@@ -1,0 +1,45 @@
+name: Easy Work AI - Job Bot
+
+on:
+  schedule:
+    # Runs every 6 hours (00:00, 06:00, 12:00, 18:00 UTC)
+    - cron: '0 */6 * * *'
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  scrape-jobs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          cd bot
+          pip install -r requirements.txt
+
+      - name: Create Firebase credentials file
+        env:
+          FIREBASE_CREDENTIALS: ${{ secrets.FIREBASE_CREDENTIALS }}
+        run: |
+          cd bot
+          echo "$FIREBASE_CREDENTIALS" > firebase-credentials.json
+
+      - name: Create .env file
+        env:
+          JOOBLE_API_KEY: ${{ secrets.JOOBLE_API_KEY }}
+        run: |
+          cd bot
+          echo "JOOBLE_API_KEY=$JOOBLE_API_KEY" > .env
+          echo "FIREBASE_CREDENTIALS_PATH=firebase-credentials.json" >> .env
+
+      - name: Run job bot
+        run: |
+          cd bot
+          python main.py

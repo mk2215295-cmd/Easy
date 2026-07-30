@@ -64,6 +64,103 @@ async function translateText(text, retries = 3) {
   return text; // fallback to original
 }
 
+async function extractRequirementsFromText(text, jobIdPrefix) {
+  const lines = text
+    .split('\n')
+    .map(l => l.replace(/^[•\-\*\d\.]+\s*/, '').trim())
+    .filter(l => l.length > 8);
+
+  const reqs = [];
+  let id = 1;
+
+  for (const line of lines) {
+    const lower = line.toLowerCase();
+    if (
+      lower.includes('experience') || lower.includes('degree') ||
+      lower.includes('ability') || lower.includes('knowledge') ||
+      lower.includes('skills') || lower.includes('proficient') ||
+      lower.includes('studium') || lower.includes('erfahrung') ||
+      lower.includes('kenntnisse') || lower.includes('years') ||
+      lower.includes('verantwortung') || lower.includes('qualifikation')
+    ) {
+      reqs.push({
+        id: `${jobIdPrefix}-req-${id}`,
+        text_en: line,
+        text_ar: await translateText(line)
+      });
+      id++;
+      if (reqs.length >= 6) break;
+    }
+  }
+
+  if (reqs.length === 0) {
+    for (let i = 0; i < lines.length && reqs.length < 4; i++) {
+      reqs.push({
+        id: `${jobIdPrefix}-req-${id}`,
+        text_en: lines[i],
+        text_ar: await translateText(lines[i])
+      });
+      id++;
+    }
+  }
+  return reqs;
+}
+
+function extractBenefitsFromText(text) {
+  const lower = text.toLowerCase();
+  const benefits = [];
+
+  if (lower.includes('housing') || lower.includes('relocation') || lower.includes('apartment') || lower.includes('sorglos-zuhause')) {
+    benefits.push({
+      id: 'ben-house',
+      type: 'accommodation',
+      label_ar: 'توفير وتسهيل السكن والتنقل',
+      label_en: 'Housing & Relocation Support'
+    });
+  }
+  if (lower.includes('health') || lower.includes('insurance') || lower.includes('krankenversicherung')) {
+    benefits.push({
+      id: 'ben-health',
+      type: 'healthInsurance',
+      label_ar: 'تأمين صحي شامل',
+      label_en: 'Full Health & Medical Insurance'
+    });
+  }
+  if (lower.includes('bonus') || lower.includes('salary') || lower.includes('compensation') || lower.includes('performance')) {
+    benefits.push({
+      id: 'ben-bonus',
+      type: 'bonus',
+      label_ar: 'مكافآت وحوافز أداء دورية',
+      label_en: 'Performance Bonus & Incentives'
+    });
+  }
+  if (lower.includes('flight') || lower.includes('ticket') || lower.includes('travel') || lower.includes('home')) {
+    benefits.push({
+      id: 'ben-flight',
+      type: 'flightTicket',
+      label_ar: 'تذاكر طيران ودعم السفر الدولي',
+      label_en: 'Annual Flight & Travel Allowance'
+    });
+  }
+  if (benefits.length === 0) {
+    benefits.push(
+      {
+        id: 'ben-std-1',
+        type: 'healthInsurance',
+        label_ar: 'تأمين صحي وبيئة عمل مرنة',
+        label_en: 'Health Insurance & Flexible Work'
+      },
+      {
+        id: 'ben-std-2',
+        type: 'visa',
+        label_ar: 'دعم التأشيرة والإقامة الرسمية',
+        label_en: 'Visa & Work Permit Sponsorship'
+      }
+    );
+  }
+  return benefits;
+}
+
 async function processJob(id, title, company, loc, desc, applyUrl, isRemote, jobType, salaryMin, salaryMax, salaryCurrency) {
   const cleanDesc = stripHtml(desc);
   
@@ -86,6 +183,9 @@ async function processJob(id, title, company, loc, desc, applyUrl, isRemote, job
     category = 'Volunteering';
   }
 
+  const reqs = await extractRequirementsFromText(cleanDesc, id);
+  const bens = extractBenefitsFromText(cleanDesc);
+
   // Create Job object
   return {
     id: id,
@@ -104,6 +204,8 @@ async function processJob(id, title, company, loc, desc, applyUrl, isRemote, job
     category: category,
     job_type: jobType,
     apply_url: applyUrl,
+    requirements: reqs,
+    benefits: bens,
     posted_at: new Date().toISOString(),
     is_new: true,
     is_featured: true,

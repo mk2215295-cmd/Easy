@@ -20,7 +20,7 @@ initializeApp({
 const db = getFirestore();
 
 function generateJobId(title, company, location) {
-  const raw = ${title}--.toLowerCase().replace(/[^a-z0-9]/g, '');
+  const raw = `${title}-${company}-${location}`.toLowerCase().replace(/[^a-z0-9]/g, '');
   return crypto.createHash('md5').update(raw).digest('hex').substring(0, 16);
 }
 
@@ -42,22 +42,22 @@ function stripHtml(html) {
 }
 
 async function fetchArbeitnow(page = 1) {
-  const res = await fetch(https://www.arbeitnow.com/api/job-board-api?page=\);
-  if (!res.ok) throw new Error(Arbeitnow failed: \);
+  const res = await fetch(`https://www.arbeitnow.com/api/job-board-api?page=${page}`);
+  if (!res.ok) throw new Error(`Arbeitnow failed: ${res.statusText}`);
   const data = await res.json();
   return data.data || [];
 }
 
 async function fetchJobicy(geo = 'Europe') {
-  const res = await fetch(https://jobicy.com/api/v2/remote-jobs?count=50&geo=\);
-  if (!res.ok) throw new Error(Jobicy failed: \);
+  const res = await fetch(`https://jobicy.com/api/v2/remote-jobs?count=50&geo=${encodeURIComponent(geo)}`);
+  if (!res.ok) throw new Error(`Jobicy failed: ${res.statusText}`);
   const data = await res.json();
   return data.jobs || [];
 }
 
 async function fetchRemotive() {
   const res = await fetch('https://remotive.com/api/remote-jobs?limit=50');
-  if (!res.ok) throw new Error(Remotive failed: \);
+  if (!res.ok) throw new Error(`Remotive failed: ${res.statusText}`);
   const data = await res.json();
   return data.jobs || [];
 }
@@ -69,7 +69,7 @@ async function translateText(text, retries = 3) {
       const res = await translate(text, { to: 'ar' });
       return res.text;
     } catch (e) {
-      console.warn(Translation retry \/\ failed:, e.message);
+      console.warn(`Translation retry ${i+1}/${retries} failed:`, e.message);
       await new Promise(r => setTimeout(r, 2000));
     }
   }
@@ -97,7 +97,7 @@ async function extractRequirementsFromText(text, jobIdPrefix) {
       lower.includes('must') || lower.includes('require') || lower.includes('track record')
     ) {
       reqs.push({
-        id: \-req-\,
+        id: `${jobIdPrefix}-req-${id}`,
         text_en: line.substring(0, 150),
         text_ar: await translateText(line.substring(0, 150))
       });
@@ -109,7 +109,7 @@ async function extractRequirementsFromText(text, jobIdPrefix) {
   if (reqs.length === 0) {
     for (let i = 0; i < lines.length && reqs.length < 3; i++) {
       reqs.push({
-        id: \-req-\,
+        id: `${jobIdPrefix}-req-${id}`,
         text_en: lines[i].substring(0, 150),
         text_ar: await translateText(lines[i].substring(0, 150))
       });
@@ -125,7 +125,7 @@ function extractBenefitsFromText(text, jobIdPrefix) {
 
   if (lower.includes('housing') || lower.includes('relocation') || lower.includes('apartment') || lower.includes('sorglos-zuhause') || lower.includes('visa sponsorship') || lower.includes('visa support')) {
     benefits.push({
-      id: \-ben-house,
+      id: `${jobIdPrefix}-ben-house`,
       type: 'accommodation',
       label_ar: 'توفير وتسهيل السكن / دعم التأشيرة والانتقال',
       label_en: 'Housing, Visa & Relocation Support'
@@ -133,7 +133,7 @@ function extractBenefitsFromText(text, jobIdPrefix) {
   }
   if (lower.includes('health') || lower.includes('insurance') || lower.includes('krankenversicherung') || lower.includes('medical') || lower.includes('dental')) {
     benefits.push({
-      id: \-ben-health,
+      id: `${jobIdPrefix}-ben-health`,
       type: 'healthInsurance',
       label_ar: 'تأمين صحي وطبي شامل',
       label_en: 'Full Health & Medical Insurance'
@@ -141,7 +141,7 @@ function extractBenefitsFromText(text, jobIdPrefix) {
   }
   if (lower.includes('bonus') || lower.includes('salary') || lower.includes('compensation') || lower.includes('performance') || lower.includes('equity') || lower.includes('shares')) {
     benefits.push({
-      id: \-ben-bonus,
+      id: `${jobIdPrefix}-ben-bonus`,
       type: 'bonus',
       label_ar: 'مكافآت وحوافز أداء / أسهم بالشركة',
       label_en: 'Performance Bonus & Equity/Shares'
@@ -149,7 +149,7 @@ function extractBenefitsFromText(text, jobIdPrefix) {
   }
   if (lower.includes('flight') || lower.includes('ticket') || lower.includes('travel') || lower.includes('home') || lower.includes('paid time off') || lower.includes('vacation')) {
     benefits.push({
-      id: \-ben-flight,
+      id: `${jobIdPrefix}-ben-flight`,
       type: 'flightTicket',
       label_ar: 'إجازات مدفوعة وتذاكر طيران',
       label_en: 'Paid Time Off & Travel Allowance'
@@ -159,7 +159,7 @@ function extractBenefitsFromText(text, jobIdPrefix) {
   if (benefits.length === 0) {
     benefits.push(
       {
-        id: \-ben-std-1,
+        id: `${jobIdPrefix}-ben-std-1`,
         type: 'healthInsurance',
         label_ar: 'بيئة عمل احترافية مرنة',
         label_en: 'Flexible Professional Environment'
@@ -173,7 +173,7 @@ async function processJob(title, company, loc, desc, applyUrl, isRemote, jobType
   const id = generateJobId(title, company, loc);
   const cleanDesc = stripHtml(desc);
   
-  console.log(Processing: \ - \ in \);
+  console.log(`Processing: ${id} - ${title} in ${loc}`);
   
   const titleAr = await translateText(title);
   const locAr = await translateText(loc);
@@ -232,7 +232,7 @@ async function run() {
   // 1. Arbeitnow (Germany/EU) - 3 pages (approx 150 jobs)
   try {
     for (let page = 1; page <= 3; page++) {
-      console.log(Fetching Arbeitnow page \...);
+      console.log(`Fetching Arbeitnow page ${page}...`);
       const arbeitData = await fetchArbeitnow(page);
       for (const item of arbeitData) {
         if (liveJobs.length > 250) break; // Hard cap to prevent translate bans
@@ -261,7 +261,7 @@ async function run() {
     for (const country of targetCountries) {
       if (liveJobs.length >= 250) break;
       try {
-        console.log(Fetching Jobicy for \...);
+        console.log(`Fetching Jobicy for ${country}...`);
         const jobicyData = await fetchJobicy(country);
         for (const item of jobicyData) {
           if (liveJobs.length >= 250) break;
@@ -286,7 +286,7 @@ async function run() {
           await new Promise(r => setTimeout(r, 800)); 
         }
       } catch (e) {
-        console.error(Error fetching Jobicy for \, e);
+        console.error(`Error fetching Jobicy for ${country}`, e);
       }
     }
   }
@@ -294,7 +294,7 @@ async function run() {
   // 3. Remotive API (Remote Europe focus)
   if (liveJobs.length < 250) {
     try {
-      console.log(Fetching Remotive...);
+      console.log(`Fetching Remotive...`);
       const remData = await fetchRemotive();
       for (const item of remData) {
         if (liveJobs.length >= 250) break;
@@ -321,7 +321,7 @@ async function run() {
     }
   }
 
-  console.log(Scraped and translated \ live jobs successfully.);
+  console.log(`Scraped and translated ${liveJobs.length} live jobs successfully.`);
 
   const batch = db.batch();
   const jobsRef = db.collection('jobs');

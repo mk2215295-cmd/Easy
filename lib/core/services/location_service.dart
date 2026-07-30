@@ -84,4 +84,51 @@ class LocationService {
       inEu: false,
     );
   }
+
+  /// Fetch global countries from API
+  Future<List<String>> fetchCountries() async {
+    try {
+      final response = await http
+          .get(Uri.parse('https://countriesnow.space/api/v0.1/countries'))
+          .timeout(const Duration(seconds: 8));
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body) as Map<String, dynamic>;
+        if (data['error'] == false) {
+          final List countriesData = data['data'] as List;
+          final List<String> countries = countriesData
+              .map((c) => c['country'].toString())
+              .toList();
+          countries.sort();
+          return countries;
+        }
+      }
+    } catch (_) {}
+    return [];
+  }
+
+  /// Fetch cities for a specific country from API
+  Future<List<String>> fetchCities(String country) async {
+    if (country.isEmpty) return [];
+    try {
+      final response = await http
+          .post(
+            Uri.parse('https://countriesnow.space/api/v0.1/countries/cities'),
+            headers: {'Content-Type': 'application/json'},
+            body: json.encode({'country': country}),
+          )
+          .timeout(const Duration(seconds: 8));
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body) as Map<String, dynamic>;
+        if (data['error'] == false) {
+          final List citiesData = data['data'] as List;
+          final List<String> cities = citiesData.map((c) => c.toString()).toList();
+          cities.sort();
+          return cities;
+        }
+      }
+    } catch (_) {}
+    return [];
+  }
 }

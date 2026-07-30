@@ -1,23 +1,11 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../../core/models/cv_model.dart';
+import '../../../core/services/location_service.dart';
 import '../../../theme/app_theme.dart';
 import '../cv_form_data.dart';
 
-// ════════════════════════════════════════════════════════════════════════════
-// CvFormStep1 — Personal Information & Cascading Sector/Profession Selectors
-//
-// Features & Strict Validations:
-//   1. Full Name Validation: Enforces at least 3 to 4 words (minimum 2 spaces)
-//      before enabling progression. Displays Arabic warning banner.
-//   2. Cascading Two-Level Selectors:
-//      - Selector 1: Sector Category (القطاع المهني / e.g. الحرف, البرمجة, البناء)
-//      - Selector 2: Job Title (المسمى الوظيفي), dynamically filtered by Sector.
-//   3. Cascading Country + City Selectors.
-//   4. Date of Birth DD/MM/YYYY Mask.
-//   5. Sequential Next Button Locking: Locked until required fields are valid.
-// ════════════════════════════════════════════════════════════════════════════
 class CvFormStep1 extends StatefulWidget {
   const CvFormStep1({
     super.key,
@@ -40,10 +28,15 @@ class _CvFormStep1State extends State<CvFormStep1> {
   late final TextEditingController _dobCtrl;
 
   CvProfessionCategory? _selectedCategory;
-  CvProfession? _selectedProfessionObj;
   String? _selectedProfessionTitle;
   String? _selectedCountry;
   String? _selectedCity;
+
+  final LocationService _locationService = LocationService();
+  List<String> _countries = [];
+  List<String> _cities = [];
+  bool _isLoadingCountries = true;
+  bool _isLoadingCities = false;
 
   @override
   void initState() {
@@ -59,7 +52,6 @@ class _CvFormStep1State extends State<CvFormStep1> {
         widget.cv.country.isNotEmpty ? widget.cv.country : null;
     _selectedCity = widget.cv.city.isNotEmpty ? widget.cv.city : null;
 
-    // Restore selected category & profession object if existing
     if (_selectedProfessionTitle != null) {
       for (final cat in kProfessionCategories) {
         final match = cat.professions.firstWhere(
@@ -78,7 +70,6 @@ class _CvFormStep1State extends State<CvFormStep1> {
         );
         if (match.titleEn.isNotEmpty) {
           _selectedCategory = cat;
-          _selectedProfessionObj = match;
           break;
         }
       }
@@ -87,6 +78,35 @@ class _CvFormStep1State extends State<CvFormStep1> {
     _nameCtrl.addListener(_pushUpdate);
     _emailCtrl.addListener(_pushUpdate);
     _dobCtrl.addListener(_pushUpdate);
+
+    _loadCountries();
+  }
+
+  Future<void> _loadCountries() async {
+    final list = await _locationService.fetchCountries();
+    if (mounted) {
+      setState(() {
+        _countries = list.isNotEmpty ? list : kCountries;
+        _isLoadingCountries = false;
+      });
+      if (_selectedCountry != null && _selectedCountry!.isNotEmpty) {
+        _loadCities(_selectedCountry!);
+      }
+    }
+  }
+
+  Future<void> _loadCities(String country) async {
+    setState(() {
+      _isLoadingCities = true;
+      _cities = [];
+    });
+    final list = await _locationService.fetchCities(country);
+    if (mounted) {
+      setState(() {
+        _cities = list.isNotEmpty ? list : (kCountryCityMap[country] ?? []);
+        _isLoadingCities = false;
+      });
+    }
   }
 
   @override
@@ -97,7 +117,6 @@ class _CvFormStep1State extends State<CvFormStep1> {
     super.dispose();
   }
 
-  // Full Name validation helper (requires 3 to 4 words minimum)
   bool _isFullNameValid(String name) {
     final words =
         name.trim().split(RegExp(r'\s+')).where((w) => w.isNotEmpty).toList();
@@ -119,30 +138,41 @@ class _CvFormStep1State extends State<CvFormStep1> {
   void _onCategoryChanged(CvProfessionCategory? cat) {
     setState(() {
       _selectedCategory = cat;
-      _selectedProfessionObj = null;
       _selectedProfessionTitle = null;
     });
     _pushUpdate();
   }
 
-  void _onProfessionChanged(CvProfession? prof) {
-    if (prof == null) return;
+  void _onProfessionChanged(String profTitle) {
     setState(() {
-      _selectedProfessionObj = prof;
-      _selectedProfessionTitle = prof.titleEn;
+      _selectedProfessionTitle = profTitle;
     });
-    _pushUpdate(bullets: prof.atsBullets);
+    final match = kProfessions.firstWhere(
+      (p) =>
+          p.titleEn.toLowerCase() == profTitle.toLowerCase() ||
+          p.titleAr == profTitle,
+      orElse: () => CvProfession(
+        titleEn: profTitle,
+        titleAr: profTitle,
+        categoryEn: '',
+        categoryAr: '',
+        emoji: '💼',
+        suggestedBullets: [],
+      ),
+    );
+    _pushUpdate(bullets: match.atsBullets);
   }
 
-  void _onCountrySelected(String? country) {
+  void _onCountrySelected(String country) {
     setState(() {
       _selectedCountry = country;
       _selectedCity = null;
     });
     _pushUpdate();
+    _loadCities(country);
   }
 
-  void _onCitySelected(String? city) {
+  void _onCitySelected(String city) {
     setState(() => _selectedCity = city);
     _pushUpdate();
   }
@@ -158,25 +188,14 @@ class _CvFormStep1State extends State<CvFormStep1> {
     final isStepValid = isNameValid && isProfessionValid;
 
     final List<String> expOptions = [
-      '1',
-      '2',
-      '3',
-      '4',
-      '5',
-      '6',
-      '7',
-      '8',
-      '9',
-      '10',
-      '10+'
+      '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '10+'
     ];
-
-    final List<String> cities = _selectedCountry != null
-        ? (kCountryCityMap[_selectedCountry] ?? [])
-        : [];
 
     final availableProfessions =
         _selectedCategory?.professions ?? kProfessions;
+    final professionStrings = availableProfessions
+        .map((p) => "\ / \")
+        .toList();
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(24),
@@ -186,7 +205,6 @@ class _CvFormStep1State extends State<CvFormStep1> {
           _StepHeader(),
           const SizedBox(height: 24),
 
-          // ── 1. Full Name (3 to 4 Words Enforced) ──────────────────────
           _InputField(
             controller: _nameCtrl,
             labelEn: 'Full Name (3-4 words required)',
@@ -216,7 +234,7 @@ class _CvFormStep1State extends State<CvFormStep1> {
                   const SizedBox(width: 6),
                   Expanded(
                     child: Text(
-                      'يرجى كتابة الاسم ثلاثي أو رباعي على الأقل (مثال: محمود أحمد علي)',
+                      'يرجى كتابة الاسم ثلاثي أو رباعي على الأقل',
                       style: AppTextStyles.labelSmall.copyWith(
                         color: const Color(0xFFB91C1C),
                         fontSize: 11,
@@ -230,7 +248,6 @@ class _CvFormStep1State extends State<CvFormStep1> {
           ],
           const SizedBox(height: 18),
 
-          // ── 2. Cascading Selector 1: Sector Category (القطاع المهني) ───
           _buildLabel('1. Sector Category / القطاع المهني',
               'اختر قطاع العمل الرئيسي أولاً'),
           const SizedBox(height: 8),
@@ -267,50 +284,17 @@ class _CvFormStep1State extends State<CvFormStep1> {
           ),
           const SizedBox(height: 18),
 
-          // ── 3. Cascading Selector 2: Job Title (المسمى الوظيفي) ────────
-          _buildLabel('2. Job Title / المسمى الوظيفي',
-              'تتغير المسميات المتاحة بحسب القطاع المختار'),
-          const SizedBox(height: 8),
-          DropdownButtonFormField<CvProfession>(
-            initialValue: _selectedProfessionObj,
-            dropdownColor: AppColors.backgroundElevated,
-            isExpanded: true,
-            icon: const Icon(Icons.keyboard_arrow_down_rounded,
-                color: AppColors.textSecondary),
-            style: AppTextStyles.bodyMedium
-                .copyWith(color: AppColors.textPrimary),
-            decoration: InputDecoration(
-              hintText: _selectedCategory == null
-                  ? 'اختر القطاع أولاً / Select sector first'
-                  : 'اختر المسمى الوظيفي / Select Job Title',
-            ),
-            disabledHint: Text(
-              'اختر القطاع أولاً / Select sector first',
-              style: AppTextStyles.bodyMedium
-                  .copyWith(color: AppColors.textDisabled),
-            ),
-            items: availableProfessions
-                .map((prof) => DropdownMenuItem(
-                      value: prof,
-                      child: Row(
-                        children: [
-                          Text(prof.emoji,
-                              style: const TextStyle(fontSize: 16)),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Text(
-                              '${prof.titleAr} (${prof.titleEn})',
-                              style: const TextStyle(fontSize: 13),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ))
-                .toList(),
-            onChanged: availableProfessions.isEmpty
-                ? null
-                : _onProfessionChanged,
+          _CustomAutocomplete(
+            labelEn: '2. Job Title / المسمى الوظيفي',
+            labelAr: 'اختر من القائمة أو اكتب مسمى وظيفي جديد',
+            hint: 'e.g. Software Engineer / مهندس برمجيات',
+            initialValue: _selectedProfessionTitle ?? '',
+            options: professionStrings,
+            onSelected: (val) {
+              final clean = val.split(' / ').first;
+              _onProfessionChanged(clean);
+            },
+            onChanged: (val) => _onProfessionChanged(val),
           ),
           if (_selectedProfessionTitle != null) ...[
             const SizedBox(height: 8),
@@ -318,7 +302,6 @@ class _CvFormStep1State extends State<CvFormStep1> {
           ],
           const SizedBox(height: 18),
 
-          // ── 4. Years of Experience Dropdown ──────────────────────────
           _buildLabel('Years of Experience / سنوات الخبرة', 'اختر سنوات الخبرة'),
           const SizedBox(height: 8),
           DropdownButtonFormField<String>(
@@ -344,7 +327,6 @@ class _CvFormStep1State extends State<CvFormStep1> {
           ),
           const SizedBox(height: 18),
 
-          // ── 5. Email / Contact ────────────────────────────────────────
           _InputField(
             controller: _emailCtrl,
             labelEn: 'Contact Information',
@@ -354,56 +336,30 @@ class _CvFormStep1State extends State<CvFormStep1> {
           ),
           const SizedBox(height: 18),
 
-          // ── 6. Country Dropdown ───────────────────────────────────────
-          _buildLabel('Country / الدولة', 'اختر دولة الإقامة الحالية'),
-          const SizedBox(height: 8),
-          DropdownButtonFormField<String>(
-            initialValue: _selectedCountry,
-            dropdownColor: AppColors.backgroundElevated,
-            icon: const Icon(Icons.keyboard_arrow_down_rounded,
-                color: AppColors.textSecondary),
-            style: AppTextStyles.bodyMedium
-                .copyWith(color: AppColors.textPrimary),
-            decoration:
-                const InputDecoration(hintText: 'Select country / اختر الدولة'),
-            items: kCountries
-                .map((c) => DropdownMenuItem(value: c, child: Text(c)))
-                .toList(),
+          _CustomAutocomplete(
+            labelEn: 'Country / الدولة',
+            labelAr: 'اختر دولة الإقامة الحالية',
+            hint: 'Select country / اختر الدولة',
+            initialValue: _selectedCountry ?? '',
+            options: _countries,
+            isLoading: _isLoadingCountries,
+            onSelected: _onCountrySelected,
             onChanged: _onCountrySelected,
           ),
           const SizedBox(height: 18),
 
-          // ── 7. City Dropdown (filters on country) ─────────────────────
-          _buildLabel('City / المدينة', 'اختر المدينة'),
-          const SizedBox(height: 8),
-          DropdownButtonFormField<String>(
-            initialValue: _selectedCity,
-            dropdownColor: AppColors.backgroundElevated,
-            icon: const Icon(Icons.keyboard_arrow_down_rounded,
-                color: AppColors.textSecondary),
-            style: AppTextStyles.bodyMedium
-                .copyWith(color: AppColors.textPrimary),
-            decoration: InputDecoration(
-              hintText: _selectedCountry == null
-                  ? 'Select a country first / اختر الدولة أولاً'
-                  : 'Select city / اختر المدينة',
-            ),
-            disabledHint: Text(
-              'Select a country first',
-              style: AppTextStyles.bodyMedium
-                  .copyWith(color: AppColors.textDisabled),
-            ),
-            items: cities.isEmpty
-                ? null
-                : cities
-                    .map((c) =>
-                        DropdownMenuItem(value: c, child: Text(c)))
-                    .toList(),
-            onChanged: cities.isEmpty ? null : _onCitySelected,
+          _CustomAutocomplete(
+            labelEn: 'City / المدينة',
+            labelAr: 'اختر المدينة',
+            hint: 'Select city / اختر المدينة',
+            initialValue: _selectedCity ?? '',
+            options: _cities,
+            isLoading: _isLoadingCities,
+            onSelected: _onCitySelected,
+            onChanged: _onCitySelected,
           ),
           const SizedBox(height: 18),
 
-          // ── 8. Date of Birth with DD/MM/YYYY mask ─────────────────────
           _InputField(
             controller: _dobCtrl,
             labelEn: 'Date of Birth',
@@ -417,7 +373,6 @@ class _CvFormStep1State extends State<CvFormStep1> {
           ),
           const SizedBox(height: 32),
 
-          // ── Sequential Locked Next Button ─────────────────────────────
           _NextButton(
             onNext: widget.onNext,
             isEnabled: isStepValid,
@@ -446,7 +401,6 @@ class _CvFormStep1State extends State<CvFormStep1> {
   }
 }
 
-// ── _StepHeader ───────────────────────────────────────────────────────────────
 class _StepHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -473,7 +427,6 @@ class _StepHeader extends StatelessWidget {
   }
 }
 
-// ── _InputField ───────────────────────────────────────────────────────────────
 class _InputField extends StatelessWidget {
   const _InputField({
     required this.controller,
@@ -530,7 +483,121 @@ class _InputField extends StatelessWidget {
   }
 }
 
-// ── _AtsInjectedBadge ─────────────────────────────────────────────────────────
+class _CustomAutocomplete extends StatelessWidget {
+  const _CustomAutocomplete({
+    required this.labelEn,
+    required this.labelAr,
+    required this.hint,
+    required this.options,
+    required this.initialValue,
+    required this.onSelected,
+    required this.onChanged,
+    this.isLoading = false,
+  });
+
+  final String labelEn;
+  final String labelAr;
+  final String hint;
+  final List<String> options;
+  final String initialValue;
+  final ValueChanged<String> onSelected;
+  final ValueChanged<String> onChanged;
+  final bool isLoading;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        RichText(
+          text: TextSpan(
+            style: AppTextStyles.titleMedium.copyWith(fontSize: 12),
+            children: [
+              TextSpan(text: labelEn),
+              const TextSpan(text: ' / '),
+              TextSpan(
+                text: labelAr,
+                style: const TextStyle(
+                    fontWeight: FontWeight.w400,
+                    color: AppColors.textSecondary),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 8),
+        Autocomplete<String>(
+          initialValue: TextEditingValue(text: initialValue),
+          optionsBuilder: (TextEditingValue textEditingValue) {
+            if (textEditingValue.text.isEmpty) {
+              return options.take(50);
+            }
+            return options.where((String option) {
+              return option
+                  .toLowerCase()
+                  .contains(textEditingValue.text.toLowerCase());
+            });
+          },
+          onSelected: onSelected,
+          fieldViewBuilder: (BuildContext context,
+              TextEditingController textEditingController,
+              FocusNode focusNode,
+              VoidCallback onFieldSubmitted) {
+            return TextField(
+              controller: textEditingController,
+              focusNode: focusNode,
+              onChanged: onChanged,
+              style: AppTextStyles.bodyMedium
+                  .copyWith(color: AppColors.textPrimary),
+              decoration: InputDecoration(
+                hintText: hint,
+                suffixIcon: isLoading 
+                  ? const Padding(
+                      padding: EdgeInsets.all(12),
+                      child: SizedBox(
+                        width: 16, height: 16,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      ),
+                    )
+                  : const Icon(Icons.arrow_drop_down, color: AppColors.textSecondary),
+              ),
+            );
+          },
+          optionsViewBuilder: (context, onSelected, options) {
+            return Align(
+              alignment: Alignment.topLeft,
+              child: Material(
+                elevation: 4,
+                borderRadius: BorderRadius.circular(8),
+                color: AppColors.backgroundElevated,
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxHeight: 200, maxWidth: 350),
+                  child: ListView.builder(
+                    padding: EdgeInsets.zero,
+                    shrinkWrap: true,
+                    itemCount: options.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      final String option = options.elementAt(index);
+                      return InkWell(
+                        onTap: () {
+                          onSelected(option);
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Text(option, style: AppTextStyles.bodyMedium),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
+      ],
+    );
+  }
+}
+
 class _AtsInjectedBadge extends StatelessWidget {
   const _AtsInjectedBadge({required this.profession});
   final String profession;
@@ -556,7 +623,7 @@ class _AtsInjectedBadge extends StatelessWidget {
           const SizedBox(width: 8),
           Expanded(
             child: Text(
-              'تم إدراج المهام الوظيفية المعتمدة تلقائياً لـ "$profession"',
+              'تم إدراج المهام الوظيفية المعتمدة لـ "\"',
               style: AppTextStyles.labelSmall.copyWith(
                   color: AppColors.accentGreen, fontSize: 11),
             ),
@@ -567,7 +634,6 @@ class _AtsInjectedBadge extends StatelessWidget {
   }
 }
 
-// ── _NextButton (Locked until valid) ──────────────────────────────────────────
 class _NextButton extends StatelessWidget {
   const _NextButton({required this.onNext, required this.isEnabled});
   final VoidCallback onNext;
@@ -625,7 +691,6 @@ class _NextButton extends StatelessWidget {
   }
 }
 
-// ── Date Mask Formatter (DD/MM/YYYY) ─────────────────────────────────────────
 class _DateMaskFormatter extends TextInputFormatter {
   @override
   TextEditingValue formatEditUpdate(

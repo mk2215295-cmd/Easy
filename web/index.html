@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base href="$FLUTTER_BASE_HREF">
+
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  
+  <!-- Aggressive Anti-Caching Meta Tags -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+
+  <meta name="description" content="Easy Work Web — AI-powered job matching platform & Europass CV builder for global workers moving to Europe.">
+  <meta name="keywords" content="Easy Work, EU Jobs, Europe Careers, Europass CV, Visa Sponsorship Jobs, Work in Europe">
+  <meta name="author" content="Easy Work Platform Team">
+
+  <!-- Monetag Verification Removed to prevent Popunders -->
+
+  <!-- Force Cache Busting & Service Worker Unregistration -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(function(registrations) {
+        for (let registration of registrations) {
+          registration.unregister();
+        }
+      });
+      if ('caches' in window) {
+        caches.keys().then(function(names) {
+          for (let name of names) {
+            caches.delete(name);
+          }
+        });
+      }
+    }
+  </script>
+
+  <!-- iOS meta tags & icons -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="Easy Work Web">
+  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="favicon.png"/>
+
+  <title>Easy Work Web — European Jobs & Relocation Platform</title>
+  <link rel="manifest" href="manifest.json">
+</head>
+<body>
+  <script>
+    var script = document.createElement('script');
+    script.src = "flutter_bootstrap.js?v=" + new Date().getTime();
+    script.async = true;
+    document.body.appendChild(script);
+  </script>
+
+  <!-- Non-blocking deferred ad scriptloader -->
+  <script>
+    window.addEventListener('load', function() {
+      setTimeout(function() {
+        // Google AdSense Script
+        var s2 = document.createElement('script');
+        s2.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5642739957710217";
+        s2.setAttribute('crossorigin', 'anonymous');
+        s2.async = true;
+        document.head.appendChild(s2);
+
+        // Travelpayouts Script
+        var s3 = document.createElement('script');
+        s3.src = "https://tp.media/content?currency=eur&promo_id=4054&shmarker=123456&campaign_id=100&trs=28822";
+        s3.setAttribute('charset', 'utf-8');
+        s3.async = true;
+        document.head.appendChild(s3);
+      }, 1500);
+    });
+  </script>
+</body>
+</html>

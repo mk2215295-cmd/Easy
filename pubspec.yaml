@@ -1,0 +1,74 @@
+name: easy_work_web
+description: "Easy Work Web — AI-powered job-matching platform for global workers."
+publish_to: "none"
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.3.0 <4.0.0"
+
+# ────────────────────────────────────────────────────────────────────────────────
+# Runtime Dependencies
+# ────────────────────────────────────────────────────────────────────────────────
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  # ── Networking ──────────────────────────────────────────────────────────────
+  # Used for all REST API calls to the backend (job listings, user data, etc.)
+  http: ^1.2.1
+
+  # ── Internationalisation ────────────────────────────────────────────────────
+  # Arabic ↔ English locale formatting (numbers, dates, RTL text direction)
+  intl: ^0.20.2
+
+  # ── Typography ──────────────────────────────────────────────────────────────
+  # Runtime Google Fonts: Inter (primary UI), Tajawal (Arabic), Outfit (accent)
+  google_fonts: ^6.2.1
+
+  # ── PDF Generation & Browser Download ──────────────────────────────────────
+  # `pdf` builds the document tree; `printing` renders it and triggers the
+  # browser's native Save-As / print dialog — no server round-trip required.
+  pdf: ^3.11.0
+  printing: ^5.12.0
+
+  # ── Declarative Routing ─────────────────────────────────────────────────────
+  # go_router handles named-route deep-linking, web URL sync, guards, etc.
+  go_router: ^14.2.7
+
+  # ── State Management ────────────────────────────────────────────────────────
+  # Provider: lightweight, zero-boilerplate ChangeNotifier DI layer
+  provider: ^6.1.2
+
+  # ── Utilities ───────────────────────────────────────────────────────────────
+  equatable: ^2.0.5            # Value-equality for model classes (no boilerplate)
+  cached_network_image: ^3.3.1 # Async network images with shimmer placeholders
+  url_launcher: ^6.3.1         # Opens affiliate links in a new browser tab
+  firebase_core: ^4.12.1
+  firebase_auth: ^6.5.6
+  cloud_firestore: ^6.7.1
+
+# ────────────────────────────────────────────────────────────────────────────────
+# Dev Dependencies
+# ────────────────────────────────────────────────────────────────────────────────
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+# ────────────────────────────────────────────────────────────────────────────────
+# Flutter Configuration
+# ────────────────────────────────────────────────────────────────────────────────
+flutter:
+  uses-material-design: true
+
+  # Fonts are loaded at runtime via `google_fonts`; no local font assets needed.
+
+  assets:
+    # ── Placeholder images & branding assets ──────────────────────────────────
+    - assets/images/
+    # ── SVG / PNG icons not covered by Material ───────────────────────────────
+    - assets/icons/
+    # ── Static JSON config / future locale override files ────────────────────
+    - assets/data/

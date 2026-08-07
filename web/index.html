@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <base href="$FLUTTER_BASE_HREF">
+  <base href="/">
 
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
@@ -46,15 +46,12 @@
 
   <title>Easy Work Web — European Jobs & Relocation Platform</title>
   <link rel="manifest" href="manifest.json">
+
+
+  <!-- Standard Flutter Web Engine Bootstrap -->
+  <script src="flutter_bootstrap.js" async></script>
 </head>
 <body>
-  <script>
-    var script = document.createElement('script');
-    script.src = "flutter_bootstrap.js?v=" + new Date().getTime();
-    script.async = true;
-    document.body.appendChild(script);
-  </script>
-
   <!-- Non-blocking deferred ad scriptloader -->
   <script>
     window.addEventListener('load', function() {

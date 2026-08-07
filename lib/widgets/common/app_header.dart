@@ -1,5 +1,4 @@
-import 'package:google_fonts/google_fonts.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -12,16 +11,6 @@ import '../../theme/app_theme.dart';
 
 // ════════════════════════════════════════════════════════════════════════════════
 // AppHeader  — Universal sticky navigation header used on EVERY screen.
-//
-// Responsive behaviour:
-//   ≥ 1080 px  (desktop)  → Full horizontal nav tabs + all actions visible
-//   640–1079 px (tablet)  → Logo + icon-only nav + all actions
-//   < 640 px   (mobile)   → Logo + hamburger drawer
-//
-// The [activeRoute] string must match one of the constants in [AppRoutes].
-// Language toggle state will be lifted to a locale Provider in Phase 3;
-// for now it lives locally via a [ValueNotifier] prop-drilled from the parent
-// screen so it survives route transitions.
 // ════════════════════════════════════════════════════════════════════════════════
 
 class AppHeader extends StatefulWidget {
@@ -32,18 +21,10 @@ class AppHeader extends StatefulWidget {
     this.isArabic = false,
   });
 
-  /// Currently active route path (e.g. AppRoutes.dashboard).
-  /// Drives the underline indicator and text colour of nav items.
   final String? activeRoute;
-
-  /// Callback fires when the user taps the language toggle.
-  /// Pass [isArabic] = true when Arabic is selected.
   final ValueChanged<bool>? onLanguageToggle;
-
-  /// Whether Arabic is the currently active language.
   final bool isArabic;
 
-  /// Fixed pixel height of the header bar.
   static const double barHeight = 64.0;
 
   @override
@@ -51,37 +32,36 @@ class AppHeader extends StatefulWidget {
 }
 
 class _AppHeaderState extends State<AppHeader> {
-  // ── Nav item definitions ──────────────────────────────────────────────────
   static const List<_NavItem> _navItems = [
     _NavItem(
       labelEn: 'Dashboard',
       labelAr: 'الرئيسية',
       route: AppRoutes.dashboard,
-      icon: LucideIcons.layoutGrid,
+      icon: Icons.grid_view_rounded,
     ),
     _NavItem(
       labelEn: 'Jobs',
       labelAr: 'الوظائف',
       route: AppRoutes.jobs,
-      icon: LucideIcons.briefcase,
+      icon: Icons.work_outline_rounded,
     ),
     _NavItem(
       labelEn: 'Applications',
       labelAr: 'طلباتي',
       route: AppRoutes.applications,
-      icon: LucideIcons.fileText,
+      icon: Icons.description_outlined,
     ),
     _NavItem(
       labelEn: 'Messages',
       labelAr: 'الرسائل',
       route: AppRoutes.messages,
-      icon: LucideIcons.messageSquare,
+      icon: Icons.chat_bubble_outline_rounded,
     ),
     _NavItem(
       labelEn: 'Profile',
       labelAr: 'ملفي',
       route: AppRoutes.profile,
-      icon: LucideIcons.user,
+      icon: Icons.person_outline_rounded,
     ),
   ];
 

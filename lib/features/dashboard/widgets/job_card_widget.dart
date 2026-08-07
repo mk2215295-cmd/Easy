@@ -1,8 +1,8 @@
-﻿import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/models/job_model.dart';
@@ -166,7 +166,7 @@ class _HeroPlaceholder extends StatelessWidget {
         ),
       ),
       child: const Center(
-        child: Icon(LucideIcons.briefcase,
+        child: Icon(Icons.work_outline_rounded,
             color: AppColors.borderSubtle, size: 36),
       ),
     );
@@ -312,7 +312,7 @@ class _ContentPane extends StatelessWidget {
             textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
             children: [
               if (displayCompany.isNotEmpty) ...[
-                const Icon(LucideIcons.building2,
+                const Icon(Icons.business_rounded,
                     size: 13, color: AppColors.accentBlue),
                 const SizedBox(width: 5),
                 Flexible(
@@ -330,7 +330,7 @@ class _ContentPane extends StatelessWidget {
                 const SizedBox(width: 8),
               ],
               if (displayLocation.isNotEmpty) ...[
-                const Icon(LucideIcons.mapPin,
+                const Icon(Icons.location_on_outlined,
                     size: 13, color: AppColors.textSecondary),
                 const SizedBox(width: 3),
                 Flexible(
@@ -412,7 +412,7 @@ class _ActionsRow extends StatelessWidget {
               child: ElevatedButton.icon(
                 onPressed: () =>
                     context.go('${AppRoutes.jobs}/${job.id}'),
-                icon: const Icon(LucideIcons.arrowUpRight, size: 14),
+                icon: const Icon(Icons.open_in_new_rounded, size: 14),
                 label: Text(isArabic ? 'تقديم الآن' : 'Apply Now'),
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -431,7 +431,7 @@ class _ActionsRow extends StatelessWidget {
               child: OutlinedButton.icon(
                 onPressed: () =>
                     context.go('${AppRoutes.jobs}/${job.id}'),
-                icon: const Icon(LucideIcons.info, size: 14),
+                icon: const Icon(Icons.info_outline_rounded, size: 14),
                 label: Text(isArabic ? 'التفاصيل' : 'Details'),
                 style: OutlinedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(horizontal: 12),

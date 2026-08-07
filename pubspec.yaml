@@ -51,7 +51,7 @@ dependencies:
 
   # ── Micro-interactions & UI Icons ───────────────────────────────────────────
   flutter_animate: ^4.5.0
-  lucide_icons: ^0.257.0
+  font_awesome_flutter: ^10.7.0
 
 # ────────────────────────────────────────────────────────────────────────────────
 # Dev Dependencies

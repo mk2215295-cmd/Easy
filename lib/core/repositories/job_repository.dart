@@ -232,8 +232,10 @@ class JobRepository {
       });
       return combined;
     } else {
+      // Show all jobs to non-EU users — treat null sponsorship as sponsored
+      // so Firestore-scraped jobs (which may not have the field) are not hidden.
       return combined
-          .where((job) => job.requiresVisaSponsorship == true)
+          .where((job) => job.requiresVisaSponsorship != false)
           .map((job) => _injectVisaSponsorshipFlag(job))
           .toList();
     }
@@ -386,10 +388,8 @@ class JobRepository {
         locationAr: locAr,
         countryFlagEmoji: emoji,
         countryCode: code,
-        description:
-            'Official position at $company ($locEn). Responsible for executing operational tasks according to European industry standards. Full employment contract with comprehensive social benefits, health insurance, and relocation assistance.',
-        descriptionAr:
-            'فرصة عمل موثقة ومباشرة لدى $company في $locEn. تشمل مهام العمل التنفيذ الميداني المباشر وفقاً لمعايير السلامة والجودة الأوروبية، مع عقد عمل رسمي وتغطية شاملة للتأمين الصحي وتسهيلات السكن والانتقال.',
+        description: _buildDescription(titleEn, company, locEn, category, type, minS, maxS),
+        descriptionAr: _buildDescriptionAr(titleAr, company, locAr, category, type, minS, maxS),
         salaryMin: minS,
         salaryMax: maxS,
         salaryCurrency: '€',
@@ -407,42 +407,47 @@ class JobRepository {
         requirements: [
           JobRequirementModel(
             id: '$id-req-1',
-            textEn: 'Relevant technical qualification or practical experience in $category',
-            textAr: 'مؤهل فني مناسب أو خبرة عملية سابقة في مجال $titleAr',
+            textEn: 'Minimum 1-2 years of practical experience in $category field',
+            textAr: 'خبرة عملية لا تقل عن سنة إلى سنتين في مجال $titleAr',
           ),
           JobRequirementModel(
             id: '$id-req-2',
-            textEn: 'Compliance with European workplace safety and health protocols',
-            textAr: 'الالتزام بمعايير السلامة والصحة المهنية الأوروبية',
+            textEn: 'Knowledge of European workplace safety and occupational health standards',
+            textAr: 'معرفة بمعايير السلامة والصحة المهنية الأوروبية المعتمدة',
           ),
           JobRequirementModel(
             id: '$id-req-3',
-            textEn: 'Basic English or host-country language communication skills',
-            textAr: 'إجادة مبادئ التواصل باللغة الإنجليزية أو لغة بلد العمل',
+            textEn: 'Basic English or ${_getHostLanguage(code)} communication skills',
+            textAr: 'مهارات تواصل أساسية باللغة الإنجليزية أو ${_getHostLanguageAr(code)}',
           ),
           JobRequirementModel(
             id: '$id-req-4',
-            textEn: 'Ability to work independently and collaborate within international teams',
-            textAr: 'القدرة على العمل المستقل والتعاون ضمن فريق العمل',
+            textEn: 'Ability to work independently and collaborate within international multicultural teams',
+            textAr: 'القدرة على العمل المستقل والتعاون ضمن فرق عمل دولية متعددة الثقافات',
+          ),
+          JobRequirementModel(
+            id: '$id-req-5',
+            textEn: 'Valid passport and eligibility to obtain a European work visa',
+            textAr: 'جواز سفر ساري المفعول وأهلية الحصول على تأشيرة عمل أوروبية',
           ),
         ],
-        benefits: const [
+        benefits: [
           JobBenefitModel(
-            id: 'ben-1',
+            id: '$id-ben-1',
             type: BenefitType.accommodation,
-            labelAr: 'توفير السكن وتسهيلات الإقامة',
-            labelEn: 'Accommodation & Housing Provided',
+            labelAr: 'توفير السكن وتسهيلات الإقامة بالقرب من موقع العمل',
+            labelEn: 'Accommodation & Housing near Worksite',
           ),
           JobBenefitModel(
-            id: 'ben-2',
+            id: '$id-ben-2',
             type: BenefitType.healthInsurance,
-            labelAr: 'تأمين صحي شامل واجتماعي',
-            labelEn: 'Full Medical & Social Insurance',
+            labelAr: 'تأمين صحي شامل واجتماعي وفق القانون الأوروبي',
+            labelEn: 'Full Medical & Social Insurance (EU Standard)',
           ),
           JobBenefitModel(
-            id: 'ben-3',
+            id: '$id-ben-3',
             type: BenefitType.visa,
-            labelAr: 'دعم التأشيرة وتصريح العمل الرسمية',
+            labelAr: 'كفالة التأشيرة وتصريح العمل الرسمي',
             labelEn: 'Visa & Work Permit Sponsorship',
           ),
         ],
@@ -485,6 +490,49 @@ class JobRepository {
         imageUrl: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=400',
       ),
     ];
+  }
+
+  /// Builds a unique, role-specific English description for each local job.
+  String _buildDescription(String titleEn, String company, String locEn, String category, String type, double minS, double maxS) {
+    final salary = '€${minS.toStringAsFixed(0)}–€${maxS.toStringAsFixed(0)}/month';
+    return '$company is hiring a $titleEn based in $locEn. '
+        'This is a $type position in the $category sector with a competitive salary of $salary. '
+        'The role involves executing day-to-day operational duties in line with European industry standards. '
+        'Candidates will receive a full employment contract, comprehensive health and social insurance, '
+        'and dedicated relocation and visa sponsorship support to help you settle in Europe. '
+        'Join a growing international team committed to quality, safety, and professional development.';
+  }
+
+  /// Builds a unique, role-specific Arabic description for each local job.
+  String _buildDescriptionAr(String titleAr, String company, String locAr, String category, String type, double minS, double maxS) {
+    final salary = '€${minS.toStringAsFixed(0)} – €${maxS.toStringAsFixed(0)} شهرياً';
+    final typeAr = type == 'Full-Time' ? 'دوام كامل' : (type == 'Part-Time' ? 'دوام جزئي' : type);
+    return 'تعلن شركة $company عن حاجتها لشغل وظيفة $titleAr في مدينة $locAr. '
+        'هذه وظيفة $typeAr في مجال $category براتب تنافسي يتراوح بين $salary. '
+        'تشمل المهام تنفيذ العمليات اليومية وفق أعلى معايير السلامة والجودة الأوروبية. '
+        'يحصل المتقدم الناجح على عقد عمل رسمي، تأمين صحي واجتماعي شامل، '
+        'ودعم كامل للحصول على تأشيرة العمل وتسهيلات السكن والانتقال إلى أوروبا. '
+        'انضم إلى فريق عمل دولي يهتم بالتطوير المهني والتميز.';
+  }
+
+  String _getHostLanguage(String countryCode) {
+    const map = {
+      'DE': 'German', 'FR': 'French', 'IT': 'Italian', 'ES': 'Spanish',
+      'NL': 'Dutch', 'PL': 'Polish', 'SE': 'Swedish', 'AT': 'German',
+      'FI': 'Finnish', 'DK': 'Danish', 'GR': 'Greek', 'IE': 'English',
+      'NO': 'Norwegian', 'BE': 'French/Dutch',
+    };
+    return map[countryCode] ?? 'the local language';
+  }
+
+  String _getHostLanguageAr(String countryCode) {
+    const map = {
+      'DE': 'الألمانية', 'FR': 'الفرنسية', 'IT': 'الإيطالية', 'ES': 'الإسبانية',
+      'NL': 'الهولندية', 'PL': 'البولندية', 'SE': 'السويدية', 'AT': 'الألمانية',
+      'FI': 'الفنلندية', 'DK': 'الدنماركية', 'GR': 'اليونانية', 'IE': 'الإنجليزية',
+      'NO': 'النرويجية', 'BE': 'الفرنسية أو الهولندية',
+    };
+    return map[countryCode] ?? 'لغة البلد المضيف';
   }
 
   String _translateOnTheFly(String text) {

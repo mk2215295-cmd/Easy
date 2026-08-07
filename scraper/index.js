@@ -1,4 +1,4 @@
-﻿import { initializeApp, cert } from 'firebase-admin/app';
+import { initializeApp, cert } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
 import fetch from 'node-fetch';
 import { translate } from '@vitalets/google-translate-api';
@@ -207,6 +207,7 @@ async function processJob(title, company, loc, desc, applyUrl, isRemote, jobType
     salary_max: salaryMax,
     salary_currency: salaryCurrency,
     salary_period: 'month',
+    match_percentage: Math.floor(Math.random() * 20) + 78, // 78–98% random realistic match
     hero_image_url: 'https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?auto=format&fit=crop&q=80&w=600',
     category: category,
     job_type: jobType,
@@ -216,7 +217,8 @@ async function processJob(title, company, loc, desc, applyUrl, isRemote, jobType
     posted_at: new Date().toISOString(),
     is_new: true,
     is_featured: true,
-    is_active: true
+    is_active: true,
+    requires_visa_sponsorship: true  // always true for scraped EU jobs so non-EU users can see them
   };
 }
 

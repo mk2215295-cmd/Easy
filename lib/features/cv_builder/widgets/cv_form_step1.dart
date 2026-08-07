@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../../core/models/cv_model.dart';
@@ -483,7 +483,7 @@ class _InputField extends StatelessWidget {
   }
 }
 
-class _CustomAutocomplete extends StatelessWidget {
+class _CustomAutocomplete extends StatefulWidget {
   const _CustomAutocomplete({
     required this.labelEn,
     required this.labelAr,
@@ -505,6 +505,40 @@ class _CustomAutocomplete extends StatelessWidget {
   final bool isLoading;
 
   @override
+  State<_CustomAutocomplete> createState() => _CustomAutocompleteState();
+}
+
+class _CustomAutocompleteState extends State<_CustomAutocomplete> {
+  late TextEditingController _textCtrl;
+
+  @override
+  void initState() {
+    super.initState();
+    _textCtrl = TextEditingController(text: widget.initialValue);
+  }
+
+  @override
+  void didUpdateWidget(_CustomAutocomplete oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Sync controller when parent changes the value (e.g. after category change)
+    if (oldWidget.initialValue != widget.initialValue &&
+        _textCtrl.text != widget.initialValue) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          _textCtrl.text = widget.initialValue;
+          _textCtrl.selection = TextSelection.collapsed(offset: widget.initialValue.length);
+        }
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _textCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -513,10 +547,10 @@ class _CustomAutocomplete extends StatelessWidget {
           text: TextSpan(
             style: AppTextStyles.titleMedium.copyWith(fontSize: 12),
             children: [
-              TextSpan(text: labelEn),
+              TextSpan(text: widget.labelEn),
               const TextSpan(text: ' / '),
               TextSpan(
-                text: labelAr,
+                text: widget.labelAr,
                 style: const TextStyle(
                     fontWeight: FontWeight.w400,
                     color: AppColors.textSecondary),
@@ -526,18 +560,18 @@ class _CustomAutocomplete extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         Autocomplete<String>(
-          initialValue: TextEditingValue(text: initialValue),
+          initialValue: TextEditingValue(text: widget.initialValue),
           optionsBuilder: (TextEditingValue textEditingValue) {
             if (textEditingValue.text.isEmpty) {
-              return options.take(50);
+              return widget.options.take(50);
             }
-            return options.where((String option) {
+            return widget.options.where((String option) {
               return option
                   .toLowerCase()
                   .contains(textEditingValue.text.toLowerCase());
             });
           },
-          onSelected: onSelected,
+          onSelected: widget.onSelected,
           fieldViewBuilder: (BuildContext context,
               TextEditingController textEditingController,
               FocusNode focusNode,
@@ -545,20 +579,22 @@ class _CustomAutocomplete extends StatelessWidget {
             return TextField(
               controller: textEditingController,
               focusNode: focusNode,
-              onChanged: onChanged,
+              onChanged: widget.onChanged,
               style: AppTextStyles.bodyMedium
                   .copyWith(color: AppColors.textPrimary),
               decoration: InputDecoration(
-                hintText: hint,
-                suffixIcon: isLoading 
-                  ? const Padding(
-                      padding: EdgeInsets.all(12),
-                      child: SizedBox(
-                        width: 16, height: 16,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      ),
-                    )
-                  : const Icon(Icons.arrow_drop_down, color: AppColors.textSecondary),
+                hintText: widget.hint,
+                suffixIcon: widget.isLoading
+                    ? const Padding(
+                        padding: EdgeInsets.all(12),
+                        child: SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                      )
+                    : const Icon(Icons.arrow_drop_down,
+                        color: AppColors.textSecondary),
               ),
             );
           },
@@ -570,7 +606,8 @@ class _CustomAutocomplete extends StatelessWidget {
                 borderRadius: BorderRadius.circular(8),
                 color: AppColors.backgroundElevated,
                 child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxHeight: 200, maxWidth: 350),
+                  constraints:
+                      const BoxConstraints(maxHeight: 200, maxWidth: 350),
                   child: ListView.builder(
                     padding: EdgeInsets.zero,
                     shrinkWrap: true,
@@ -578,12 +615,11 @@ class _CustomAutocomplete extends StatelessWidget {
                     itemBuilder: (BuildContext context, int index) {
                       final String option = options.elementAt(index);
                       return InkWell(
-                        onTap: () {
-                          onSelected(option);
-                        },
+                        onTap: () => onSelected(option),
                         child: Padding(
                           padding: const EdgeInsets.all(16.0),
-                          child: Text(option, style: AppTextStyles.bodyMedium),
+                          child:
+                              Text(option, style: AppTextStyles.bodyMedium),
                         ),
                       );
                     },
@@ -597,6 +633,7 @@ class _CustomAutocomplete extends StatelessWidget {
     );
   }
 }
+
 
 class _AtsInjectedBadge extends StatelessWidget {
   const _AtsInjectedBadge({required this.profession});

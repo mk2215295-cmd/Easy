@@ -1,4 +1,5 @@
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -56,31 +57,31 @@ class _AppHeaderState extends State<AppHeader> {
       labelEn: 'Dashboard',
       labelAr: 'الرئيسية',
       route: AppRoutes.dashboard,
-      icon: Icons.grid_view_rounded,
+      icon: LucideIcons.layoutGrid,
     ),
     _NavItem(
       labelEn: 'Jobs',
       labelAr: 'الوظائف',
       route: AppRoutes.jobs,
-      icon: Icons.work_outline_rounded,
+      icon: LucideIcons.briefcase,
     ),
     _NavItem(
       labelEn: 'Applications',
       labelAr: 'طلباتي',
       route: AppRoutes.applications,
-      icon: Icons.description_outlined,
+      icon: LucideIcons.fileText,
     ),
     _NavItem(
       labelEn: 'Messages',
       labelAr: 'الرسائل',
       route: AppRoutes.messages,
-      icon: Icons.chat_bubble_outline_rounded,
+      icon: LucideIcons.messageSquare,
     ),
     _NavItem(
       labelEn: 'Profile',
       labelAr: 'ملفي',
       route: AppRoutes.profile,
-      icon: Icons.person_outline_rounded,
+      icon: LucideIcons.user,
     ),
   ];
 

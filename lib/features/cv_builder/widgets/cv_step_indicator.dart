@@ -1,122 +1,216 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import '../../../theme/app_theme.dart';
 
 // ════════════════════════════════════════════════════════════════════════════════
 // CvStepIndicator
-// Progress indicator showing 5 steps of CV building:
-//   1. Personal Info, 2. Work Experience, 3. Education, 4. Skills, 5. Preview & Download
-//
-// Shows a glowing active state, checked circles for completed steps, and connects
-// them with line guides.
+// Ultra-responsive, animated 5-step progress header for the CV Builder.
+// On desktop (≥ 768px): Full 5-step horizontal flow with labels.
+// On mobile (< 768px): Compact progress bar & step counter to prevent text overlap.
 // ════════════════════════════════════════════════════════════════════════════════
 class CvStepIndicator extends StatelessWidget {
   const CvStepIndicator({
     super.key,
     required this.currentStep,
+    this.isArabic = false,
   });
 
   /// 1-based index of the currently active step (1 to 5).
   final int currentStep;
+  final bool isArabic;
+
+  static const List<String> stepsEn = [
+    'Personal Info',
+    'Work Experience',
+    'Education',
+    'Skills',
+    'Preview & Download'
+  ];
+
+  static const List<String> stepsAr = [
+    'البيانات الشخصية',
+    'الخبرة العملية',
+    'التعليم والشهادات',
+    'المهارات',
+    'معاينة وتحميل'
+  ];
 
   @override
   Widget build(BuildContext context) {
-    final List<String> stepsEn = [
-      'Personal Info',
-      'Work Experience',
-      'Education',
-      'Skills',
-      'Preview & Download'
-    ];
-    final List<String> stepsAr = [
-      'البيانات الشخصية',
-      'الخبرة العملية',
-      'التعليم والشهادات',
-      'المهارات',
-      'معاينة وتحميل'
-    ];
+    final screenWidth = MediaQuery.sizeOf(context).width;
+    final isMobile = screenWidth < 768;
+
+    if (isMobile) {
+      return _buildMobileLayout(context);
+    }
+
+    return _buildDesktopLayout(context);
+  }
+
+  // ── Mobile Responsive Layout (Compact & Clean) ──────────────────────────────
+  Widget _buildMobileLayout(BuildContext context) {
+    final activeTitle = isArabic
+        ? stepsAr[currentStep - 1]
+        : stepsEn[currentStep - 1];
+
+    final progressPct = currentStep / 5.0;
 
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+      decoration: BoxDecoration(
+        color: AppColors.backgroundSurface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.borderSubtle.withValues(alpha: 0.5)),
+      ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                isArabic ? 'الخطوة $currentStep من 5' : 'Step $currentStep of 5',
+                style: AppTextStyles.labelSmall.copyWith(
+                  color: AppColors.accentBlue,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 12,
+                ),
+              ),
+              Expanded(
+                child: Text(
+                  activeTitle,
+                  textAlign: isArabic ? TextAlign.left : TextAlign.right,
+                  style: AppTextStyles.titleMedium.copyWith(
+                    color: AppColors.textPrimary,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 13,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+
+          // Animated linear progress bar
+          ClipRRect(
+            borderRadius: BorderRadius.circular(4),
+            child: Stack(
+              children: [
+                Container(
+                  height: 6,
+                  color: AppColors.backgroundElevated,
+                ),
+                FractionallySizedBox(
+                  widthFactor: progressPct,
+                  child: Container(
+                    height: 6,
+                    decoration: const BoxDecoration(
+                      color: AppColors.accentBlue,
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.accentBlueGlow,
+                          blurRadius: 6,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 12),
+
+          // 5 Small Step Dots
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: List.generate(5, (index) {
               final stepNum = index + 1;
-              final isCompleted = stepNum < currentStep;
+              final isDone = stepNum <= currentStep;
               final isActive = stepNum == currentStep;
-              
-              return Expanded(
-                child: Row(
-                  children: [
-                    // Step bubble
-                    Expanded(
-                      child: Column(
-                        children: [
-                          _buildStepBubble(isCompleted, isActive, stepNum),
-                          const SizedBox(height: 8),
-                          Text(
-                            '$stepNum. ${stepsEn[index]}',
-                            style: AppTextStyles.labelSmall.copyWith(
-                              fontWeight: isActive || isCompleted
-                                  ? FontWeight.w600
-                                  : FontWeight.w400,
-                              color: isActive
-                                  ? AppColors.accentBlue
-                                  : isCompleted
-                                      ? AppColors.textPrimary
-                                      : AppColors.textDisabled,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                          Text(
-                            stepsAr[index],
-                            style: AppTextStyles.labelSmall.copyWith(
-                              fontSize: 9,
-                              color: isActive
-                                  ? AppColors.accentBlue.withValues(alpha: 0.8)
-                                  : isCompleted
-                                      ? AppColors.textSecondary
-                                      : AppColors.textDisabled,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ],
-                      ),
-                    ),
-                    // Line indicator between steps (omit after the last step)
-                    if (index < 4)
-                      Expanded(
-                        child: Container(
-                          height: 3,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(2),
-                            gradient: LinearGradient(
-                              colors: [
-                                isCompleted
-                                    ? AppColors.accentBlue
-                                    : AppColors.borderSubtle,
-                                stepNum + 1 <= currentStep
-                                    ? AppColors.accentBlue
-                                    : AppColors.borderSubtle,
-                              ],
-                            ),
-                            boxShadow: isCompleted
-                                ? const [
-                                    BoxShadow(
-                                      color: AppColors.accentBlueGlow,
-                                      blurRadius: 8,
-                                    )
-                                  ]
-                                : [],
-                          ),
-                        ),
-                      ),
-                  ],
+
+              return AnimatedContainer(
+                duration: const Duration(milliseconds: 250),
+                width: isActive ? 24 : 10,
+                height: 10,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(5),
+                  color: isDone ? AppColors.accentBlue : AppColors.backgroundElevated,
+                  boxShadow: isActive
+                      ? const [
+                          BoxShadow(
+                            color: AppColors.accentBlueGlow,
+                            blurRadius: 8,
+                          )
+                        ]
+                      : null,
                 ),
               );
             }),
           ),
         ],
+      ),
+    ).animate().fadeIn(duration: 300.ms);
+  }
+
+  // ── Desktop Layout (Full 5-Step Progress) ──────────────────────────────────
+  Widget _buildDesktopLayout(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+      child: Row(
+        children: List.generate(5, (index) {
+          final stepNum = index + 1;
+          final isCompleted = stepNum < currentStep;
+          final isActive = stepNum == currentStep;
+          final title = isArabic ? stepsAr[index] : stepsEn[index];
+
+          return Expanded(
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    children: [
+                      _buildStepBubble(isCompleted, isActive, stepNum),
+                      const SizedBox(height: 8),
+                      Text(
+                        '$stepNum. $title',
+                        style: AppTextStyles.labelSmall.copyWith(
+                          fontWeight: isActive || isCompleted
+                              ? FontWeight.w600
+                              : FontWeight.w400,
+                          color: isActive
+                              ? AppColors.accentBlue
+                              : isCompleted
+                                  ? AppColors.textPrimary
+                                  : AppColors.textDisabled,
+                          fontSize: 12,
+                        ),
+                        textAlign: TextAlign.center,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ),
+                if (index < 4)
+                  Expanded(
+                    child: Container(
+                      height: 3,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(2),
+                        gradient: LinearGradient(
+                          colors: [
+                            isCompleted ? AppColors.accentBlue : AppColors.borderSubtle,
+                            stepNum + 1 <= currentStep ? AppColors.accentBlue : AppColors.borderSubtle,
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          );
+        }),
       ),
     );
   }

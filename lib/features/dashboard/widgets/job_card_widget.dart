@@ -1,6 +1,8 @@
-import 'package:cached_network_image/cached_network_image.dart';
+﻿import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/models/job_model.dart';
@@ -11,9 +13,8 @@ import 'match_badge_widget.dart';
 
 // ════════════════════════════════════════════════════════════════════════════
 // JobCardWidget
-//
-// Renders a single live job card with clean image bounds, company badge,
-// tags, salary pill, and action buttons. Responsive across desktop and mobile.
+// Ultra-modern card design with glassmorphic borders, Lucide icons, and
+// smooth staggered entrance animations powered by flutter_animate.
 // ════════════════════════════════════════════════════════════════════════════
 class JobCardWidget extends StatefulWidget {
   const JobCardWidget({super.key, required this.job});
@@ -45,19 +46,20 @@ class _JobCardWidgetState extends State<JobCardWidget> {
             curve: Curves.easeOut,
             decoration: BoxDecoration(
               color: AppColors.backgroundSurface,
-              borderRadius: BorderRadius.circular(14),
+              borderRadius: BorderRadius.circular(16),
               border: Border.all(
                 color: _hovered
-                    ? AppColors.accentBlue.withValues(alpha: 0.55)
+                    ? AppColors.accentBlue.withValues(alpha: 0.6)
                     : AppColors.borderSubtle,
+                width: _hovered ? 1.5 : 1.0,
               ),
               boxShadow: _hovered
                   ? const [
                       BoxShadow(
                         color: AppColors.accentBlueGlow,
-                        blurRadius: 22,
-                        spreadRadius: 0,
-                        offset: Offset(0, 6),
+                        blurRadius: 24,
+                        spreadRadius: 1,
+                        offset: Offset(0, 8),
                       ),
                     ]
                   : const [],
@@ -74,7 +76,7 @@ class _JobCardWidgetState extends State<JobCardWidget> {
           ),
         ),
       ),
-    );
+    ).animate().fadeIn(duration: 350.ms).slideY(begin: 0.08, end: 0);
   }
 }
 
@@ -86,9 +88,9 @@ class _HeroImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
-      borderRadius: const BorderRadius.vertical(top: Radius.circular(14)),
+      borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
       child: SizedBox(
-        height: 140,
+        height: 145,
         width: double.infinity,
         child: Stack(
           fit: StackFit.expand,
@@ -115,7 +117,7 @@ class _HeroImage extends StatelessWidget {
                     stops: const [0.4, 1.0],
                     colors: [
                       Colors.transparent,
-                      AppColors.backgroundSurface.withValues(alpha: 0.9),
+                      AppColors.backgroundSurface.withValues(alpha: 0.95),
                     ],
                   ),
                 ),
@@ -164,8 +166,8 @@ class _HeroPlaceholder extends StatelessWidget {
         ),
       ),
       child: const Center(
-        child: Icon(Icons.work_outline_rounded,
-            color: AppColors.borderSubtle, size: 40),
+        child: Icon(LucideIcons.briefcase,
+            color: AppColors.borderSubtle, size: 36),
       ),
     );
   }
@@ -179,7 +181,7 @@ class _FlagBubble extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: AppColors.backgroundPrimary.withValues(alpha: 0.8),
+        color: AppColors.backgroundPrimary.withValues(alpha: 0.85),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(color: AppColors.borderSubtle.withValues(alpha: 0.6)),
       ),
@@ -221,16 +223,16 @@ class _ContentPane extends StatelessWidget {
     final salary = job.formattedSalary();
     final rawTitle =
         isArabic ? (job.titleAr ?? job.title ?? '') : (job.title ?? '');
-    final displayTitle = isArabic ? _translateHelper(rawTitle) : rawTitle;
+    final displayTitle = isArabic ? _cleanArabicText(rawTitle) : _cleanEnglishText(rawTitle);
 
     final displayCompany = job.company ?? '';
     final rawLocation =
         isArabic ? (job.locationAr ?? job.location ?? '') : (job.location ?? '');
-    final displayLocation = isArabic ? _translateHelper(rawLocation) : rawLocation;
+    final displayLocation = isArabic ? _cleanArabicText(rawLocation) : _cleanEnglishText(rawLocation);
 
     final rawDesc =
         isArabic ? (job.descriptionAr ?? job.description ?? '') : (job.description ?? '');
-    final displayDesc = isArabic ? _translateHelper(rawDesc) : rawDesc;
+    final displayDesc = isArabic ? _cleanArabicText(rawDesc) : _cleanEnglishText(rawDesc);
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(14, 12, 14, 0),
@@ -245,10 +247,10 @@ class _ContentPane extends StatelessWidget {
             children: [
               if (job.jobType != null) ...[
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                   decoration: BoxDecoration(
                     color: AppColors.accentBlueMuted.withValues(alpha: 0.5),
-                    borderRadius: BorderRadius.circular(4),
+                    borderRadius: BorderRadius.circular(6),
                     border: Border.all(
                         color: AppColors.accentBlue.withValues(alpha: 0.3)),
                   ),
@@ -266,10 +268,10 @@ class _ContentPane extends StatelessWidget {
               if (job.category != null)
                 Flexible(
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                     decoration: BoxDecoration(
                       color: AppColors.backgroundElevated,
-                      borderRadius: BorderRadius.circular(4),
+                      borderRadius: BorderRadius.circular(6),
                       border: Border.all(color: AppColors.borderSubtle),
                     ),
                     child: Text(
@@ -299,22 +301,20 @@ class _ContentPane extends StatelessWidget {
               ),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
-            )
-          else
-            const _EmptyLine(width: 120),
+            ),
 
           const SizedBox(height: 6),
 
-          // Company & Location Row
+          // Company & Location Row with Lucide icons
           Row(
             mainAxisAlignment:
                 isArabic ? MainAxisAlignment.end : MainAxisAlignment.start,
             textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
             children: [
               if (displayCompany.isNotEmpty) ...[
-                const Icon(Icons.business_rounded,
+                const Icon(LucideIcons.building2,
                     size: 13, color: AppColors.accentBlue),
-                const SizedBox(width: 4),
+                const SizedBox(width: 5),
                 Flexible(
                   child: Text(
                     displayCompany,
@@ -330,9 +330,9 @@ class _ContentPane extends StatelessWidget {
                 const SizedBox(width: 8),
               ],
               if (displayLocation.isNotEmpty) ...[
-                const Icon(Icons.location_on_outlined,
+                const Icon(LucideIcons.mapPin,
                     size: 13, color: AppColors.textSecondary),
-                const SizedBox(width: 2),
+                const SizedBox(width: 3),
                 Flexible(
                   child: Text(
                     displayLocation,
@@ -369,7 +369,7 @@ class _ContentPane extends StatelessWidget {
           // Salary Badge
           if (salary != null)
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+              padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
               decoration: BoxDecoration(
                 color: AppColors.accentGreenMuted.withValues(alpha: 0.3),
                 borderRadius: BorderRadius.circular(6),
@@ -385,28 +385,10 @@ class _ContentPane extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-            )
-          else
-            const _EmptyLine(width: 100),
+            ),
 
           const SizedBox(height: 12),
         ],
-      ),
-    );
-  }
-}
-
-class _EmptyLine extends StatelessWidget {
-  const _EmptyLine({required this.width});
-  final double width;
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: width,
-      height: 11,
-      decoration: BoxDecoration(
-        color: AppColors.backgroundElevated,
-        borderRadius: BorderRadius.circular(4),
       ),
     );
   }
@@ -422,21 +404,18 @@ class _ActionsRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(14, 0, 14, 14),
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        reverse: isArabic,
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            SizedBox(
+      child: Row(
+        children: [
+          Expanded(
+            child: SizedBox(
               height: 38,
               child: ElevatedButton.icon(
                 onPressed: () =>
                     context.go('${AppRoutes.jobs}/${job.id}'),
-                icon: const Icon(Icons.open_in_new_rounded, size: 14),
+                icon: const Icon(LucideIcons.arrowUpRight, size: 14),
                 label: Text(isArabic ? 'تقديم الآن' : 'Apply Now'),
                 style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
                   textStyle:
                       AppTextStyles.buttonPrimary.copyWith(fontSize: 12),
                   shape: RoundedRectangleBorder(
@@ -444,16 +423,18 @@ class _ActionsRow extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(width: 8),
-            SizedBox(
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: SizedBox(
               height: 38,
               child: OutlinedButton.icon(
                 onPressed: () =>
                     context.go('${AppRoutes.jobs}/${job.id}'),
-                icon: const Icon(Icons.info_outline_rounded, size: 14),
-                label: Text(isArabic ? 'تفاصيل' : 'Details'),
+                icon: const Icon(LucideIcons.info, size: 14),
+                label: Text(isArabic ? 'التفاصيل' : 'Details'),
                 style: OutlinedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
                   textStyle: AppTextStyles.buttonPrimary.copyWith(
                     fontSize: 12,
                     color: AppColors.accentBlue,
@@ -463,64 +444,26 @@ class _ActionsRow extends StatelessWidget {
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 }
 
-String _translateHelper(String text) {
+/// Helper to ensure clean language separation without combined strings like "عامل بناء (Construction Worker)".
+String _cleanArabicText(String text) {
   if (text.isEmpty) return text;
-  String res = text;
-  const lexicon = {
-    'Teamleitung Accounting': 'رئيس قسم المحاسبة والمالية',
-    'Teamleitung': 'رئيس قسم / قيادة فريق',
-    'Accounting & Finance': 'المحاسبة والمالية',
-    'Accounting': 'المحاسبة والمالية',
-    'Finanzen': 'المالية والمحاسبة',
-    'Senior Prototyping Engineer': 'كبير مهندسي النماذج الأولية',
-    'Thermal Systems & Cooling Integration': 'أنظمة التبريد والتكامل الحراري',
-    'Senior Business Development Representative': 'كبير ممثلي تطوير الأعمال الدولي',
-    'Workplace Administrator': 'مدير أنظمة وبيئة العمل',
-    'Software Engineer': 'مهندس برمجيات',
-    'Frontend Developer': 'مطور واجهات أمامية',
-    'Backend Developer': 'مطور أنظمة خادمة',
-    'Full Stack Developer': 'مطور تطبيقات شامل',
-    'Full-Time': 'دوام كامل',
-    'Part-Time': 'دوام جزئي',
-    'Volunteering': 'فرص تطوع',
-    'Engineering': 'الهندسة والتقنية',
-    'Trades': 'الحرف الفنية والتقنية',
-    'Construction': 'البناء واللوجستيات',
-    'Hospitality': 'الضيافة والخدمات',
-    'Healthcare': 'الرعاية الصحية',
-    'Business': 'إدارة الأعمال والمبيعات',
-    'Germany': 'ألمانيا',
-    'France': 'فرنسا',
-    'Italy': 'إيطاليا',
-    'Spain': 'إسبانيا',
-    'Poland': 'بولندا',
-    'Netherlands': 'هولندا',
-    'Austria': 'النمسا',
-    'Belgium': 'بلجيكا',
-    'Greece': 'اليونان',
-    'Sweden': 'السويد',
-    'Ireland': 'أيرلندا',
-    'Denmark': 'الدنمارك',
-    'Norway': 'النرويج',
-    'Portugal': 'البرتغال',
-    'We are looking for': 'نحن نبحث عن',
-    'Requirements': 'المتطلبات',
-    'Benefits': 'المزايا',
-    'Responsibilities': 'المهام والمسؤوليات',
-    'Join our team': 'انضم لفريقنا',
-    'Experience': 'الخبرة',
-    'Skills': 'المهارات',
-  };
-  lexicon.forEach((en, ar) {
-    res = res.replaceAll(
-        RegExp('\\b${RegExp.escape(en)}\\b', caseSensitive: false), ar);
-  });
-  return res;
+  // Remove parenthetical English if present in combined strings
+  return text.replaceAll(RegExp(r'\s*\([A-Za-z0-9\s,\.-]+\)'), '').trim();
+}
+
+String _cleanEnglishText(String text) {
+  if (text.isEmpty) return text;
+  // If text starts with English, keep English part
+  final match = RegExp(r'^([A-Za-z0-9\s,\.\-\&\/]+)').firstMatch(text);
+  if (match != null && match.group(1)!.trim().length > 2) {
+    return match.group(1)!.trim();
+  }
+  return text;
 }

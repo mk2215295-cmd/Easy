@@ -253,7 +253,7 @@ class _AnimatedBackground extends StatelessWidget {
             SizedBox(
               width: size.width,
               height: size.height,
-              child: CustomPaint(painter: _GridPainter()),
+              child: CustomPaint(painter: _GridPainter(progress: animation.value)),
             ),
           ],
         );
@@ -262,24 +262,53 @@ class _AnimatedBackground extends StatelessWidget {
   }
 }
 
-// ── Subtle dot grid painter ───────────────────────────────────────────────────
+// ── Interactive particle mesh grid painter ─────────────────────────────────────
 class _GridPainter extends CustomPainter {
+  _GridPainter({this.progress = 0.0});
+  final double progress;
+
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = const Color(0xFF21262D)
-      ..strokeWidth = 1
+    final dotPaint = Paint()
+      ..color = const Color(0xFF388BFD).withValues(alpha: 0.3)
       ..style = PaintingStyle.fill;
-    const spacing = 40.0;
-    for (double x = 0; x < size.width; x += spacing) {
-      for (double y = 0; y < size.height; y += spacing) {
-        canvas.drawCircle(Offset(x, y), 1.2, paint);
+
+    final linePaint = Paint()
+      ..color = const Color(0xFF1F6FEB).withValues(alpha: 0.12)
+      ..strokeWidth = 0.8
+      ..style = PaintingStyle.stroke;
+
+    const spacing = 48.0;
+    final cols = (size.width / spacing).ceil();
+    final rows = (size.height / spacing).ceil();
+
+    final List<Offset> points = [];
+    for (int col = 0; col < cols; col++) {
+      for (int row = 0; row < rows; row++) {
+        final offsetX = (col % 2 == 0) ? (progress * 12) : -(progress * 12);
+        final offsetY = (row % 2 == 0) ? -(progress * 8) : (progress * 8);
+        points.add(Offset(col * spacing + offsetX, row * spacing + offsetY));
       }
+    }
+
+    // Draw connecting lines between adjacent points
+    for (int i = 0; i < points.length; i++) {
+      for (int j = i + 1; j < points.length; j++) {
+        final dist = (points[i] - points[j]).distance;
+        if (dist < spacing * 1.5) {
+          canvas.drawLine(points[i], points[j], linePaint);
+        }
+      }
+    }
+
+    // Draw particle dots
+    for (final pt in points) {
+      canvas.drawCircle(pt, 1.8, dotPaint);
     }
   }
 
   @override
-  bool shouldRepaint(_GridPainter old) => false;
+  bool shouldRepaint(_GridPainter old) => old.progress != progress;
 }
 
 // ── Main login card ────────────────────────────────────────────────────────────

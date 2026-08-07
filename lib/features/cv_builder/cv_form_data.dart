@@ -1,623 +1,600 @@
-// ├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É
-// CvFormData
-//
-// Categorized taxonomy of White-Collar & Blue-Collar professions with
-// bilingual labels (English & Arabic) and a comprehensive pool of 8-10
-// bilingual suggested experience bullet points per profession.
-//
-// Bilingual Mapping:
-//   ├óΓé¼┬ó [textAr] is shown in the UI selection list when language is Arabic.
-//   ├óΓé¼┬ó [textEn] is the formal ATS English text inserted into the PDF/CV.
-// ├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É├óΓÇó┬É
-
-class CvExperienceBullet {
-  const CvExperienceBullet({
-    required this.textEn,
-    required this.textAr,
-  });
-
-  /// Formal ATS English text inserted into the Europass PDF/CV model
-  final String textEn;
-
-  /// Arabic localized text shown in the UI preset suggestion list
-  final String textAr;
-}
-
-class CvProfession {
-  const CvProfession({
-    required this.titleEn,
-    required this.titleAr,
-    required this.categoryEn,
-    required this.categoryAr,
-    required this.emoji,
-    required this.suggestedBullets,
-  });
-
-  /// ATS-friendly English job title embedded in the PDF.
-  final String titleEn;
-
-  /// Arabic label shown inside the UI dropdown/modal.
-  final String titleAr;
-
-  /// Category name in English (e.g. "Vocational & Technical Trades")
-  final String categoryEn;
-
-  /// Category name in Arabic (e.g. "├ÿ┬º├ÖΓÇ₧├ÿ┬¡├ÿ┬▒├Ö┬ü ├ÿ┬º├ÖΓÇ₧├Ö┬ü├ÖΓÇá├Ö┼á├ÿ┬⌐ ├Ö╦å├ÿ┬º├ÖΓÇ₧├ÿ┬¬├ÖΓÇÜ├ÖΓÇá├Ö┼á├ÿ┬⌐")
-  final String categoryAr;
-
-  /// Emoji indicator for visual clarity
-  final String emoji;
-
-  /// Comprehensive list of 8-10 bilingual ATS suggested bullet points.
-  final List<CvExperienceBullet> suggestedBullets;
-
-  /// Legacy helper getter returning English bullet point strings.
-  List<String> get atsBullets => suggestedBullets.map((b) => b.textEn).toList();
-}
-
-class CvProfessionCategory {
-  const CvProfessionCategory({
-    required this.id,
-    required this.titleEn,
-    required this.titleAr,
-    required this.emoji,
-    required this.professions,
-  });
-
-  final String id;
-  final String titleEn;
-  final String titleAr;
-  final String emoji;
-  final List<CvProfession> professions;
-}
-
-// ├óΓÇ¥Γé¼├óΓÇ¥Γé¼ Categorized Professions Database ├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼
-const List<CvProfession> kProfessions = [
-  // 1. ├░┼╕ΓÇ║┬á├»┬╕┬Å Vocational & Technical Trades
-  CvProfession(
-    titleEn: 'Electrician',
-    titleAr: '├Ö╞Æ├ÖΓÇí├ÿ┬▒├ÿ┬¿├ÿ┬º├ÿ┬ª├Ö┼á',
-    categoryEn: 'Vocational & Technical Trades',
-    categoryAr: '├ÿ┬º├ÖΓÇ₧├ÿ┬¡├ÿ┬▒├Ö┬ü ├ÿ┬º├ÖΓÇ₧├Ö┬ü├ÖΓÇá├Ö┼á├ÿ┬⌐ ├Ö╦å├ÿ┬º├ÖΓÇ₧├ÿ┬¬├ÖΓÇÜ├ÖΓÇá├Ö┼á├ÿ┬⌐',
-    emoji: '├░┼╕ΓÇ║┬á├»┬╕┬Å',
-    suggestedBullets: [
-      CvExperienceBullet(
-        textEn: 'Installed, maintained and repaired electrical wiring, equipment and fixtures in compliance with national safety codes.',
-        textAr: '├ÿ┬¬├ÿ┬▒├Ö╞Æ├Ö┼á├ÿ┬¿ ├Ö╦å├ÿ┬╡├Ö┼á├ÿ┬º├ÖΓÇá├ÿ┬⌐ ├Ö╦å├ÿ┬Ñ├ÿ┬╡├ÖΓÇ₧├ÿ┬º├ÿ┬¡ ├ÿ┬º├ÖΓÇ₧├ÿ┬¬├ÖΓÇª├ÿ┬»├Ö┼á├ÿ┬»├ÿ┬º├ÿ┬¬ ├Ö╦å├ÿ┬º├ÖΓÇ₧├ÖΓÇª├ÿ┬╣├ÿ┬»├ÿ┬º├ÿ┬¬ ├Ö╦å├ÿ┬º├ÖΓÇ₧├ÿ┬¬├ÿ┬▒├Ö╞Æ├Ö┼á├ÿ┬¿├ÿ┬º├ÿ┬¬ ├ÿ┬º├ÖΓÇ₧├Ö╞Æ├ÖΓÇí├ÿ┬▒├ÿ┬¿├ÿ┬º├ÿ┬ª├Ö┼á├ÿ┬⌐ ├Ö╦å├Ö┬ü├ÖΓÇÜ├ÿ┬º├ÖΓÇ╣ ├ÖΓÇ₧├ÖΓÇª├ÿ┬╣├ÿ┬º├Ö┼á├Ö┼á├ÿ┬▒ ├ÿ┬º├ÖΓÇ₧├ÿ┬│├ÖΓÇ₧├ÿ┬º├ÖΓÇª├ÿ┬⌐ ├ÿ┬º├ÖΓÇ₧├Ö╦å├ÿ┬╖├ÖΓÇá├Ö┼á├ÿ┬⌐.',
-      ),
-      CvExperienceBullet(
-        textEn: 'Read and interpreted blueprints, wiring diagrams and engineering drawings to carry out installation tasks.',
-        textAr: '├ÖΓÇÜ├ÿ┬▒├ÿ┬º├ÿ┬í├ÿ┬⌐ ├Ö╦å├ÿ┬¬├Ö┬ü├ÿ┬│├Ö┼á├ÿ┬▒ ├ÿ┬º├ÖΓÇ₧├ÖΓÇª├ÿ┬«├ÿ┬╖├ÿ┬╖├ÿ┬º├ÿ┬¬ ├ÿ┬º├ÖΓÇ₧├ÖΓÇí├ÖΓÇá├ÿ┬»├ÿ┬│├Ö┼á├ÿ┬⌐ ├Ö╦å├ÿ┬▒├ÿ┬│├Ö╦å├ÖΓÇª├ÿ┬º├ÿ┬¬ ├ÿ┬º├ÖΓÇ₧├ÿ┬¬├ÖΓÇª├ÿ┬»├Ö┼á├ÿ┬»├ÿ┬º├ÿ┬¬ ├ÿ┬º├ÖΓÇ₧├Ö╞Æ├ÖΓÇí├ÿ┬▒├ÿ┬¿├ÿ┬º├ÿ┬ª├Ö┼á├ÿ┬⌐ ├ÖΓÇ₧├ÿ┬¬├ÖΓÇá├Ö┬ü├Ö┼á├ÿ┬░ ├ÿ┬º├ÖΓÇ₧├ÖΓÇª├ÖΓÇí├ÿ┬º├ÖΓÇª ├ÿ┬¿├ÿ┬»├ÖΓÇÜ├ÿ┬⌐.',
-      ),
-      CvExperienceBullet(
-        textEn: 'Performed preventive maintenance on industrial electrical systems, reducing unplanned downtime by 25%.',
-        textAr: '├ÿ┬¬├ÖΓÇá├Ö┬ü├Ö┼á├ÿ┬░ ├ÿ┬º├ÖΓÇ₧├ÿ┬╡├Ö┼á├ÿ┬º├ÖΓÇá├ÿ┬⌐ ├ÿ┬º├ÖΓÇ₧├Ö╦å├ÖΓÇÜ├ÿ┬º├ÿ┬ª├Ö┼á├ÿ┬⌐ ├ÖΓÇ₧├ÖΓÇ₧├ÿ┬ú├ÖΓÇá├ÿ┬╕├ÖΓÇª├ÿ┬⌐ ├ÿ┬º├ÖΓÇ₧├Ö╞Æ├ÖΓÇí├ÿ┬▒├ÿ┬¿├ÿ┬º├ÿ┬ª├Ö┼á├ÿ┬⌐ ├ÿ┬º├ÖΓÇ₧├ÿ┬╡├ÖΓÇá├ÿ┬º├ÿ┬╣├Ö┼á├ÿ┬⌐├ÿ┼Æ ├ÖΓÇª├ÖΓÇª├ÿ┬º ├ÖΓÇÜ├ÖΓÇ₧├ÖΓÇ₧ ├ÖΓÇª├ÖΓÇá ├ÿ┬º├ÖΓÇ₧├ÿ┬¬├Ö╦å├ÖΓÇÜ├Ö┬ü ├ÿ┬║├Ö┼á├ÿ┬▒ ├ÿ┬º├ÖΓÇ₧├ÖΓÇª├ÿ┬«├ÿ┬╖├ÿ┬╖ ├ÖΓÇ₧├ÖΓÇí ├ÿ┬¿├ÖΓÇá├ÿ┬│├ÿ┬¿├ÿ┬⌐ 25%.',
-      ),
-      CvExperienceBullet(
-        textEn: 'Diagnosed and repaired electrical faults in high-voltage transformers, switchgears, and control panels.',
-        textAr: '├ÿ┬¬├ÿ┬┤├ÿ┬«├Ö┼á├ÿ┬╡ ├Ö╦å├ÿ┬Ñ├ÿ┬╡├ÖΓÇ₧├ÿ┬º├ÿ┬¡ ├ÿ┬º├ÖΓÇ₧├ÿ┬ú├ÿ┬╣├ÿ┬╖├ÿ┬º├ÖΓÇ₧ ├ÿ┬º├ÖΓÇ₧├Ö╞Æ├ÖΓÇí├ÿ┬▒├ÿ┬¿├ÿ┬º├ÿ┬ª├Ö┼á├ÿ┬⌐ ├Ö┬ü├Ö┼á ├ÖΓÇª├ÿ┬¡├Ö╦å├ÖΓÇ₧├ÿ┬º├ÿ┬¬ ├ÿ┬º├ÖΓÇ₧├ÿ┬╢├ÿ┬║├ÿ┬╖ ├ÿ┬º├ÖΓÇ₧├ÿ┬╣├ÿ┬º├ÖΓÇ₧├Ö┼á ├Ö╦å├ÖΓÇ₧├Ö╦å├ÿ┬¡├ÿ┬º├ÿ┬¬ ├ÿ┬º├ÖΓÇ₧├ÿ┬¬├ÿ┬¡├Ö╞Æ├ÖΓÇª ├Ö╦å├ÿ┬º├ÖΓÇ₧├ÖΓÇÜ├ÿ┬╖├ÿ┬╣.',
-      ),
-      CvExperienceBullet(
-        textEn: 'Tested electrical systems and continuity using multimeters, megohmmeters, and insulation testers.',
-        textAr: '├ÿ┬º├ÿ┬«├ÿ┬¬├ÿ┬¿├ÿ┬º├ÿ┬▒ ├ÿ┬º├ÖΓÇ₧├ÿ┬ú├ÖΓÇá├ÿ┬╕├ÖΓÇª├ÿ┬⌐ ├ÿ┬º├ÖΓÇ₧├Ö╞Æ├ÖΓÇí├ÿ┬▒├ÿ┬¿├ÿ┬º├ÿ┬ª├Ö┼á├ÿ┬⌐ ├Ö╦å├ÿ┬º├ÖΓÇ₧├ÿ┬º├ÿ┬│├ÿ┬¬├ÖΓÇª├ÿ┬▒├ÿ┬º├ÿ┬▒├Ö┼á├ÿ┬⌐ ├ÿ┬¿├ÿ┬º├ÿ┬│├ÿ┬¬├ÿ┬«├ÿ┬»├ÿ┬º├ÖΓÇª ├ÿ┬ú├ÿ┬¼├ÖΓÇí├ÿ┬▓├ÿ┬⌐ ├ÿ┬º├ÖΓÇ₧├Ö┬ü├Ö╦å├ÖΓÇ₧├ÿ┬¬├ÖΓÇª├Ö┼á├ÿ┬¬├ÿ┬▒ ├Ö╦å├ÿ┬º├ÖΓÇ₧├ÖΓÇª├Ö┼á├ÿ┬¼├Ö╦å├ÖΓÇª├Ö┼á├ÿ┬¬├ÿ┬▒ ├Ö╦å├Ö┬ü├ÿ┬¡├ÿ┬╡ ├ÿ┬º├ÖΓÇ₧├ÿ┬╣├ÿ┬▓├ÖΓÇ₧.',
-      ),
-      CvExperienceBullet(
-        textEn: 'Installed cable trays, conduit systems, and junction boxes for commercial facilities.',
-        textAr: '├ÿ┬¬├ÿ┬▒├Ö╞Æ├Ö┼á├ÿ┬¿ ├ÖΓÇª├ÿ┬│├ÿ┬º├ÿ┬▒├ÿ┬º├ÿ┬¬ ├ÿ┬º├ÖΓÇ₧├Ö╞Æ├ÿ┬º├ÿ┬¿├ÖΓÇ₧├ÿ┬º├ÿ┬¬ ├Ö╦å├ÿ┬ú├ÖΓÇá├ÿ┬╕├ÖΓÇª├ÿ┬⌐ ├ÿ┬º├ÖΓÇ₧├ÿ┬ú├ÖΓÇá├ÿ┬º├ÿ┬¿├Ö┼á├ÿ┬¿ ├Ö╦å├ÿ┬╡├ÖΓÇá├ÿ┬º├ÿ┬»├Ö┼á├ÖΓÇÜ ├ÿ┬º├ÖΓÇ₧├ÿ┬¬├ÿ┬¼├ÖΓÇª├Ö┼á├ÿ┬╣ ├Ö┬ü├Ö┼á ├ÿ┬º├ÖΓÇ₧├ÖΓÇª├ÖΓÇá├ÿ┬┤├ÿ┬ó├ÿ┬¬ ├ÿ┬º├ÖΓÇ₧├ÿ┬¬├ÿ┬¼├ÿ┬º├ÿ┬▒├Ö┼á├ÿ┬⌐.',
-      ),
-      CvExperienceBullet(
-        textEn: 'Collaborated with project managers and site engineers to deliver electrical works on schedule.',
-        textAr: '├ÿ┬º├ÖΓÇ₧├ÿ┬¬├ÿ┬╣├ÿ┬º├Ö╦å├ÖΓÇá ├ÖΓÇª├ÿ┬╣ ├ÖΓÇª├ÿ┬»├Ö┼á├ÿ┬▒├Ö┼á ├ÿ┬º├ÖΓÇ₧├ÖΓÇª├ÿ┬┤├ÿ┬º├ÿ┬▒├Ö┼á├ÿ┬╣ ├Ö╦å├ÖΓÇª├ÖΓÇí├ÖΓÇá├ÿ┬»├ÿ┬│├Ö┼á ├ÿ┬º├ÖΓÇ₧├ÖΓÇª├Ö╦å├ÖΓÇÜ├ÿ┬╣ ├ÖΓÇ₧├ÿ┬¬├ÿ┬│├ÖΓÇ₧├Ö┼á├ÖΓÇª ├ÿ┬º├ÖΓÇ₧├ÿ┬ú├ÿ┬╣├ÖΓÇª├ÿ┬º├ÖΓÇ₧ ├ÿ┬º├ÖΓÇ₧├Ö╞Æ├ÖΓÇí├ÿ┬▒├ÿ┬¿├ÿ┬º├ÿ┬ª├Ö┼á├ÿ┬⌐ ├Ö┬ü├Ö┼á ├ÿ┬º├ÖΓÇ₧├ÖΓÇª├Ö╦å├ÿ┬º├ÿ┬╣├Ö┼á├ÿ┬» ├ÿ┬º├ÖΓÇ₧├ÖΓÇª├ÿ┬¡├ÿ┬¬├ÿ┬│├ÿ┬¿├ÿ┬⌐.',
-      ),
-      CvExperienceBullet(
-        textEn: 'Enforced zero-incident OSHA & CE safety protocols across all live wire installation sites.',
-        textAr: '├ÿ┬¬├ÿ┬╖├ÿ┬¿├Ö┼á├ÖΓÇÜ ├ÿ┬Ñ├ÿ┬¼├ÿ┬▒├ÿ┬º├ÿ┬í├ÿ┬º├ÿ┬¬ ├ÿ┬º├ÖΓÇ₧├ÿ┬│├ÖΓÇ₧├ÿ┬º├ÖΓÇª├ÿ┬⌐ ├ÿ┬º├ÖΓÇ₧├ÖΓÇª├ÖΓÇí├ÖΓÇá├Ö┼á├ÿ┬⌐ ├Ö╦å├ÿ┬¬├ÿ┬¼├ÖΓÇá├ÿ┬¿ ├ÿ┬º├ÖΓÇ₧├ÿ┬¡├Ö╦å├ÿ┬º├ÿ┬»├ÿ┬½ ├Ö┬ü├Ö┼á ├ÿ┬¼├ÖΓÇª├Ö┼á├ÿ┬╣ ├ÖΓÇª├Ö╦å├ÿ┬º├ÖΓÇÜ├ÿ┬╣ ├ÿ┬º├ÖΓÇ₧├ÿ┬╣├ÖΓÇª├ÖΓÇ₧ ├ÿ┬º├ÖΓÇ₧├Ö╞Æ├ÖΓÇí├ÿ┬▒├ÿ┬¿├ÿ┬º├ÿ┬ª├Ö┼á├ÿ┬⌐ ├ÿ┬º├ÖΓÇ₧├ÿ┬¡├Ö┼á├ÿ┬⌐.',
-      ),
-    ],
-  ),
-  CvProfession(
-    titleEn: 'Welder & Fabricator',
-    titleAr: '├ÖΓÇ₧├ÿ┬¡├ÿ┬º├ÖΓÇª ├Ö╦å├ÖΓÇª├ÿ┬┤├Ö╞Æ├ÖΓÇÿ├ÖΓÇ₧ ├ÖΓÇª├ÿ┬╣├ÿ┬º├ÿ┬»├ÖΓÇá',
-    categoryEn: 'Vocational & Technical Trades',
-    categoryAr: '├ÿ┬º├ÖΓÇ₧├ÿ┬¡├ÿ┬▒├Ö┬ü ├ÿ┬º├ÖΓÇ₧├Ö┬ü├ÖΓÇá├Ö┼á├ÿ┬⌐ ├Ö╦å├ÿ┬º├ÖΓÇ₧├ÿ┬¬├ÖΓÇÜ├ÖΓÇá├Ö┼á├ÿ┬⌐',
-    emoji: '├░┼╕ΓÇ║┬á├»┬╕┬Å',
-    suggestedBullets: [
-      CvExperienceBullet(
-        textEn: 'Performed MIG, TIG and arc welding on structural steel and stainless steel components in manufacturing environments.',
-        textAr: '├ÿ┬¬├ÖΓÇá├Ö┬ü├Ö┼á├ÿ┬░ ├ÿ┬╣├ÖΓÇª├ÖΓÇ₧├Ö┼á├ÿ┬º├ÿ┬¬ ├ÿ┬º├ÖΓÇ₧├ÖΓÇ₧├ÿ┬¡├ÿ┬º├ÖΓÇª ├ÿ┬¿├ÿ┬º├ÿ┬│├ÿ┬¬├ÿ┬«├ÿ┬»├ÿ┬º├ÖΓÇª MIG ├Ö╦åTIG ├Ö╦å├ÿ┬º├ÖΓÇ₧├ÖΓÇ₧├ÿ┬¡├ÿ┬º├ÖΓÇª ├ÿ┬º├ÖΓÇ₧├ÖΓÇÜ├Ö╦å├ÿ┬│├Ö┼á ├ÿ┬╣├ÖΓÇ₧├ÖΓÇ░ ├ÿ┬º├ÖΓÇ₧├ÖΓÇí├Ö┼á├ÿ┬º├Ö╞Æ├ÖΓÇ₧ ├ÿ┬º├ÖΓÇ₧├Ö┬ü├Ö╦å├ÖΓÇ₧├ÿ┬º├ÿ┬░├Ö┼á├ÿ┬⌐ ├Ö╦å├ÿ┬º├ÖΓÇ₧├ÖΓÇª├ÿ┬╣├ÿ┬º├ÿ┬»├ÖΓÇá.',
-      ),
-      CvExperienceBullet(
-        textEn: 'Interpreted engineering drawings and welding symbols to produce precision welds meeting ISO 9001 quality standards.',
-        textAr: '├ÖΓÇÜ├ÿ┬▒├ÿ┬º├ÿ┬í├ÿ┬⌐ ├Ö╦å├ÿ┬▒├ÿ┬│├ÖΓÇª ├ÿ┬▒├ÖΓÇª├Ö╦å├ÿ┬▓ ├ÿ┬º├ÖΓÇ₧├ÖΓÇ₧├ÿ┬¡├ÿ┬º├ÖΓÇª ├Ö╦å├ÿ┬º├ÖΓÇ₧├ÖΓÇª├ÿ┬«├ÿ┬╖├ÿ┬╖├ÿ┬º├ÿ┬¬ ├ÿ┬º├ÖΓÇ₧├ÖΓÇí├ÖΓÇá├ÿ┬»├ÿ┬│├Ö┼á├ÿ┬⌐ ├ÖΓÇ₧├ÿ┬Ñ├ÖΓÇá├ÿ┬¬├ÿ┬º├ÿ┬¼ ├ÖΓÇ₧├ÿ┬¡├ÿ┬º├ÖΓÇª├ÿ┬º├ÿ┬¬ ├ÿ┬»├ÖΓÇÜ├Ö┼á├ÖΓÇÜ├ÿ┬⌐ ├ÿ┬¬├ÿ┬╖├ÿ┬º├ÿ┬¿├ÖΓÇÜ ├ÖΓÇª├ÿ┬╣├ÿ┬º├Ö┼á├Ö┼á├ÿ┬▒ ISO 9001.',
-      ),
-      CvExperienceBullet(
-        textEn: 'Inspected completed welds using visual and non-destructive testing (NDT) methods to ensure structural integrity.',
-        textAr: '├Ö┬ü├ÿ┬¡├ÿ┬╡ ├ÿ┬º├ÖΓÇ₧├ÖΓÇ₧├ÿ┬¡├ÿ┬º├ÖΓÇª├ÿ┬º├ÿ┬¬ ├ÿ┬º├ÖΓÇ₧├ÖΓÇª├Ö╞Æ├ÿ┬¬├ÖΓÇª├ÖΓÇ₧├ÿ┬⌐ ├ÿ┬¿├ÿ┬º├ÿ┬│├ÿ┬¬├ÿ┬«├ÿ┬»├ÿ┬º├ÖΓÇª ├ÿ┬º├ÖΓÇ₧├Ö┬ü├ÿ┬¡├ÿ┬╡ ├ÿ┬º├ÖΓÇ₧├ÿ┬¿├ÿ┬╡├ÿ┬▒├Ö┼á ├Ö╦å├ÿ┬º├ÿ┬º├ÿ┬«├ÿ┬¬├ÿ┬¿├ÿ┬º├ÿ┬▒├ÿ┬º├ÿ┬¬ NDT ├ÿ┬║├Ö┼á├ÿ┬▒ ├ÿ┬º├ÖΓÇ₧├ÖΓÇª├ÿ┬»├ÖΓÇª├ÿ┬▒├ÿ┬⌐ ├ÖΓÇ₧├ÿ┬╢├ÖΓÇª├ÿ┬º├ÖΓÇá ├ÖΓÇª├ÿ┬¬├ÿ┬º├ÖΓÇá├ÿ┬⌐ ├ÿ┬º├ÖΓÇ₧├ÖΓÇí├Ö┼á├Ö╞Æ├ÖΓÇ₧.',
-      ),
-      CvExperienceBullet(
-        textEn: 'Operated angle grinders, cutting torches, plasma cutters, and fabrication tools with 100% precision.',
-        textAr: '├ÿ┬¬├ÿ┬┤├ÿ┬║├Ö┼á├ÖΓÇ₧ ├ÿ┬ú├ÿ┬»├Ö╦å├ÿ┬º├ÿ┬¬ ├ÿ┬º├ÖΓÇ₧├ÖΓÇÜ├ÿ┬╖├ÿ┬╣ ├ÿ┬¿├ÿ┬º├ÖΓÇ₧├ÿ┬¿├ÖΓÇ₧├ÿ┬º├ÿ┬▓├ÖΓÇª├ÿ┬º ├Ö╦å├ÿ┬º├ÖΓÇ₧├ÖΓÇª├ÿ┬¼├ÿ┬º├ÖΓÇ₧├ÿ┬« ├Ö╦å├ÖΓÇª├ÿ┬╣├ÿ┬»├ÿ┬º├ÿ┬¬ ├ÿ┬º├ÖΓÇ₧├ÿ┬¬├ÿ┬┤├Ö╞Æ├Ö┼á├ÖΓÇ₧ ├ÿ┬¿├ÿ┬»├ÖΓÇÜ├ÿ┬⌐ ├ÿ┬╣├ÿ┬º├ÖΓÇ₧├Ö┼á├ÿ┬⌐.',
-      ),
-      CvExperienceBullet(
-        textEn: 'Fabricated heavy structural frames, tanks, and pressure piping to design specification.',
-        textAr: '├ÿ┬¬├ÿ┬╡├ÖΓÇá├Ö┼á├ÿ┬╣ ├Ö╦å├ÿ┬¬├ÿ┬┤├Ö╞Æ├Ö┼á├ÖΓÇ₧ ├ÿ┬º├ÖΓÇ₧├ÖΓÇí├Ö┼á├ÿ┬º├Ö╞Æ├ÖΓÇ₧ ├ÿ┬º├ÖΓÇ₧├ÖΓÇª├ÿ┬╣├ÿ┬»├ÖΓÇá├Ö┼á├ÿ┬⌐ ├ÿ┬º├ÖΓÇ₧├ÿ┬½├ÖΓÇÜ├Ö┼á├ÖΓÇ₧├ÿ┬⌐ ├Ö╦å├ÿ┬º├ÖΓÇ₧├ÿ┬«├ÿ┬▓├ÿ┬º├ÖΓÇá├ÿ┬º├ÿ┬¬ ├Ö╦å├ÿ┬ú├ÖΓÇá├ÿ┬º├ÿ┬¿├Ö┼á├ÿ┬¿ ├ÿ┬º├ÖΓÇ₧├ÿ┬╢├ÿ┬║├ÿ┬╖ ├Ö╦å├Ö┬ü├ÖΓÇÜ├ÿ┬º├ÖΓÇ╣ ├ÖΓÇ₧├ÖΓÇ₧├ÖΓÇª├Ö╦å├ÿ┬º├ÿ┬╡├Ö┬ü├ÿ┬º├ÿ┬¬.',
-      ),
-      CvExperienceBullet(
-        textEn: 'Set up welding parameters, shielding gas flow rates, and voltage according to metallurgy specs.',
-        textAr: '├ÿ┬╢├ÿ┬¿├ÿ┬╖ ├ÖΓÇª├ÿ┬╣├ÿ┬»├ÖΓÇ₧├ÿ┬º├ÿ┬¬ ├ÿ┬¬├ÿ┬»├Ö┬ü├ÖΓÇÜ ├ÿ┬º├ÖΓÇ₧├ÿ┬║├ÿ┬º├ÿ┬▓ ├Ö╦å├ÖΓÇª├ÿ┬│├ÿ┬¬├Ö╦å├Ö┼á├ÿ┬º├ÿ┬¬ ├ÿ┬º├ÖΓÇ₧├ÿ┬¼├ÖΓÇí├ÿ┬» ├ÿ┬º├ÖΓÇ₧├Ö╞Æ├ÖΓÇí├ÿ┬▒├ÿ┬¿├ÿ┬º├ÿ┬ª├Ö┼á ├Ö╦å├Ö┬ü├ÖΓÇÜ├ÿ┬º├ÖΓÇ╣ ├ÖΓÇ₧├ÖΓÇª├Ö╦å├ÿ┬º├ÿ┬╡├Ö┬ü├ÿ┬º├ÿ┬¬ ├ÿ┬º├ÖΓÇ₧├ÖΓÇª├ÿ┬╣├ÿ┬º├ÿ┬»├ÖΓÇá ├ÿ┬º├ÖΓÇ₧├ÖΓÇª├ÿ┬╣├ÿ┬º├ÖΓÇ₧├ÿ┬¼├ÿ┬⌐.',
-      ),
-      CvExperienceBullet(
-        textEn: 'Prepared metal surfaces by cleaning, beveling, and clamping parts prior to assembly.',
-        textAr: '├ÿ┬¬├ÿ┬¼├ÖΓÇí├Ö┼á├ÿ┬▓ ├ÿ┬ú├ÿ┬│├ÿ┬╖├ÿ┬¡ ├ÿ┬º├ÖΓÇ₧├ÖΓÇª├ÿ┬╣├ÿ┬º├ÿ┬»├ÖΓÇá ├ÿ┬¿├ÿ┬º├ÖΓÇ₧├ÿ┬¬├ÖΓÇá├ÿ┬╕├Ö┼á├Ö┬ü ├Ö╦å├ÿ┬º├ÖΓÇ₧├ÿ┬┤├ÿ┬╖├Ö┬ü ├Ö╦å├ÿ┬º├ÖΓÇ₧├ÿ┬¬├ÿ┬½├ÿ┬¿├Ö┼á├ÿ┬¬ ├ÖΓÇÜ├ÿ┬¿├ÖΓÇ₧ ├ÿ┬¿├ÿ┬»├ÿ┬í ├ÿ┬╣├ÖΓÇª├ÖΓÇ₧├Ö┼á├ÿ┬⌐ ├ÿ┬º├ÖΓÇ₧├ÿ┬¬├ÿ┬¼├ÖΓÇª├Ö┼á├ÿ┬╣.',
-      ),
-      CvExperienceBullet(
-        textEn: 'Strictly adhered to PPE, eye protection, and ventilation safety protocols on fabrication floors.',
-        textAr: '├ÿ┬º├ÖΓÇ₧├ÿ┬º├ÖΓÇ₧├ÿ┬¬├ÿ┬▓├ÿ┬º├ÖΓÇª ├ÿ┬º├ÖΓÇ₧├ÿ┬╡├ÿ┬º├ÿ┬▒├ÖΓÇª ├ÿ┬¿├ÖΓÇª├ÿ┬╣├ÿ┬»├ÿ┬º├ÿ┬¬ ├ÿ┬º├ÖΓÇ₧├ÿ┬¡├ÖΓÇª├ÿ┬º├Ö┼á├ÿ┬⌐ ├ÿ┬º├ÖΓÇ₧├ÿ┬┤├ÿ┬«├ÿ┬╡├Ö┼á├ÿ┬⌐ ├Ö╦å├ÿ┬│├ÖΓÇ₧├ÿ┬º├ÖΓÇª├ÿ┬⌐ ├ÿ┬º├ÖΓÇ₧├ÿ┬¬├ÖΓÇí├Ö╦å├Ö┼á├ÿ┬⌐ ├ÿ┬»├ÿ┬º├ÿ┬«├ÖΓÇ₧ ├Ö╦å├ÿ┬▒├ÿ┬┤ ├ÿ┬º├ÖΓÇ₧├ÿ┬¬├ÿ┬╡├ÖΓÇá├Ö┼á├ÿ┬╣.',
-      ),
-    ],
-  ),
-  CvProfession(
-    titleEn: 'Plumber & Pipefitter',
-    titleAr: '├ÿ┬│├ÿ┬¿├ÿ┬º├Ö╞Æ ├Ö╦å├Ö┬ü├ÖΓÇá├Ö┼á ├ÿ┬¬├ÖΓÇª├ÿ┬»├Ö┼á├ÿ┬»├ÿ┬º├ÿ┬¬ ├ÿ┬╡├ÿ┬¡├Ö┼á├ÿ┬⌐',
-    categoryEn: 'Vocational & Technical Trades',
-    categoryAr: '├ÿ┬º├ÖΓÇ₧├ÿ┬¡├ÿ┬▒├Ö┬ü ├ÿ┬º├ÖΓÇ₧├Ö┬ü├ÖΓÇá├Ö┼á├ÿ┬⌐ ├Ö╦å├ÿ┬º├ÖΓÇ₧├ÿ┬¬├ÖΓÇÜ├ÖΓÇá├Ö┼á├ÿ┬⌐',
-    emoji: '├░┼╕ΓÇ║┬á├»┬╕┬Å',
-    suggestedBullets: [
-      CvExperienceBullet(
-        textEn: 'Installed, inspected and repaired commercial and residential piping systems, water heaters and drainage infrastructure.',
-        textAr: '├ÿ┬¬├ÿ┬▒├Ö╞Æ├Ö┼á├ÿ┬¿ ├Ö╦å├Ö┬ü├ÿ┬¡├ÿ┬╡ ├Ö╦å├ÿ┬Ñ├ÿ┬╡├ÖΓÇ₧├ÿ┬º├ÿ┬¡ ├ÿ┬┤├ÿ┬¿├Ö╞Æ├ÿ┬º├ÿ┬¬ ├ÿ┬º├ÖΓÇ₧├ÿ┬ú├ÖΓÇá├ÿ┬º├ÿ┬¿├Ö┼á├ÿ┬¿ ├ÿ┬º├ÖΓÇ₧├ÿ┬¬├ÿ┬¼├ÿ┬º├ÿ┬▒├Ö┼á├ÿ┬⌐ ├Ö╦å├ÿ┬º├ÖΓÇ₧├ÿ┬│├Ö╞Æ├ÖΓÇá├Ö┼á├ÿ┬⌐ ├Ö╦å├ÿ┬│├ÿ┬«├ÿ┬º├ÖΓÇá├ÿ┬º├ÿ┬¬ ├ÿ┬º├ÖΓÇ₧├ÖΓÇª├Ö┼á├ÿ┬º├ÖΓÇí ├Ö╦å├ÿ┬º├ÖΓÇ₧├ÿ┬¿├ÖΓÇá├Ö┼á├ÿ┬⌐ ├ÿ┬º├ÖΓÇ₧├ÿ┬¬├ÿ┬¡├ÿ┬¬├Ö┼á├ÿ┬⌐ ├ÖΓÇ₧├ÖΓÇ₧├ÿ┬╡├ÿ┬▒├Ö┬ü.',
-      ),
-      CvExperienceBullet(
-        textEn: 'Used pressure testing gauges to detect pipe leaks and ensured all installations met building regulatory standards.',
-        textAr: '├ÿ┬º├ÿ┬│├ÿ┬¬├ÿ┬«├ÿ┬»├ÿ┬º├ÖΓÇª ├ÿ┬ú├ÿ┬¼├ÖΓÇí├ÿ┬▓├ÿ┬⌐ ├ÖΓÇÜ├Ö┼á├ÿ┬º├ÿ┬│ ├ÿ┬º├ÖΓÇ₧├ÿ┬╢├ÿ┬║├ÿ┬╖ ├ÖΓÇ₧├ÿ┬º├Ö╞Æ├ÿ┬¬├ÿ┬┤├ÿ┬º├Ö┬ü ├ÿ┬º├ÖΓÇ₧├ÿ┬¬├ÿ┬│├ÿ┬▒├Ö┼á├ÿ┬¿├ÿ┬º├ÿ┬¬ ├Ö╦å├ÿ┬╢├ÖΓÇª├ÿ┬º├ÖΓÇá ├ÖΓÇª├ÿ┬╖├ÿ┬º├ÿ┬¿├ÖΓÇÜ├ÿ┬⌐ ├ÿ┬º├ÖΓÇ₧├ÿ┬¬├ÖΓÇª├ÿ┬»├Ö┼á├ÿ┬»├ÿ┬º├ÿ┬¬ ├ÖΓÇ₧├ÖΓÇ₧├Ö╦å├ÿ┬º├ÿ┬ª├ÿ┬¡ ├ÿ┬º├ÖΓÇ₧├ÿ┬¿├ÖΓÇá├ÿ┬º├ÿ┬í.',
-      ),
-      CvExperienceBullet(
-        textEn: 'Replaced damaged valves, fittings and pumps in high-demand plumbing systems with zero unplanned shutdowns.',
-        textAr: '├ÿ┬º├ÿ┬│├ÿ┬¬├ÿ┬¿├ÿ┬»├ÿ┬º├ÖΓÇ₧ ├ÿ┬º├ÖΓÇ₧├ÿ┬╡├ÖΓÇª├ÿ┬º├ÖΓÇª├ÿ┬º├ÿ┬¬ ├Ö╦å├ÿ┬º├ÖΓÇ₧├ÖΓÇª├ÿ┬╢├ÿ┬«├ÿ┬º├ÿ┬¬ ├ÿ┬º├ÖΓÇ₧├ÿ┬¬├ÿ┬º├ÖΓÇ₧├Ö┬ü├ÿ┬⌐ ├Ö┬ü├Ö┼á ├ÿ┬┤├ÿ┬¿├Ö╞Æ├ÿ┬º├ÿ┬¬ ├ÿ┬º├ÖΓÇ₧├ÖΓÇª├Ö┼á├ÿ┬º├ÖΓÇí ├ÿ┬»├Ö╦å├ÖΓÇá ├ÿ┬¬├ÿ┬╣├ÿ┬╖├Ö┼á├ÖΓÇ₧ ├ÿ┬«├ÿ┬╖├Ö╦å├ÿ┬╖ ├ÿ┬º├ÖΓÇ₧├ÿ┬Ñ├ÖΓÇª├ÿ┬»├ÿ┬º├ÿ┬».',
-      ),
-      CvExperienceBullet(
-        textEn: 'Coordinated with site managers to plan pipe routing, trenching, and material estimation for major renovations.',
-        textAr: '├ÿ┬º├ÖΓÇ₧├ÿ┬¬├ÖΓÇá├ÿ┬│├Ö┼á├ÖΓÇÜ ├ÖΓÇª├ÿ┬╣ ├ÖΓÇª├ÿ┬»├Ö┼á├ÿ┬▒├Ö┼á ├ÿ┬º├ÖΓÇ₧├ÖΓÇª├Ö╦å├ÖΓÇÜ├ÿ┬╣ ├ÖΓÇ₧├ÿ┬¬├ÿ┬«├ÿ┬╖├Ö┼á├ÿ┬╖ ├ÖΓÇª├ÿ┬│├ÿ┬º├ÿ┬▒├ÿ┬º├ÿ┬¬ ├ÿ┬º├ÖΓÇ₧├ÿ┬ú├ÖΓÇá├ÿ┬º├ÿ┬¿├Ö┼á├ÿ┬¿ ├Ö╦å├ÿ┬¡├Ö┬ü├ÿ┬▒ ├ÿ┬º├ÖΓÇ₧├ÿ┬«├ÖΓÇá├ÿ┬º├ÿ┬»├ÖΓÇÜ ├Ö╦å├ÿ┬¡├ÿ┬│├ÿ┬º├ÿ┬¿ ├Ö╞Æ├ÖΓÇª├Ö┼á├ÿ┬º├ÿ┬¬ ├ÿ┬º├ÖΓÇ₧├ÖΓÇª├Ö╦å├ÿ┬º├ÿ┬».',
-      ),
-      CvExperienceBullet(
-        textEn: 'Soldered, brazed, and threaded copper, PVC, PEX, and cast iron piping for water supply.',
-        textAr: '├ÖΓÇ₧├ÿ┬¡├ÿ┬º├ÖΓÇª ├Ö╦å├ÿ┬¬├ÖΓÇ₧├ÿ┬¡├Ö┼á├ÖΓÇª ├Ö╦å├ÿ┬¬├ÿ┬½├ÿ┬¿├Ö┼á├ÿ┬¬ ├ÿ┬ú├ÖΓÇá├ÿ┬º├ÿ┬¿├Ö┼á├ÿ┬¿ ├ÿ┬º├ÖΓÇ₧├ÖΓÇá├ÿ┬¡├ÿ┬º├ÿ┬│ ├Ö╦å├ÿ┬º├ÖΓÇ₧├ÖΓé¼ PVC ├Ö╦å├ÿ┬º├ÖΓÇ₧├ÿ┬¡├ÿ┬»├Ö┼á├ÿ┬» ├ÖΓÇ₧├ÿ┬┤├ÿ┬¿├Ö╞Æ├ÿ┬º├ÿ┬¬ ├ÿ┬º├ÖΓÇ₧├ÿ┬¬├ÿ┬║├ÿ┬░├Ö┼á├ÿ┬⌐.',
-      ),
-      CvExperienceBullet(
-        textEn: 'Cleared complex blockages in main sewer lines using hydro-jetters and motor drain augers.',
-        textAr: '├ÿ┬¬├ÿ┬│├ÖΓÇ₧├Ö┼á├Ö╞Æ ├Ö╦å├ÿ┬¬├ÿ┬╖├ÖΓÇí├Ö┼á├ÿ┬▒ ├ÿ┬º├ÖΓÇ₧├ÿ┬º├ÖΓÇá├ÿ┬│├ÿ┬»├ÿ┬º├ÿ┬»├ÿ┬º├ÿ┬¬ ├ÿ┬º├ÖΓÇ₧├ÖΓÇª├ÿ┬╣├ÖΓÇÜ├ÿ┬»├ÿ┬⌐ ├Ö┬ü├Ö┼á ├ÿ┬«├ÿ┬╖├Ö╦å├ÿ┬╖ ├ÿ┬º├ÖΓÇ₧├ÖΓÇª├ÿ┬¼├ÿ┬º├ÿ┬▒├Ö┼á ├ÿ┬º├ÖΓÇ₧├ÿ┬▒├ÿ┬ª├Ö┼á├ÿ┬│├Ö┼á├ÿ┬⌐ ├ÿ┬¿├ÿ┬º├ÿ┬│├ÿ┬¬├ÿ┬«├ÿ┬»├ÿ┬º├ÖΓÇª ├ÿ┬º├ÖΓÇ₧├ÿ┬╢├ÿ┬║├ÿ┬╖ ├ÿ┬º├ÖΓÇ₧├ÿ┬╣├ÿ┬º├ÖΓÇ₧├Ö┼á ├Ö╦å├ÿ┬º├ÖΓÇ₧├ÿ┬¬├ÿ┬¼├ÖΓÇí├Ö┼á├ÿ┬▓├ÿ┬º├ÿ┬¬ ├ÿ┬º├ÖΓÇ₧├ÿ┬ó├ÖΓÇ₧├Ö┼á├ÿ┬⌐.',
-      ),
-      CvExperienceBullet(
-        textEn: 'Installed sanitary fixtures, pumps, backflow preventers, and water filtration equipment.',
-        textAr: '├ÿ┬¬├ÿ┬▒├Ö╞Æ├Ö┼á├ÿ┬¿ ├ÿ┬º├ÖΓÇ₧├ÿ┬ú├ÿ┬»├Ö╦å├ÿ┬º├ÿ┬¬ ├ÿ┬º├ÖΓÇ₧├ÿ┬╡├ÿ┬¡├Ö┼á├ÿ┬⌐ ├Ö╦å├ÿ┬º├ÖΓÇ₧├ÖΓÇª├ÿ┬╢├ÿ┬«├ÿ┬º├ÿ┬¬ ├Ö╦å├ÖΓÇª├ÿ┬╣├ÿ┬»├ÿ┬º├ÿ┬¬ ├ÿ┬º├ÖΓÇ₧├Ö┬ü├ÖΓÇ₧├ÿ┬¬├ÿ┬▒├ÿ┬⌐ ├Ö╦å├ÿ┬ú├ÿ┬¼├ÖΓÇí├ÿ┬▓├ÿ┬⌐ ├ÖΓÇª├ÖΓÇá├ÿ┬╣ ├ÿ┬º├ÖΓÇ₧├ÿ┬¬├ÿ┬»├Ö┬ü├ÖΓÇÜ ├ÿ┬º├ÖΓÇ₧├ÿ┬╣├Ö╞Æ├ÿ┬│├Ö┼á.',
-      ),
-      CvExperienceBullet(
-        textEn: 'Maintained detailed work orders, material logs, and safety inspection documentation.',
-        textAr: '├ÿ┬¬├Ö╦å├ÿ┬½├Ö┼á├ÖΓÇÜ ├ÿ┬ú├ÿ┬░├Ö╦å├ÖΓÇá├ÿ┬º├ÿ┬¬ ├ÿ┬º├ÖΓÇ₧├ÿ┬╣├ÖΓÇª├ÖΓÇ₧ ├Ö╦å├ÿ┬│├ÿ┬¼├ÖΓÇ₧├ÿ┬º├ÿ┬¬ ├ÿ┬º├ÖΓÇ₧├ÖΓÇª├Ö╦å├ÿ┬º├ÿ┬» ├Ö╦å├Ö┬ü├ÿ┬¡├Ö╦å├ÿ┬╡├ÿ┬º├ÿ┬¬ ├ÿ┬º├ÖΓÇ₧├ÿ┬│├ÖΓÇ₧├ÿ┬º├ÖΓÇª├ÿ┬⌐ ├ÿ┬¿├ÿ┬┤├Ö╞Æ├ÖΓÇ₧ ├ÖΓÇª├ÖΓÇá├ÿ┬¬├ÿ┬╕├ÖΓÇª.',
-      ),
-    ],
-  ),
-  CvProfession(
-    titleEn: 'HVAC Technician',
-    titleAr: '├Ö┬ü├ÖΓÇá├Ö┼á ├ÿ┬¬├Ö╞Æ├Ö┼á├Ö┼á├Ö┬ü ├Ö╦å├ÿ┬¬├ÿ┬¿├ÿ┬▒├Ö┼á├ÿ┬»',
-    categoryEn: 'Vocational & Technical Trades',
-    categoryAr: '├ÿ┬º├ÖΓÇ₧├ÿ┬¡├ÿ┬▒├Ö┬ü ├ÿ┬º├ÖΓÇ₧├Ö┬ü├ÖΓÇá├Ö┼á├ÿ┬⌐ ├Ö╦å├ÿ┬º├ÖΓÇ₧├ÿ┬¬├ÖΓÇÜ├ÖΓÇá├Ö┼á├ÿ┬⌐',
-    emoji: '├░┼╕ΓÇ║┬á├»┬╕┬Å',
-    suggestedBullets: [
-      CvExperienceBullet(
-        textEn: 'Installed, serviced and repaired central heating, ventilation and air conditioning (HVAC) systems in commercial buildings.',
-        textAr: '├ÿ┬¬├ÿ┬▒├Ö╞Æ├Ö┼á├ÿ┬¿ ├Ö╦å├ÿ┬╡├Ö┼á├ÿ┬º├ÖΓÇá├ÿ┬⌐ ├Ö╦å├ÿ┬Ñ├ÿ┬╡├ÖΓÇ₧├ÿ┬º├ÿ┬¡ ├ÿ┬ú├ÖΓÇá├ÿ┬╕├ÖΓÇª├ÿ┬⌐ ├ÿ┬º├ÖΓÇ₧├ÿ┬¬├Ö╞Æ├Ö┼á├Ö┼á├Ö┬ü ├Ö╦å├ÿ┬º├ÖΓÇ₧├ÿ┬¬├ÿ┬¿├ÿ┬▒├Ö┼á├ÿ┬» ├ÿ┬º├ÖΓÇ₧├ÖΓÇª├ÿ┬▒├Ö╞Æ├ÿ┬▓├Ö┼á├ÿ┬⌐ ├Ö╦å├ÿ┬º├ÖΓÇ₧├ÿ┬¬├ÖΓÇí├Ö╦å├Ö┼á├ÿ┬⌐ ├Ö┬ü├Ö┼á ├ÿ┬º├ÖΓÇ₧├ÖΓÇª├ÿ┬¿├ÿ┬º├ÖΓÇá├Ö┼á ├ÿ┬º├ÖΓÇ₧├ÿ┬¬├ÿ┬¼├ÿ┬º├ÿ┬▒├Ö┼á├ÿ┬⌐.',
-      ),
-      CvExperienceBullet(
-        textEn: 'Recovered refrigerants and recharged systems according to F-Gas environmental regulations and safety standards.',
-        textAr: '├ÿ┬º├ÿ┬│├ÿ┬¬├ÿ┬▒├ÿ┬¼├ÿ┬º├ÿ┬╣ ├Ö╦å├ÿ┬│├ÿ┬º├ÿ┬ª├ÿ┬╖ ├ÿ┬º├ÖΓÇ₧├ÿ┬¬├ÿ┬¿├ÿ┬▒├Ö┼á├ÿ┬» ├Ö╦å├ÿ┬Ñ├ÿ┬╣├ÿ┬º├ÿ┬»├ÿ┬⌐ ├ÿ┬┤├ÿ┬¡├ÖΓÇá ├ÿ┬º├ÖΓÇ₧├ÿ┬ú├ÖΓÇá├ÿ┬╕├ÖΓÇª├ÿ┬⌐ ├Ö╦å├Ö┬ü├ÖΓÇÜ├ÿ┬º├ÖΓÇ╣ ├ÖΓÇ₧├ÖΓÇ₧├Ö╦å├ÿ┬º├ÿ┬ª├ÿ┬¡ ├ÿ┬º├ÖΓÇ₧├ÿ┬¿├Ö┼á├ÿ┬ª├Ö┼á├ÿ┬⌐ ├Ö╦å├ÿ┬º├ÖΓÇ₧├ÿ┬│├ÖΓÇ₧├ÿ┬º├ÖΓÇª├ÿ┬⌐ ├ÿ┬º├ÖΓÇ₧├ÖΓÇª├ÿ┬╣├ÿ┬¬├ÖΓÇª├ÿ┬»├ÿ┬⌐.',
-      ),
-      CvExperienceBullet(
-        textEn: 'Diagnosed electrical and mechanical faults in chillers, air handling units (AHUs) and compressors.',
-        textAr: '├ÿ┬¬├ÿ┬┤├ÿ┬«├Ö┼á├ÿ┬╡ ├ÿ┬º├ÖΓÇ₧├ÿ┬ú├ÿ┬╣├ÿ┬╖├ÿ┬º├ÖΓÇ₧ ├ÿ┬º├ÖΓÇ₧├Ö╞Æ├ÖΓÇí├ÿ┬▒├ÿ┬¿├ÿ┬º├ÿ┬ª├Ö┼á├ÿ┬⌐ ├Ö╦å├ÿ┬º├ÖΓÇ₧├ÖΓÇª├Ö┼á├Ö╞Æ├ÿ┬º├ÖΓÇá├Ö┼á├Ö╞Æ├Ö┼á├ÿ┬⌐ ├Ö┬ü├Ö┼á ├ÿ┬º├ÖΓÇ₧├ÖΓÇª├ÿ┬¿├ÿ┬▒├ÿ┬»├ÿ┬º├ÿ┬¬ (Chillers) ├Ö╦å├Ö╦å├ÿ┬¡├ÿ┬»├ÿ┬º├ÿ┬¬ ├ÖΓÇª├ÖΓÇá├ÿ┬º├Ö╦å├ÖΓÇ₧├ÿ┬⌐ ├ÿ┬º├ÖΓÇ₧├ÖΓÇí├Ö╦å├ÿ┬º├ÿ┬í ├Ö╦å├ÿ┬º├ÖΓÇ₧├ÿ┬╢├Ö╦å├ÿ┬º├ÿ┬║├ÿ┬╖.',
-      ),
-      CvExperienceBullet(
-        textEn: 'Executed scheduled preventive maintenance contracts, improving system energy efficiency by 18%.',
-        textAr: '├ÿ┬¬├ÖΓÇá├Ö┬ü├Ö┼á├ÿ┬░ ├ÿ┬╣├ÖΓÇÜ├Ö╦å├ÿ┬» ├ÿ┬º├ÖΓÇ₧├ÿ┬╡├Ö┼á├ÿ┬º├ÖΓÇá├ÿ┬⌐ ├ÿ┬º├ÖΓÇ₧├Ö╦å├ÖΓÇÜ├ÿ┬º├ÿ┬ª├Ö┼á├ÿ┬⌐ ├ÿ┬º├ÖΓÇ₧├ÿ┬»├Ö╦å├ÿ┬▒├Ö┼á├ÿ┬⌐ ├ÖΓÇª├ÖΓÇª├ÿ┬º ├ÿ┬│├ÿ┬º├ÖΓÇí├ÖΓÇª ├Ö┬ü├Ö┼á ├ÿ┬¬├ÿ┬¡├ÿ┬│├Ö┼á├ÖΓÇá ├Ö╞Æ├Ö┬ü├ÿ┬º├ÿ┬í├ÿ┬⌐ ├ÿ┬º├ÿ┬│├ÿ┬¬├ÖΓÇí├ÖΓÇ₧├ÿ┬º├Ö╞Æ ├ÿ┬º├ÖΓÇ₧├ÿ┬╖├ÿ┬º├ÖΓÇÜ├ÿ┬⌐ ├ÿ┬¿├ÖΓÇá├ÿ┬│├ÿ┬¿├ÿ┬⌐ 18%.',
-      ),
-      CvExperienceBullet(
-        textEn: 'Replaced failed fan motors, expansion valves, thermostats, and circuit boards.',
-        textAr: '├ÿ┬º├ÿ┬│├ÿ┬¬├ÿ┬¿├ÿ┬»├ÿ┬º├ÖΓÇ₧ ├ÖΓÇª├ÿ┬¡├ÿ┬▒├Ö╞Æ├ÿ┬º├ÿ┬¬ ├ÿ┬º├ÖΓÇ₧├ÖΓÇª├ÿ┬▒├Ö╦å├ÿ┬¡├Ö┼á├ÿ┬º├ÿ┬¬ ├Ö╦å├ÿ┬╡├ÖΓÇª├ÿ┬º├ÖΓÇª├ÿ┬º├ÿ┬¬ ├ÿ┬º├ÖΓÇ₧├ÿ┬¬├ÖΓÇª├ÿ┬»├ÿ┬» ├Ö╦å├ÿ┬½├ÿ┬▒├ÖΓÇª├Ö╦å├ÿ┬│├ÿ┬¬├ÿ┬º├ÿ┬¬ ├Ö╦å├ÖΓÇ₧├Ö╦å├ÿ┬¡├ÿ┬º├ÿ┬¬ ├ÿ┬º├ÖΓÇ₧├ÿ┬¬├ÿ┬¡├Ö╞Æ├ÖΓÇª ├ÿ┬º├ÖΓÇ₧├ÿ┬¬├ÿ┬º├ÖΓÇ₧├Ö┬ü├ÿ┬⌐.',
-      ),
-      CvExperienceBullet(
-        textEn: 'Inspected and cleaned ductwork, air filters, and evaporator coils to optimize indoor air quality.',
-        textAr: '├ÿ┬¬├ÖΓÇá├ÿ┬╕├Ö┼á├Ö┬ü ├Ö╦å├Ö┬ü├ÿ┬¡├ÿ┬╡ ├ÖΓÇª├ÿ┬¼├ÿ┬º├ÿ┬▒├Ö┼á ├ÿ┬º├ÖΓÇ₧├ÖΓÇí├Ö╦å├ÿ┬º├ÿ┬í ├Ö╦å├ÿ┬º├ÖΓÇ₧├Ö┬ü├ÖΓÇ₧├ÿ┬º├ÿ┬¬├ÿ┬▒ ├Ö╦å├ÖΓÇª├ÿ┬¿├ÿ┬«├ÿ┬▒├ÿ┬º├ÿ┬¬ ├ÿ┬º├ÖΓÇ₧├ÿ┬¬├ÿ┬¿├ÿ┬▒├Ö┼á├ÿ┬» ├ÖΓÇ₧├ÿ┬╢├ÖΓÇª├ÿ┬º├ÖΓÇá ├ÿ┬¼├Ö╦å├ÿ┬»├ÿ┬⌐ ├ÿ┬º├ÖΓÇ₧├ÖΓÇí├Ö╦å├ÿ┬º├ÿ┬í ├ÿ┬º├ÖΓÇ₧├ÿ┬»├ÿ┬º├ÿ┬«├ÖΓÇ₧├Ö┼á.',
-      ),
-      CvExperienceBullet(
-        textEn: 'Programmed digital building management thermostats and automated HVAC controllers.',
-        textAr: '├ÿ┬¿├ÿ┬▒├ÖΓÇª├ÿ┬¼├ÿ┬⌐ ├ÿ┬ú├ÖΓÇá├ÿ┬╕├ÖΓÇª├ÿ┬⌐ ├ÿ┬º├ÖΓÇ₧├ÿ┬¬├ÿ┬¡├Ö╞Æ├ÖΓÇª ├ÿ┬º├ÖΓÇ₧├ÿ┬▒├ÖΓÇÜ├ÖΓÇª├Ö┼á ├Ö╦å├ÿ┬º├ÖΓÇ₧├ÖΓé¼ Thermostat ├ÿ┬º├ÖΓÇ₧├ÿ┬¬├ÖΓÇ₧├ÖΓÇÜ├ÿ┬º├ÿ┬ª├Ö┼á ├ÖΓÇ₧├ÿ┬Ñ├ÖΓÇá├ÿ┬╣├ÿ┬º├ÿ┬┤ ├Ö╞Æ├Ö┬ü├ÿ┬º├ÿ┬í├ÿ┬⌐ ├ÿ┬º├ÖΓÇ₧├ÿ┬¬├ÿ┬¿├ÿ┬▒├Ö┼á├ÿ┬».',
-      ),
-      CvExperienceBullet(
-        textEn: 'Completed emergency field service calls with a 95% first-visit resolution rate.',
-        textAr: '├ÿ┬º├ÖΓÇ₧├ÿ┬º├ÿ┬│├ÿ┬¬├ÿ┬¼├ÿ┬º├ÿ┬¿├ÿ┬⌐ ├ÖΓÇ₧├ÖΓÇá├ÿ┬»├ÿ┬º├ÿ┬í├ÿ┬º├ÿ┬¬ ├ÿ┬º├ÖΓÇ₧├ÿ┬╡├Ö┼á├ÿ┬º├ÖΓÇá├ÿ┬⌐ ├ÿ┬º├ÖΓÇ₧├ÿ┬╖├ÿ┬º├ÿ┬▒├ÿ┬ª├ÿ┬⌐ ├Ö╦å├ÿ┬Ñ├ÿ┬╡├ÖΓÇ₧├ÿ┬º├ÿ┬¡ ├ÿ┬º├ÖΓÇ₧├ÖΓÇª├ÿ┬┤├ÿ┬º├Ö╞Æ├ÖΓÇ₧ ├ÖΓÇª├ÖΓÇá ├ÿ┬º├ÖΓÇ₧├ÿ┬▓├Ö┼á├ÿ┬º├ÿ┬▒├ÿ┬⌐ ├ÿ┬º├ÖΓÇ₧├ÿ┬ú├Ö╦å├ÖΓÇ₧├ÖΓÇ░ ├ÿ┬¿├ÖΓÇá├ÿ┬│├ÿ┬¿├ÿ┬⌐ 95%.',
-      ),
-    ],
-  ),
-  CvProfession(
-    titleEn: 'Automotive Mechanic',
-    titleAr: '├ÖΓÇª├Ö┼á├Ö╞Æ├ÿ┬º├ÖΓÇá├Ö┼á├Ö╞Æ├Ö┼á ├ÿ┬│├Ö┼á├ÿ┬º├ÿ┬▒├ÿ┬º├ÿ┬¬ ├Ö╦å├ÿ┬ó├ÖΓÇ₧├ÿ┬º├ÿ┬¬',
-    categoryEn: 'Vocational & Technical Trades',
-    categoryAr: '├ÿ┬º├ÖΓÇ₧├ÿ┬¡├ÿ┬▒├Ö┬ü ├ÿ┬º├ÖΓÇ₧├Ö┬ü├ÖΓÇá├Ö┼á├ÿ┬⌐ ├Ö╦å├ÿ┬º├ÖΓÇ₧├ÿ┬¬├ÖΓÇÜ├ÖΓÇá├Ö┼á├ÿ┬⌐',
-    emoji: '├░┼╕ΓÇ║┬á├»┬╕┬Å',
-    suggestedBullets: [
-      CvExperienceBullet(
-        textEn: 'Diagnosed engine, transmission, brake and electrical faults using OBD-II computer diagnostic tools.',
-        textAr: '├ÿ┬¬├ÿ┬┤├ÿ┬«├Ö┼á├ÿ┬╡ ├ÿ┬ú├ÿ┬╣├ÿ┬╖├ÿ┬º├ÖΓÇ₧ ├ÿ┬º├ÖΓÇ₧├ÖΓÇª├ÿ┬¡├ÿ┬▒├Ö╞Æ├ÿ┬º├ÿ┬¬ ├Ö╦å├ÿ┬╣├ÖΓÇ₧├ÿ┬¿ ├ÿ┬º├ÖΓÇ₧├ÿ┬¬├ÿ┬▒├Ö╦å├ÿ┬│ ├Ö╦å├ÿ┬º├ÖΓÇ₧├ÖΓÇª├Ö╞Æ├ÿ┬º├ÿ┬¿├ÿ┬¡ ├ÿ┬¿├ÿ┬º├ÿ┬│├ÿ┬¬├ÿ┬«├ÿ┬»├ÿ┬º├ÖΓÇª ├ÿ┬ú├ÿ┬¼├ÖΓÇí├ÿ┬▓├ÿ┬⌐ ├ÿ┬º├ÖΓÇ₧├Ö┬ü├ÿ┬¡├ÿ┬╡ ├ÿ┬º├ÖΓÇ₧├Ö╞Æ├ÖΓÇª├ÿ┬¿├Ö┼á├Ö╦å├ÿ┬¬├ÿ┬▒├Ö┼á OBD-II.',
-      ),
-      CvExperienceBullet(
-        textEn: 'Performed complete vehicle overhauls, timing belt replacements and suspension tuning on diverse vehicle fleets.',
-        textAr: '├ÿ┬Ñ├ÿ┬¼├ÿ┬▒├ÿ┬º├ÿ┬í ├ÿ┬º├ÖΓÇ₧├ÿ┬╣├ÖΓÇª├ÿ┬▒├ÿ┬º├ÿ┬¬ ├ÿ┬º├ÖΓÇ₧├Ö╞Æ├ÿ┬º├ÖΓÇª├ÖΓÇ₧├ÿ┬⌐ ├ÖΓÇ₧├ÖΓÇ₧├ÖΓÇª├ÿ┬¡├ÿ┬▒├Ö╞Æ├ÿ┬º├ÿ┬¬ ├Ö╦å├ÿ┬¬├ÿ┬║├Ö┼á├Ö┼á├ÿ┬▒ ├ÿ┬│├Ö┼á├Ö╦å├ÿ┬▒ ├ÿ┬º├ÖΓÇ₧├ÿ┬¬├Ö╦å├ÖΓÇÜ├Ö┼á├ÿ┬¬ ├Ö╦å├ÿ┬¬├ÿ┬╣├ÿ┬»├Ö┼á├ÖΓÇ₧ ├ÿ┬ú├ÖΓÇá├ÿ┬╕├ÖΓÇª├ÿ┬⌐ ├ÿ┬º├ÖΓÇ₧├ÿ┬¬├ÿ┬╣├ÖΓÇ₧├Ö┼á├ÖΓÇÜ ├ÖΓÇ₧├ÿ┬ú├ÿ┬│├ÿ┬╖├Ö╦å├ÖΓÇ₧ ├ÿ┬º├ÖΓÇ₧├ÿ┬│├Ö┼á├ÿ┬º├ÿ┬▒├ÿ┬º├ÿ┬¬.',
-      ),
-      CvExperienceBullet(
-        textEn: 'Maintained daily service logs, estimated repair costs and communicated technical solutions clearly to clients.',
-        textAr: '├ÿ┬º├ÖΓÇ₧├ÿ┬º├ÿ┬¡├ÿ┬¬├Ö┬ü├ÿ┬º├ÿ┬╕ ├ÿ┬¿├ÿ┬│├ÿ┬¼├ÖΓÇ₧├ÿ┬º├ÿ┬¬ ├ÿ┬º├ÖΓÇ₧├ÿ┬«├ÿ┬»├ÖΓÇª├ÿ┬⌐ ├ÿ┬º├ÖΓÇ₧├Ö┼á├Ö╦å├ÖΓÇª├Ö┼á├ÿ┬⌐ ├Ö╦å├ÿ┬¬├ÖΓÇÜ├ÿ┬»├Ö┼á├ÿ┬▒ ├ÿ┬¬├Ö╞Æ├ÿ┬º├ÖΓÇ₧├Ö┼á├Ö┬ü ├ÿ┬º├ÖΓÇ₧├ÿ┬Ñ├ÿ┬╡├ÖΓÇ₧├ÿ┬º├ÿ┬¡ ├Ö╦å├ÿ┬┤├ÿ┬▒├ÿ┬¡ ├ÿ┬º├ÖΓÇ₧├ÿ┬¡├ÖΓÇ₧├Ö╦å├ÖΓÇ₧ ├ÿ┬º├ÖΓÇ₧├ÿ┬¬├ÖΓÇÜ├ÖΓÇá├Ö┼á├ÿ┬⌐ ├ÖΓÇ₧├ÖΓÇ₧├ÿ┬╣├ÖΓÇª├ÖΓÇ₧├ÿ┬º├ÿ┬í.',
-      ),
-      CvExperienceBullet(
-        textEn: 'Replaced worn brake pads, rotors, shocks, struts, and steering linkages.',
-        textAr: '├ÿ┬º├ÿ┬│├ÿ┬¬├ÿ┬¿├ÿ┬»├ÿ┬º├ÖΓÇ₧ ├Ö┬ü├ÿ┬¡├ÖΓÇª├ÿ┬º├ÿ┬¬ ├ÿ┬º├ÖΓÇ₧├ÖΓÇª├Ö╞Æ├ÿ┬º├ÿ┬¿├ÿ┬¡ ├Ö╦å├ÿ┬º├ÖΓÇ₧├ÿ┬ú├ÖΓÇÜ├ÿ┬▒├ÿ┬º├ÿ┬╡ ├Ö╦å├ÿ┬º├ÖΓÇ₧├ÖΓÇª├ÿ┬│├ÿ┬º├ÿ┬╣├ÿ┬»├Ö┼á├ÖΓÇá ├Ö╦å├ÿ┬ú├ÖΓÇá├ÿ┬╕├ÖΓÇª├ÿ┬⌐ ├ÿ┬º├ÖΓÇ₧├ÿ┬¬├Ö╦å├ÿ┬¼├Ö┼á├ÖΓÇí ├ÿ┬º├ÖΓÇ₧├ÿ┬¬├ÿ┬º├ÖΓÇ₧├Ö┬ü├ÿ┬⌐.',
-      ),
-      CvExperienceBullet(
-        textEn: 'Flushed and refilled transmission fluids, engine oils, coolants, and brake hydraulic lines.',
-        textAr: '├ÿ┬¬├ÿ┬║├Ö┼á├Ö┼á├ÿ┬▒ ├Ö╦å├ÿ┬║├ÿ┬│├Ö┼á├ÖΓÇ₧ ├ÿ┬▓├Ö┼á├Ö╦å├ÿ┬¬ ├ÿ┬º├ÖΓÇ₧├ÖΓÇª├ÿ┬¡├ÿ┬▒├Ö╞Æ ├Ö╦å├ÿ┬│├Ö╦å├ÿ┬º├ÿ┬ª├ÖΓÇ₧ ├ÿ┬º├ÖΓÇ₧├ÿ┬¬├ÿ┬¿├ÿ┬▒├Ö┼á├ÿ┬» ├Ö╦å├ÿ┬▓├Ö┼á├Ö╦å├ÿ┬¬ ├ÿ┬º├ÖΓÇ₧├Ö┬ü├ÿ┬▒├ÿ┬º├ÖΓÇª├ÖΓÇ₧ ├Ö╦å├ÿ┬º├ÖΓÇ₧├ÖΓÇí├Ö┼á├ÿ┬»├ÿ┬▒├Ö╦å├ÖΓÇ₧├Ö┼á├Ö╞Æ.',
-      ),
-      CvExperienceBullet(
-        textEn: 'Balanced wheels, performed 4-wheel alignment, and mounted commercial tires.',
-        textAr: '├ÿ┬╢├ÿ┬¿├ÿ┬╖ ├ÿ┬▓├Ö╦å├ÿ┬º├Ö┼á├ÿ┬º ├ÿ┬º├ÖΓÇ₧├ÿ┬╣├ÿ┬¼├ÖΓÇ₧├ÿ┬º├ÿ┬¬ ├ÿ┬º├ÖΓÇ₧├ÿ┬ú├ÿ┬▒├ÿ┬¿├ÿ┬╣ ├Ö╦å├ÿ┬¬├ÿ┬▒├ÿ┬╡├Ö┼á├ÿ┬╡ ├ÿ┬º├ÖΓÇ₧├ÿ┬Ñ├ÿ┬╖├ÿ┬º├ÿ┬▒├ÿ┬º├ÿ┬¬ ├Ö╦å├ÿ┬╡├Ö┼á├ÿ┬º├ÖΓÇá├ÿ┬¬├ÖΓÇí├ÿ┬º.',
-      ),
-      CvExperienceBullet(
-        textEn: 'Enforced shop safety standards and proper disposal of hazardous automotive fluids and batteries.',
-        textAr: '├ÿ┬¬├ÿ┬╖├ÿ┬¿├Ö┼á├ÖΓÇÜ ├ÖΓÇª├ÿ┬╣├ÿ┬º├Ö┼á├Ö┼á├ÿ┬▒ ├ÿ┬º├ÖΓÇ₧├ÿ┬│├ÖΓÇ₧├ÿ┬º├ÖΓÇª├ÿ┬⌐ ├ÿ┬»├ÿ┬º├ÿ┬«├ÖΓÇ₧ ├ÿ┬º├ÖΓÇ₧├Ö╦å├ÿ┬▒├ÿ┬┤├ÿ┬⌐ ├Ö╦å├ÿ┬º├ÖΓÇ₧├ÿ┬¬├ÿ┬«├ÖΓÇ₧├ÿ┬╡ ├ÿ┬º├ÖΓÇ₧├ÿ┬ó├ÖΓÇª├ÖΓÇá ├ÖΓÇª├ÖΓÇá ├ÿ┬¿├ÿ┬╖├ÿ┬º├ÿ┬▒├Ö┼á├ÿ┬º├ÿ┬¬ ├Ö╦å├ÿ┬▓├Ö┼á├Ö╦å├ÿ┬¬ ├ÿ┬º├ÖΓÇ₧├ÿ┬│├Ö┼á├ÿ┬º├ÿ┬▒├ÿ┬º├ÿ┬¬.',
-      ),
-      CvExperienceBullet(
-        textEn: 'Conducted pre-purchase and pre-inspection safety testing for passenger and commercial vehicles.',
-        textAr: '├ÿ┬Ñ├ÿ┬¼├ÿ┬▒├ÿ┬º├ÿ┬í ├Ö┬ü├ÿ┬¡├Ö╦å├ÿ┬╡├ÿ┬º├ÿ┬¬ ├ÿ┬º├ÖΓÇ₧├ÿ┬┤├ÿ┬º├ÖΓÇª├ÖΓÇ₧├ÿ┬⌐ ├Ö╦å├ÿ┬º├ÖΓÇ₧├ÿ┬│├ÖΓÇ₧├ÿ┬º├ÖΓÇª├ÿ┬⌐ ├ÿ┬º├ÖΓÇ₧├Ö┬ü├ÖΓÇá├Ö┼á├ÿ┬⌐ ├ÖΓÇ₧├ÖΓÇ₧├ÿ┬│├Ö┼á├ÿ┬º├ÿ┬▒├ÿ┬º├ÿ┬¬ ├ÖΓÇÜ├ÿ┬¿├ÖΓÇ₧ ├ÿ┬º├ÖΓÇ₧├Ö┬ü├ÿ┬¡├ÿ┬╡ ├ÿ┬º├ÖΓÇ₧├ÿ┬»├Ö╦å├ÿ┬▒├Ö┼á.',
-      ),
-    ],
-  ),
-  CvProfession(
-    titleEn: 'Factory Operator & Technician',
-    titleAr: '├ÖΓÇª├ÿ┬┤├ÿ┬║├ÖΓÇ₧ ├Ö╦å├Ö┬ü├ÖΓÇá├Ö┼á ├ÖΓÇª├ÿ┬╡├ÖΓÇá├ÿ┬╣',
-    categoryEn: 'Vocational & Technical Trades',
-    categoryAr: '├ÿ┬º├ÖΓÇ₧├ÿ┬¡├ÿ┬▒├Ö┬ü ├ÿ┬º├ÖΓÇ₧├Ö┬ü├ÖΓÇá├Ö┼á├ÿ┬⌐ ├Ö╦å├ÿ┬º├ÖΓÇ₧├ÿ┬¬├ÖΓÇÜ├ÖΓÇá├Ö┼á├ÿ┬⌐',
-    emoji: '├░┼╕ΓÇ║┬á├»┬╕┬Å',
-    suggestedBullets: [
-      CvExperienceBullet(
-        textEn: 'Operated and maintained automated production line machinery, ensuring continuous output at target efficiency rates.',
-        textAr: '├ÿ┬¬├ÿ┬┤├ÿ┬║├Ö┼á├ÖΓÇ₧ ├Ö╦å├ÿ┬╡├Ö┼á├ÿ┬º├ÖΓÇá├ÿ┬⌐ ├ÿ┬«├ÿ┬╖├Ö╦å├ÿ┬╖ ├ÿ┬º├ÖΓÇ₧├ÿ┬Ñ├ÖΓÇá├ÿ┬¬├ÿ┬º├ÿ┬¼ ├ÿ┬º├ÖΓÇ₧├ÿ┬ó├ÖΓÇ₧├Ö┼á├ÿ┬⌐ ├Ö╦å├ÿ┬╢├ÖΓÇª├ÿ┬º├ÖΓÇá ├ÿ┬º├ÿ┬│├ÿ┬¬├ÖΓÇª├ÿ┬▒├ÿ┬º├ÿ┬▒├Ö┼á├ÿ┬⌐ ├ÿ┬º├ÖΓÇ₧├ÿ┬¬├ÿ┬┤├ÿ┬║├Ö┼á├ÖΓÇ₧ ├ÿ┬¿├ÖΓÇª├ÿ┬╣├ÿ┬»├ÖΓÇ₧├ÿ┬º├ÿ┬¬ ├ÿ┬º├ÖΓÇ₧├Ö╞Æ├Ö┬ü├ÿ┬º├ÿ┬í├ÿ┬⌐ ├ÿ┬º├ÖΓÇ₧├ÖΓÇª├ÿ┬│├ÿ┬¬├ÖΓÇí├ÿ┬»├Ö┬ü├ÿ┬⌐.',
-      ),
-      CvExperienceBullet(
-        textEn: 'Conducted routine inspections and preventive maintenance on CNC machines, conveyors and hydraulic equipment.',
-        textAr: '├ÿ┬Ñ├ÿ┬¼├ÿ┬▒├ÿ┬º├ÿ┬í ├ÿ┬º├ÖΓÇ₧├Ö┬ü├ÿ┬¡├Ö╦å├ÿ┬╡├ÿ┬º├ÿ┬¬ ├ÿ┬º├ÖΓÇ₧├ÿ┬»├Ö╦å├ÿ┬▒├Ö┼á├ÿ┬⌐ ├Ö╦å├ÿ┬º├ÖΓÇ₧├ÿ┬╡├Ö┼á├ÿ┬º├ÖΓÇá├ÿ┬⌐ ├ÿ┬º├ÖΓÇ₧├Ö╦å├ÖΓÇÜ├ÿ┬º├ÿ┬ª├Ö┼á├ÿ┬⌐ ├ÖΓÇ₧├ÿ┬ó├ÖΓÇ₧├ÿ┬º├ÿ┬¬ CNC ├Ö╦å├ÿ┬º├ÖΓÇ₧├ÿ┬│├Ö┼á├Ö╦å├ÿ┬▒ ├ÿ┬º├ÖΓÇ₧├ÖΓÇá├ÿ┬º├ÖΓÇÜ├ÖΓÇ₧├ÿ┬⌐ ├Ö╦å├ÿ┬º├ÖΓÇ₧├ÿ┬ú├ÖΓÇá├ÿ┬╕├ÖΓÇª├ÿ┬⌐ ├ÿ┬º├ÖΓÇ₧├ÖΓÇí├Ö┼á├ÿ┬»├ÿ┬▒├Ö╦å├ÖΓÇ₧├Ö┼á├Ö╞Æ├Ö┼á├ÿ┬⌐.',
-      ),
-      CvExperienceBullet(
-        textEn: 'Diagnosed mechanical and electrical faults, reducing average repair downtime from 4 hours to under 90 minutes.',
-        textAr: '├ÿ┬¬├ÿ┬┤├ÿ┬«├Ö┼á├ÿ┬╡ ├ÿ┬º├ÖΓÇ₧├ÿ┬ú├ÿ┬╣├ÿ┬╖├ÿ┬º├ÖΓÇ₧ ├ÿ┬º├ÖΓÇ₧├ÖΓÇª├Ö┼á├Ö╞Æ├ÿ┬º├ÖΓÇá├Ö┼á├Ö╞Æ├Ö┼á├ÿ┬⌐ ├Ö╦å├ÿ┬º├ÖΓÇ₧├Ö╞Æ├ÖΓÇí├ÿ┬▒├ÿ┬¿├ÿ┬º├ÿ┬ª├Ö┼á├ÿ┬⌐ ├Ö╦å├ÿ┬¬├ÖΓÇÜ├ÖΓÇ₧├Ö┼á├ÖΓÇ₧ ├ÿ┬▓├ÖΓÇª├ÖΓÇá ├ÿ┬º├ÖΓÇ₧├ÿ┬¬├Ö╦å├ÖΓÇÜ├Ö┬ü ├ÖΓÇª├ÖΓÇá 4 ├ÿ┬│├ÿ┬º├ÿ┬╣├ÿ┬º├ÿ┬¬ ├ÿ┬Ñ├ÖΓÇ₧├ÖΓÇ░ ├ÿ┬ú├ÖΓÇÜ├ÖΓÇ₧ ├ÖΓÇª├ÖΓÇá 90 ├ÿ┬»├ÖΓÇÜ├Ö┼á├ÖΓÇÜ├ÿ┬⌐.',
-      ),
-      CvExperienceBullet(
-        textEn: 'Adhered to ISO quality control procedures and logged all maintenance activities in the CMMS system.',
-        textAr: '├ÿ┬º├ÖΓÇ₧├ÿ┬º├ÖΓÇ₧├ÿ┬¬├ÿ┬▓├ÿ┬º├ÖΓÇª ├ÿ┬¿├ÖΓÇª├ÿ┬╣├ÿ┬º├Ö┼á├Ö┼á├ÿ┬▒ ├ÿ┬¼├Ö╦å├ÿ┬»├ÿ┬⌐ ISO ├Ö╦å├ÿ┬¬├ÿ┬│├ÿ┬¼├Ö┼á├ÖΓÇ₧ ├ÿ┬¼├ÖΓÇª├Ö┼á├ÿ┬╣ ├ÿ┬ú├ÖΓÇá├ÿ┬┤├ÿ┬╖├ÿ┬⌐ ├ÿ┬º├ÖΓÇ₧├ÿ┬╡├Ö┼á├ÿ┬º├ÖΓÇá├ÿ┬⌐ ├Ö┬ü├Ö┼á ├ÖΓÇá├ÿ┬╕├ÿ┬º├ÖΓÇª CMMS.',
-      ),
-      CvExperienceBullet(
-        textEn: 'Adjusted machine calibration parameters and tooling setups according to production batch specifications.',
-        textAr: '├ÿ┬╢├ÿ┬¿├ÿ┬╖ ├ÿ┬Ñ├ÿ┬╣├ÿ┬»├ÿ┬º├ÿ┬»├ÿ┬º├ÿ┬¬ ├Ö╞Æ├ÿ┬º├ÖΓÇ₧├Ö┼á├ÿ┬¿├ÿ┬▒├ÿ┬º├ÿ┬¬├Ö╦å├ÿ┬▒ ├ÿ┬º├ÖΓÇ₧├ÿ┬ó├ÖΓÇ₧├ÿ┬º├ÿ┬¬ ├Ö╦å├ÿ┬º├ÖΓÇ₧├ÖΓÇÜ├Ö╦å├ÿ┬º├ÖΓÇ₧├ÿ┬¿ ├Ö╦å├Ö┬ü├ÖΓÇÜ├ÿ┬º├ÖΓÇ╣ ├ÖΓÇ₧├ÖΓÇª├Ö╦å├ÿ┬º├ÿ┬╡├Ö┬ü├ÿ┬º├ÿ┬¬ ├ÿ┬»├Ö┬ü├ÿ┬╣├ÿ┬⌐ ├ÿ┬º├ÖΓÇ₧├ÿ┬Ñ├ÖΓÇá├ÿ┬¬├ÿ┬º├ÿ┬¼.',
-      ),
-      CvExperienceBullet(
-        textEn: 'Monitored raw material feed lines to prevent blockages and line starvation.',
-        textAr: '├ÖΓÇª├ÿ┬▒├ÿ┬º├ÖΓÇÜ├ÿ┬¿├ÿ┬⌐ ├ÿ┬«├ÿ┬╖├Ö╦å├ÿ┬╖ ├ÿ┬¬├ÿ┬║├ÿ┬░├Ö┼á├ÿ┬⌐ ├ÿ┬º├ÖΓÇ₧├ÖΓÇª├Ö╦å├ÿ┬º├ÿ┬» ├ÿ┬º├ÖΓÇ₧├ÿ┬«├ÿ┬º├ÖΓÇª ├ÖΓÇ₧├ÖΓÇª├ÖΓÇá├ÿ┬╣ ├ÿ┬º├ÖΓÇ₧├ÿ┬º├ÖΓÇá├ÿ┬¡├ÿ┬┤├ÿ┬º├ÿ┬▒ ├ÿ┬ú├Ö╦å ├ÿ┬¬├Ö╦å├ÖΓÇÜ├Ö┬ü ├ÿ┬º├ÖΓÇ₧├ÿ┬¬├ÿ┬»├Ö┬ü├ÖΓÇÜ.',
-      ),
-      CvExperienceBullet(
-        textEn: 'Enforced strict 5S shop-floor organization and machine safety guards compliance.',
-        textAr: '├ÿ┬¬├ÿ┬╖├ÿ┬¿├Ö┼á├ÖΓÇÜ ├ÖΓÇª├ÖΓÇá├ÖΓÇí├ÿ┬¼├Ö┼á├ÿ┬⌐ 5S ├ÖΓÇ₧├ÿ┬¬├ÿ┬▒├ÿ┬¬├Ö┼á├ÿ┬¿ ├ÿ┬¿├Ö┼á├ÿ┬ª├ÿ┬⌐ ├ÿ┬º├ÖΓÇ₧├ÿ┬╣├ÖΓÇª├ÖΓÇ₧ ├Ö╦å├ÿ┬º├ÖΓÇ₧├ÿ┬º├ÖΓÇ₧├ÿ┬¬├ÿ┬▓├ÿ┬º├ÖΓÇª ├ÿ┬¿├ÿ┬¡├Ö╦å├ÿ┬º├ÿ┬¼├ÿ┬▓ ├ÿ┬º├ÖΓÇ₧├ÿ┬¡├ÖΓÇª├ÿ┬º├Ö┼á├ÿ┬⌐ ├ÿ┬º├ÖΓÇ₧├ÿ┬¬├ÖΓÇ₧├ÖΓÇÜ├ÿ┬º├ÿ┬ª├Ö┼á├ÿ┬⌐.',
-      ),
-      CvExperienceBullet(
-        textEn: 'Trained junior machine operators on emergency shut-off protocols and shift handovers.',
-        textAr: '├ÿ┬¬├ÿ┬»├ÿ┬▒├Ö┼á├ÿ┬¿ ├ÿ┬º├ÖΓÇ₧├ÖΓÇª├ÿ┬┤├ÿ┬║├ÖΓÇ₧├Ö┼á├ÖΓÇá ├ÿ┬º├ÖΓÇ₧├ÿ┬¼├ÿ┬»├ÿ┬» ├ÿ┬╣├ÖΓÇ₧├ÖΓÇ░ ├ÿ┬Ñ├ÿ┬¼├ÿ┬▒├ÿ┬º├ÿ┬í├ÿ┬º├ÿ┬¬ ├ÿ┬º├ÖΓÇ₧├ÿ┬Ñ├Ö┼á├ÖΓÇÜ├ÿ┬º├Ö┬ü ├ÿ┬º├ÖΓÇ₧├ÿ┬╖├ÿ┬º├ÿ┬▒├ÿ┬ª ├Ö╦å├ÿ┬¬├ÿ┬│├ÖΓÇ₧├Ö┼á├ÖΓÇª ├ÿ┬º├ÖΓÇ₧├Ö╦å├ÿ┬▒├ÿ┬»├Ö┼á├ÿ┬º├ÿ┬¬.',
-      ),
-    ],
-  ),
-
-  // 2. ├░┼╕ΓÇÖ┬╗ Tech & Engineering
-  CvProfession(
-    titleEn: 'Software Engineer',
-    titleAr: '├ÖΓÇª├ÖΓÇí├ÖΓÇá├ÿ┬»├ÿ┬│ ├ÿ┬¿├ÿ┬▒├ÖΓÇª├ÿ┬¼├Ö┼á├ÿ┬º├ÿ┬¬',
-    categoryEn: 'Tech, Engineering & Business',
-    categoryAr: '├ÿ┬º├ÖΓÇ₧├ÿ┬¬├Ö╞Æ├ÖΓÇá├Ö╦å├ÖΓÇ₧├Ö╦å├ÿ┬¼├Ö┼á├ÿ┬º ├Ö╦å├ÿ┬º├ÖΓÇ₧├ÖΓÇí├ÖΓÇá├ÿ┬»├ÿ┬│├ÿ┬⌐ ├Ö╦å├ÿ┬º├ÖΓÇ₧├ÿ┬ú├ÿ┬╣├ÖΓÇª├ÿ┬º├ÖΓÇ₧',
-    emoji: '├░┼╕ΓÇÖ┬╗',
-    suggestedBullets: [
-      CvExperienceBullet(
-        textEn: 'Architected and deployed scalable RESTful microservices and backend web applications using modern cloud frameworks.',
-        textAr: '├ÿ┬¬├ÿ┬╡├ÖΓÇª├Ö┼á├ÖΓÇª ├Ö╦å├ÿ┬¬├ÿ┬╖├Ö╦å├Ö┼á├ÿ┬▒ ├ÿ┬º├ÖΓÇ₧├ÿ┬«├ÿ┬»├ÖΓÇª├ÿ┬º├ÿ┬¬ ├ÿ┬º├ÖΓÇ₧├ÖΓÇª├ÿ┬╡├ÿ┬║├ÿ┬▒├ÿ┬⌐ ├Ö╦å├ÿ┬º├ÖΓÇ₧├ÿ┬¬├ÿ┬╖├ÿ┬¿├Ö┼á├ÖΓÇÜ├ÿ┬º├ÿ┬¬ ├ÿ┬º├ÖΓÇ₧├ÿ┬│├ÿ┬¡├ÿ┬º├ÿ┬¿├Ö┼á├ÿ┬⌐ ├ÿ┬º├ÖΓÇ₧├ÖΓÇÜ├ÿ┬º├ÿ┬¿├ÖΓÇ₧├ÿ┬⌐ ├ÖΓÇ₧├ÖΓÇ₧├ÿ┬¬├Ö╦å├ÿ┬│├ÿ┬╣.',
-      ),
-      CvExperienceBullet(
-        textEn: 'Wrote clean, testable codebase backed by CI/CD pipelines, unit testing and automated integration tests.',
-        textAr: '├Ö╞Æ├ÿ┬¬├ÿ┬º├ÿ┬¿├ÿ┬⌐ ├Ö╞Æ├Ö╦å├ÿ┬» ├ÿ┬¿├ÿ┬▒├ÖΓÇª├ÿ┬¼├Ö┼á ├ÖΓÇá├ÿ┬╕├Ö┼á├Ö┬ü ├ÖΓÇª├ÿ┬»├ÿ┬╣├Ö╦å├ÖΓÇª ├ÿ┬¿├ÿ┬º├ÿ┬«├ÿ┬¬├ÿ┬¿├ÿ┬º├ÿ┬▒├ÿ┬º├ÿ┬¬ ├ÿ┬º├ÖΓÇ₧├Ö╦å├ÿ┬¡├ÿ┬»├ÿ┬⌐ ├Ö╦å├ÿ┬º├ÖΓÇ₧├ÿ┬¬├Ö╞Æ├ÿ┬º├ÖΓÇª├ÖΓÇ₧ ├Ö╦å├ÿ┬ú├ÖΓÇá├ÿ┬º├ÿ┬¿├Ö┼á├ÿ┬¿ ├ÿ┬º├ÖΓÇ₧├ÿ┬¬├ÿ┬¼├ÖΓÇª├Ö┼á├ÿ┬╣ ├ÿ┬º├ÖΓÇ₧├ÿ┬ó├ÖΓÇ₧├Ö┼á CI/CD.',
-      ),
-      CvExperienceBullet(
-        textEn: 'Collaborated in Agile/Scrum sprint teams to ship enterprise features on time with zero high-severity production bugs.',
-        textAr: '├ÿ┬º├ÖΓÇ₧├ÿ┬╣├ÖΓÇª├ÖΓÇ₧ ├ÿ┬╢├ÖΓÇª├ÖΓÇá ├Ö┬ü├ÿ┬▒├ÖΓÇÜ Agile/Scrum ├ÖΓÇ₧├ÿ┬¬├ÿ┬│├ÖΓÇ₧├Ö┼á├ÖΓÇª ├ÿ┬º├ÖΓÇ₧├ÖΓÇª├Ö┼á├ÿ┬▓├ÿ┬º├ÿ┬¬ ├ÿ┬º├ÖΓÇ₧├ÿ┬¿├ÿ┬▒├ÖΓÇª├ÿ┬¼├Ö┼á├ÿ┬⌐ ├Ö┬ü├Ö┼á ├ÖΓÇª├Ö╦å├ÿ┬º├ÿ┬╣├Ö┼á├ÿ┬»├ÖΓÇí├ÿ┬º ├ÿ┬¿├ÿ┬»├Ö╦å├ÖΓÇá ├ÿ┬ú├ÿ┬«├ÿ┬╖├ÿ┬º├ÿ┬í.',
-      ),
-      CvExperienceBullet(
-        textEn: 'Optimized database queries and API response latencies by 35% across high-traffic platforms.',
-        textAr: '├ÿ┬¬├ÿ┬¡├ÿ┬│├Ö┼á├ÖΓÇá ├ÿ┬º├ÿ┬│├ÿ┬¬├ÿ┬╣├ÖΓÇ₧├ÿ┬º├ÖΓÇª├ÿ┬º├ÿ┬¬ ├ÖΓÇÜ├Ö╦å├ÿ┬º├ÿ┬╣├ÿ┬» ├ÿ┬º├ÖΓÇ₧├ÿ┬¿├Ö┼á├ÿ┬º├ÖΓÇá├ÿ┬º├ÿ┬¬ ├Ö╦å├ÿ┬º├ÿ┬│├ÿ┬¬├ÿ┬¼├ÿ┬º├ÿ┬¿├ÿ┬⌐ ├ÿ┬º├ÖΓÇ₧├ÖΓé¼ API ├ÿ┬¿├ÖΓÇá├ÿ┬│├ÿ┬¿├ÿ┬⌐ 35% ├ÿ┬╣├ÖΓÇ₧├ÖΓÇ░ ├ÿ┬º├ÖΓÇ₧├ÖΓÇª├ÖΓÇá├ÿ┬╡├ÿ┬º├ÿ┬¬ ├ÿ┬╣├ÿ┬º├ÖΓÇ₧├Ö┼á├ÿ┬⌐ ├ÿ┬º├ÖΓÇ₧├ÿ┬▓├Ö┼á├ÿ┬º├ÿ┬▒├ÿ┬º├ÿ┬¬.',
-      ),
-      CvExperienceBullet(
-        textEn: 'Integrated OAuth2, JWT, and third-party RESTful APIs with strict security protocols.',
-        textAr: '├ÿ┬»├ÖΓÇª├ÿ┬¼ ├ÿ┬¿├ÿ┬▒├Ö╦å├ÿ┬¬├Ö╦å├Ö╞Æ├Ö╦å├ÖΓÇ₧├ÿ┬º├ÿ┬¬ ├ÿ┬º├ÖΓÇ₧├ÿ┬ú├ÖΓÇª├ÿ┬º├ÖΓÇá OAuth2 ├Ö╦å JWT ├Ö╦å├ÿ┬º├ÖΓÇ₧├Ö╦å├ÿ┬º├ÿ┬¼├ÖΓÇí├ÿ┬º├ÿ┬¬ ├ÿ┬º├ÖΓÇ₧├ÿ┬¿├ÿ┬▒├ÖΓÇª├ÿ┬¼├Ö┼á├ÿ┬⌐ ├ÿ┬º├ÖΓÇ₧├ÿ┬«├ÿ┬º├ÿ┬▒├ÿ┬¼├Ö┼á├ÿ┬⌐ ├ÿ┬¿├ÿ┬ú├ÿ┬╣├ÖΓÇ₧├ÖΓÇ░ ├ÖΓÇª├ÿ┬╣├ÿ┬º├Ö┼á├Ö┼á├ÿ┬▒ ├ÿ┬º├ÖΓÇ₧├ÿ┬¡├ÖΓÇª├ÿ┬º├Ö┼á├ÿ┬⌐.',
-      ),
-      CvExperienceBullet(
-        textEn: 'Monitored system health using Prometheus, Grafana, and cloud logging dashboards.',
-        textAr: '├ÖΓÇª├ÿ┬▒├ÿ┬º├ÖΓÇÜ├ÿ┬¿├ÿ┬⌐ ├ÿ┬ú├ÿ┬»├ÿ┬º├ÿ┬í ├ÿ┬º├ÖΓÇ₧├ÿ┬«├Ö╦å├ÿ┬º├ÿ┬»├ÖΓÇª ├Ö╦å├ÿ┬º├ÿ┬│├ÿ┬¬├ÖΓÇÜ├ÿ┬▒├ÿ┬º├ÿ┬▒ ├ÿ┬º├ÖΓÇ₧├ÖΓÇá├ÿ┬╕├ÿ┬º├ÖΓÇª ├ÿ┬¿├ÿ┬º├ÿ┬│├ÿ┬¬├ÿ┬«├ÿ┬»├ÿ┬º├ÖΓÇª ├ÿ┬ú├ÿ┬»├Ö╦å├ÿ┬º├ÿ┬¬ ├ÿ┬º├ÖΓÇ₧├ÖΓÇª├ÿ┬▒├ÿ┬º├ÖΓÇÜ├ÿ┬¿├ÿ┬⌐ ├Ö╦å├ÿ┬º├ÖΓÇ₧├ÿ┬│├ÿ┬¼├ÖΓÇ₧├ÿ┬º├ÿ┬¬ ├ÿ┬º├ÖΓÇ₧├ÿ┬│├ÿ┬¡├ÿ┬º├ÿ┬¿├Ö┼á├ÿ┬⌐.',
-      ),
-      CvExperienceBullet(
-        textEn: 'Conducted peer code reviews to enforce software architecture patterns and coding guidelines.',
-        textAr: '├ÖΓÇª├ÿ┬▒├ÿ┬º├ÿ┬¼├ÿ┬╣├ÿ┬⌐ ├ÿ┬º├ÖΓÇ₧├Ö╞Æ├Ö╦å├ÿ┬» ├ÿ┬º├ÖΓÇ₧├ÿ┬¿├ÿ┬▒├ÖΓÇª├ÿ┬¼├Ö┼á ├ÖΓÇ₧├ÖΓÇ₧├ÿ┬ú├ÖΓÇÜ├ÿ┬▒├ÿ┬º├ÖΓÇá ├ÖΓÇ₧├ÿ┬╢├ÖΓÇª├ÿ┬º├ÖΓÇá ├ÿ┬º├ÖΓÇ₧├ÿ┬º├ÖΓÇ₧├ÿ┬¬├ÿ┬▓├ÿ┬º├ÖΓÇª ├ÿ┬¿├ÿ┬ú├ÖΓÇá├ÖΓÇª├ÿ┬º├ÿ┬╖ ├ÿ┬º├ÖΓÇ₧├ÖΓÇª├ÿ┬╣├ÖΓÇª├ÿ┬º├ÿ┬▒├Ö┼á├ÿ┬⌐ ├Ö╦å├ÿ┬º├ÖΓÇ₧├ÖΓÇª├ÿ┬╣├ÿ┬º├Ö┼á├Ö┼á├ÿ┬▒ ├ÿ┬º├ÖΓÇ₧├ÖΓÇÜ├Ö┼á├ÿ┬º├ÿ┬│├Ö┼á├ÿ┬⌐.',
-      ),
-      CvExperienceBullet(
-        textEn: 'Refactored legacy monolithic services into modular maintainable components.',
-        textAr: '├ÿ┬Ñ├ÿ┬╣├ÿ┬º├ÿ┬»├ÿ┬⌐ ├ÖΓÇí├Ö┼á├Ö╞Æ├ÖΓÇ₧├ÿ┬⌐ ├ÿ┬º├ÖΓÇ₧├ÿ┬¿├ÿ┬▒├ÿ┬º├ÖΓÇª├ÿ┬¼ ├ÿ┬º├ÖΓÇ₧├ÖΓÇÜ├ÿ┬»├Ö┼á├ÖΓÇª├ÿ┬⌐ ├ÿ┬Ñ├ÖΓÇ₧├ÖΓÇ░ ├ÖΓÇª├Ö╞Æ├Ö╦å├ÖΓÇá├ÿ┬º├ÿ┬¬ ├ÿ┬¿├ÿ┬▒├ÖΓÇª├ÿ┬¼├Ö┼á├ÿ┬⌐ ├ÿ┬¡├ÿ┬»├Ö┼á├ÿ┬½├ÿ┬⌐ ├Ö╦å├ÿ┬│├ÖΓÇí├Ö╦å├ÖΓÇ₧├ÿ┬⌐ ├ÿ┬º├ÖΓÇ₧├ÿ┬╡├Ö┼á├ÿ┬º├ÖΓÇá├ÿ┬⌐.',
-      ),
-    ],
-  ),
-  CvProfession(
-    titleEn: 'Flutter & Mobile Developer',
-    titleAr: '├ÖΓÇª├ÿ┬╖├Ö╦å├ÿ┬▒ ├ÿ┬¬├ÿ┬╖├ÿ┬¿├Ö┼á├ÖΓÇÜ├ÿ┬º├ÿ┬¬ ├Ö┬ü├ÖΓÇ₧├ÿ┬º├ÿ┬¬├ÿ┬▒ ├Ö╦å├ÿ┬¼├Ö╦å├ÿ┬º├ÖΓÇ₧',
-    categoryEn: 'Tech, Engineering & Business',
-    categoryAr: '├ÿ┬º├ÖΓÇ₧├ÿ┬¬├Ö╞Æ├ÖΓÇá├Ö╦å├ÖΓÇ₧├Ö╦å├ÿ┬¼├Ö┼á├ÿ┬º ├Ö╦å├ÿ┬º├ÖΓÇ₧├ÖΓÇí├ÖΓÇá├ÿ┬»├ÿ┬│├ÿ┬⌐ ├Ö╦å├ÿ┬º├ÖΓÇ₧├ÿ┬ú├ÿ┬╣├ÖΓÇª├ÿ┬º├ÖΓÇ₧',
-    emoji: '├░┼╕ΓÇÖ┬╗',
-    suggestedBullets: [
-      CvExperienceBullet(
-        textEn: 'Built cross-platform iOS & Android mobile applications using Flutter & Dart with clean architecture and Provider/Bloc.',
-        textAr: '├ÿ┬¬├ÿ┬╖├Ö╦å├Ö┼á├ÿ┬▒ ├ÿ┬¬├ÿ┬╖├ÿ┬¿├Ö┼á├ÖΓÇÜ├ÿ┬º├ÿ┬¬ ├ÿ┬¼├Ö╦å├ÿ┬º├ÖΓÇ₧ ├ÿ┬¬├ÿ┬╣├ÖΓÇª├ÖΓÇ₧ ├ÿ┬╣├ÖΓÇ₧├ÖΓÇ░ iOS ├Ö╦å Android ├ÿ┬¿├ÿ┬º├ÿ┬│├ÿ┬¬├ÿ┬«├ÿ┬»├ÿ┬º├ÖΓÇª Flutter ├Ö╦å Dart ├Ö╦å├ÿ┬Ñ├ÿ┬»├ÿ┬º├ÿ┬▒├ÿ┬⌐ ├ÿ┬º├ÖΓÇ₧├ÿ┬¡├ÿ┬º├ÖΓÇ₧├ÿ┬⌐.',
-      ),
-      CvExperienceBullet(
-        textEn: 'Integrated Firebase Auth, Cloud Firestore, REST APIs and OAuth providers for seamless user authentication.',
-        textAr: '├ÿ┬»├ÖΓÇª├ÿ┬¼ ├ÿ┬«├ÿ┬»├ÖΓÇª├ÿ┬º├ÿ┬¬ ├ÿ┬º├ÖΓÇ₧├ÖΓÇª├ÿ┬╡├ÿ┬º├ÿ┬»├ÖΓÇÜ├ÿ┬⌐ ├ÖΓÇª├ÖΓÇá Firebase ├Ö╦å Firestore ├Ö╦å├ÿ┬º├ÖΓÇ₧├Ö╦å├ÿ┬º├ÿ┬¼├ÖΓÇí├ÿ┬º├ÿ┬¬ ├ÿ┬º├ÖΓÇ₧├ÿ┬¿├ÿ┬▒├ÖΓÇª├ÿ┬¼├Ö┼á├ÿ┬⌐ ├ÖΓÇ₧├ÿ┬▒├ÿ┬¿├ÿ┬╖ ├ÿ┬º├ÖΓÇ₧├ÖΓÇª├ÿ┬│├ÿ┬¬├ÿ┬«├ÿ┬»├ÖΓÇª├Ö┼á├ÖΓÇá.',
-      ),
-      CvExperienceBullet(
-        textEn: 'Implemented responsive pixel-perfect UI layouts and custom smooth micro-animations.',
-        textAr: '├ÿ┬¿├ÖΓÇá├ÿ┬º├ÿ┬í ├Ö╦å├ÿ┬º├ÿ┬¼├ÖΓÇí├ÿ┬º├ÿ┬¬ ├ÖΓÇª├ÿ┬│├ÿ┬¬├ÿ┬«├ÿ┬»├ÖΓÇª ├ÖΓÇª├ÿ┬¬├ÿ┬¼├ÿ┬º├Ö╦å├ÿ┬¿├ÿ┬⌐ ├ÿ┬╣├ÿ┬º├ÖΓÇ₧├Ö┼á├ÿ┬⌐ ├ÿ┬º├ÖΓÇ₧├ÿ┬»├ÖΓÇÜ├ÿ┬⌐ ├ÖΓÇª├ÿ┬╣ ├ÿ┬¡├ÿ┬▒├Ö╞Æ├ÿ┬º├ÿ┬¬ ├Ö╦å├ÿ┬¬├ÿ┬ú├ÿ┬½├Ö┼á├ÿ┬▒├ÿ┬º├ÿ┬¬ ├ÿ┬¬├Ö┬ü├ÿ┬º├ÿ┬╣├ÖΓÇ₧├Ö┼á├ÿ┬⌐ ├ÿ┬│├ÖΓÇ₧├ÿ┬│├ÿ┬⌐.',
-      ),
-      CvExperienceBullet(
-        textEn: 'Published and maintained applications on Apple App Store & Google Play Store.',
-        textAr: '├ÿ┬▒├Ö┬ü├ÿ┬╣ ├Ö╦å├ÖΓÇá├ÿ┬┤├ÿ┬▒ ├Ö╦å├ÿ┬╡├Ö┼á├ÿ┬º├ÖΓÇá├ÿ┬⌐ ├ÿ┬º├ÖΓÇ₧├ÿ┬¬├ÿ┬╖├ÿ┬¿├Ö┼á├ÖΓÇÜ├ÿ┬º├ÿ┬¬ ├ÿ┬╣├ÖΓÇ₧├ÖΓÇ░ ├ÖΓÇª├ÿ┬¬├ÿ┬¼├ÿ┬▒├Ö┼á App Store ├Ö╦å Google Play.',
-      ),
-      CvExperienceBullet(
-        textEn: 'Implemented offline data caching using Hive, SQLite, and Shared Preferences.',
-        textAr: '├ÿ┬¬├Ö┬ü├ÿ┬╣├Ö┼á├ÖΓÇ₧ ├ÿ┬º├ÖΓÇ₧├ÿ┬¬├ÿ┬«├ÿ┬▓├Ö┼á├ÖΓÇá ├ÿ┬º├ÖΓÇ₧├ÖΓÇª├ÿ┬¡├ÖΓÇ₧├Ö┼á ├ÿ┬º├ÖΓÇ₧├ÖΓÇª├ÿ┬ñ├ÖΓÇÜ├ÿ┬¬ ├ÖΓÇ₧├ÖΓÇ₧├ÿ┬¿├Ö┼á├ÿ┬º├ÖΓÇá├ÿ┬º├ÿ┬¬ ├ÖΓÇ₧├ÿ┬╢├ÖΓÇª├ÿ┬º├ÖΓÇá ├ÿ┬╣├ÖΓÇª├ÖΓÇ₧ ├ÿ┬º├ÖΓÇ₧├ÿ┬¬├ÿ┬╖├ÿ┬¿├Ö┼á├ÖΓÇÜ ├ÿ┬¿├ÿ┬»├Ö╦å├ÖΓÇá ├ÿ┬º├ÿ┬¬├ÿ┬╡├ÿ┬º├ÖΓÇ₧ ├ÿ┬¿├ÿ┬º├ÖΓÇ₧├ÿ┬Ñ├ÖΓÇá├ÿ┬¬├ÿ┬▒├ÖΓÇá├ÿ┬¬.',
-      ),
-      CvExperienceBullet(
-        textEn: 'Integrated push notifications, deep linking, and in-app analytics tracking.',
-        textAr: '├ÿ┬»├ÖΓÇª├ÿ┬¼ ├ÿ┬º├ÖΓÇ₧├ÿ┬¬├ÖΓÇá├ÿ┬¿├Ö┼á├ÖΓÇí├ÿ┬º├ÿ┬¬ ├ÿ┬º├ÖΓÇ₧├Ö┬ü├Ö╦å├ÿ┬▒├Ö┼á├ÿ┬⌐ ├Ö╦å├ÿ┬º├ÖΓÇ₧├ÿ┬▒├Ö╦å├ÿ┬º├ÿ┬¿├ÿ┬╖ ├ÿ┬º├ÖΓÇ₧├ÿ┬╣├ÖΓÇª├Ö┼á├ÖΓÇÜ├ÿ┬⌐ ├Ö╦å├ÿ┬ú├ÿ┬»├Ö╦å├ÿ┬º├ÿ┬¬ ├ÿ┬¬├ÿ┬¡├ÖΓÇ₧├Ö┼á├ÖΓÇ₧├ÿ┬º├ÿ┬¬ ├ÿ┬º├ÿ┬│├ÿ┬¬├ÿ┬«├ÿ┬»├ÿ┬º├ÖΓÇª ├ÿ┬º├ÖΓÇ₧├ÿ┬¬├ÿ┬╖├ÿ┬¿├Ö┼á├ÖΓÇÜ.',
-      ),
-      CvExperienceBullet(
-        textEn: 'Reduced mobile app bundle size by 30% through asset optimization and tree-shaking.',
-        textAr: '├ÿ┬¬├ÖΓÇÜ├ÖΓÇ₧├Ö┼á├ÖΓÇ₧ ├ÿ┬¡├ÿ┬¼├ÖΓÇª ├ÖΓÇª├ÖΓÇ₧├Ö┬ü ├ÿ┬º├ÖΓÇ₧├ÿ┬¬├ÿ┬╖├ÿ┬¿├Ö┼á├ÖΓÇÜ ├ÿ┬¿├ÖΓÇá├ÿ┬│├ÿ┬¿├ÿ┬⌐ 30% ├ÿ┬╣├ÿ┬¿├ÿ┬▒ ├ÿ┬¬├ÿ┬¡├ÿ┬│├Ö┼á├ÖΓÇá ├ÿ┬º├ÖΓÇ₧├Ö╦å├ÿ┬│├ÿ┬º├ÿ┬ª├ÿ┬╖ ├Ö╦å├ÿ┬╢├ÿ┬║├ÿ┬╖ ├ÿ┬º├ÖΓÇ₧├ÿ┬╣├ÖΓÇá├ÿ┬º├ÿ┬╡├ÿ┬▒.',
-      ),
-      CvExperienceBullet(
-        textEn: 'Handled app localization (RTL & LTR) for multi-language global deployment.',
-        textAr: '├ÿ┬»├ÿ┬╣├ÖΓÇª ├ÿ┬º├ÖΓÇ₧├ÿ┬¬├Ö╦å├ÿ┬╖├Ö┼á├ÖΓÇá ├Ö╦å├ÿ┬º├ÖΓÇ₧├ÖΓÇ₧├ÿ┬║├ÿ┬º├ÿ┬¬ ├ÖΓÇª├ÿ┬¬├ÿ┬╣├ÿ┬»├ÿ┬»├ÿ┬⌐ ├ÿ┬º├ÖΓÇ₧├ÿ┬º├ÿ┬¬├ÿ┬¼├ÿ┬º├ÖΓÇí├ÿ┬º├ÿ┬¬ (RTL/LTR) ├ÖΓÇ₧├ÖΓÇ₧├ÖΓÇá├ÿ┬┤├ÿ┬▒ ├ÿ┬º├ÖΓÇ₧├ÿ┬╣├ÿ┬º├ÖΓÇ₧├ÖΓÇª├Ö┼á.',
-      ),
-    ],
-  ),
-  
-  // 3. ├░┼╕┬ÅΓÇö├»┬╕┬Å Construction & Logistics
-  CvProfession(
-    titleEn: 'Construction Worker',
-    titleAr: '├ÿ┬╣├ÿ┬º├ÖΓÇª├ÖΓÇ₧ ├ÿ┬¿├ÖΓÇá├ÿ┬º├ÿ┬í',
-    categoryEn: 'Construction & Logistics',
-    categoryAr: '├ÿ┬º├ÖΓÇ₧├ÿ┬¿├ÖΓÇá├ÿ┬º├ÿ┬í ├Ö╦å├ÿ┬º├ÖΓÇ₧├ÖΓÇ₧├Ö╦å├ÿ┬¼├ÿ┬│├ÿ┬¬├Ö┼á├ÿ┬º├ÿ┬¬',
-    emoji: '├░┼╕┬ÅΓÇö├»┬╕┬Å',
-    suggestedBullets: [
-      CvExperienceBullet(
-        textEn: 'Assisted in the erection of scaffolding and operation of heavy construction equipment.',
-        textAr: '├ÿ┬º├ÖΓÇ₧├ÖΓÇª├ÿ┬│├ÿ┬º├ÿ┬╣├ÿ┬»├ÿ┬⌐ ├Ö┬ü├Ö┼á ├ÖΓÇá├ÿ┬╡├ÿ┬¿ ├ÿ┬º├ÖΓÇ₧├ÿ┬│├ÖΓÇÜ├ÿ┬º├ÖΓÇ₧├ÿ┬º├ÿ┬¬ ├Ö╦å├ÿ┬¬├ÿ┬┤├ÿ┬║├Ö┼á├ÖΓÇ₧ ├ÖΓÇª├ÿ┬╣├ÿ┬»├ÿ┬º├ÿ┬¬ ├ÿ┬º├ÖΓÇ₧├ÿ┬¿├ÖΓÇá├ÿ┬º├ÿ┬í ├ÿ┬º├ÖΓÇ₧├ÿ┬½├ÖΓÇÜ├Ö┼á├ÖΓÇ₧├ÿ┬⌐.',
-      ),
-    ],
-  ),
-  
-  // 4. ├░┼╕┬Å┬¿ Hospitality, Services & Agriculture
-  CvProfession(
-    titleEn: 'Customer Service Representative',
-    titleAr: '├ÖΓÇª├ÖΓÇª├ÿ┬½├ÖΓÇ₧ ├ÿ┬«├ÿ┬»├ÖΓÇª├ÿ┬⌐ ├ÿ┬º├ÖΓÇ₧├ÿ┬╣├ÖΓÇª├ÖΓÇ₧├ÿ┬º├ÿ┬í',
-    categoryEn: 'Hospitality, Services & Agriculture',
-    categoryAr: '├ÿ┬º├ÖΓÇ₧├ÿ┬╢├Ö┼á├ÿ┬º├Ö┬ü├ÿ┬⌐ ├Ö╦å├ÿ┬º├ÖΓÇ₧├ÿ┬«├ÿ┬»├ÖΓÇª├ÿ┬º├ÿ┬¬ ├Ö╦å├ÿ┬º├ÖΓÇ₧├ÿ┬▓├ÿ┬▒├ÿ┬º├ÿ┬╣├ÿ┬⌐',
-    emoji: '├░┼╕┬Å┬¿',
-    suggestedBullets: [
-      CvExperienceBullet(
-        textEn: 'Resolved customer inquiries and maintained high satisfaction ratings.',
-        textAr: '├ÿ┬¡├ÖΓÇ₧ ├ÿ┬º├ÿ┬│├ÿ┬¬├Ö┬ü├ÿ┬│├ÿ┬º├ÿ┬▒├ÿ┬º├ÿ┬¬ ├ÿ┬º├ÖΓÇ₧├ÿ┬╣├ÖΓÇª├ÖΓÇ₧├ÿ┬º├ÿ┬í ├Ö╦å├ÿ┬º├ÖΓÇ₧├ÿ┬¡├Ö┬ü├ÿ┬º├ÿ┬╕ ├ÿ┬╣├ÖΓÇ₧├ÖΓÇ░ ├ÖΓÇª├ÿ┬╣├ÿ┬»├ÖΓÇ₧├ÿ┬º├ÿ┬¬ ├ÿ┬▒├ÿ┬╢├ÿ┬º ├ÿ┬╣├ÿ┬º├ÖΓÇ₧├Ö┼á├ÿ┬⌐.',
-      ),
-    ],
-  ),
-  
-  // 5. ├░┼╕┬Å┬Ñ Healthcare & Science
-  CvProfession(
-    titleEn: 'Registered Nurse',
-    titleAr: '├ÖΓÇª├ÖΓÇª├ÿ┬▒├ÿ┬╢ ├ÖΓÇª├ÿ┬│├ÿ┬¼├ÖΓÇ₧',
-    categoryEn: 'Healthcare & Science',
-    categoryAr: '├ÿ┬º├ÖΓÇ₧├ÿ┬▒├ÿ┬╣├ÿ┬º├Ö┼á├ÿ┬⌐ ├ÿ┬º├ÖΓÇ₧├ÿ┬╡├ÿ┬¡├Ö┼á├ÿ┬⌐ ├Ö╦å├ÿ┬º├ÖΓÇ₧├ÿ┬╣├ÖΓÇ₧├Ö╦å├ÖΓÇª',
-    emoji: '├░┼╕┬Å┬Ñ',
-    suggestedBullets: [
-      CvExperienceBullet(
-        textEn: 'Provided exceptional patient care and assisted in clinical procedures.',
-        textAr: '├ÿ┬¬├ÖΓÇÜ├ÿ┬»├Ö┼á├ÖΓÇª ├ÿ┬▒├ÿ┬╣├ÿ┬º├Ö┼á├ÿ┬⌐ ├ÖΓÇª├ÿ┬¬├ÖΓÇª├Ö┼á├ÿ┬▓├ÿ┬⌐ ├ÖΓÇ₧├ÖΓÇ₧├ÖΓÇª├ÿ┬▒├ÿ┬╢├ÖΓÇ░ ├Ö╦å├ÿ┬º├ÖΓÇ₧├ÖΓÇª├ÿ┬│├ÿ┬º├ÿ┬╣├ÿ┬»├ÿ┬⌐ ├Ö┬ü├Ö┼á ├ÿ┬º├ÖΓÇ₧├ÿ┬Ñ├ÿ┬¼├ÿ┬▒├ÿ┬º├ÿ┬í├ÿ┬º├ÿ┬¬ ├ÿ┬º├ÖΓÇ₧├ÿ┬│├ÿ┬▒├Ö┼á├ÿ┬▒├Ö┼á├ÿ┬⌐.',
-      ),
-    ],
-  ),
-  
-  // 6. ├░┼╕ΓÇ£┼á Business, Sales & Admin
-  CvProfession(
-    titleEn: 'Sales Manager',
-    titleAr: '├ÖΓÇª├ÿ┬»├Ö┼á├ÿ┬▒ ├ÖΓÇª├ÿ┬¿├Ö┼á├ÿ┬╣├ÿ┬º├ÿ┬¬',
-    categoryEn: 'Business, Sales & Admin',
-    categoryAr: '├ÿ┬Ñ├ÿ┬»├ÿ┬º├ÿ┬▒├ÿ┬⌐ ├ÿ┬º├ÖΓÇ₧├ÿ┬ú├ÿ┬╣├ÖΓÇª├ÿ┬º├ÖΓÇ₧ ├Ö╦å├ÿ┬º├ÖΓÇ₧├ÖΓÇª├ÿ┬¿├Ö┼á├ÿ┬╣├ÿ┬º├ÿ┬¬',
-    emoji: '├░┼╕ΓÇ£┼á',
-    suggestedBullets: [
-      CvExperienceBullet(
-        textEn: 'Developed sales strategies and led a high-performing sales team.',
-        textAr: '├ÿ┬¬├ÿ┬╖├Ö╦å├Ö┼á├ÿ┬▒ ├ÿ┬º├ÿ┬│├ÿ┬¬├ÿ┬▒├ÿ┬º├ÿ┬¬├Ö┼á├ÿ┬¼├Ö┼á├ÿ┬º├ÿ┬¬ ├ÿ┬º├ÖΓÇ₧├ÖΓÇª├ÿ┬¿├Ö┼á├ÿ┬╣├ÿ┬º├ÿ┬¬ ├Ö╦å├ÖΓÇÜ├Ö┼á├ÿ┬º├ÿ┬»├ÿ┬⌐ ├Ö┬ü├ÿ┬▒├Ö┼á├ÖΓÇÜ ├ÖΓÇª├ÿ┬¿├Ö┼á├ÿ┬╣├ÿ┬º├ÿ┬¬ ├ÿ┬╣├ÿ┬º├ÖΓÇ₧├Ö┼á ├ÿ┬º├ÖΓÇ₧├ÿ┬ú├ÿ┬»├ÿ┬º├ÿ┬í.',
-      ),
-  ),
-  CvProfessionCategory(
-    titleEn: 'Engineering & Architecture',
-    titleAr: '╪º┘ä┘ç┘å╪»╪│╪⌐ ┘ê╪º┘ä╪╣┘à╪º╪▒╪⌐',
-    emoji: '≡ƒÅù∩╕Å',
-    professions: [
-      CvProfession(titleEn: 'Civil Engineer', titleAr: '┘à┘ç┘å╪»╪│ ┘à╪»┘å┘è', categoryEn: 'Engineering', categoryAr: '╪º┘ä┘ç┘å╪»╪│╪⌐', emoji: '≡ƒÅù∩╕Å', suggestedBullets: ['Managed construction projects from conception to completion.', 'Ensured compliance with safety and building regulations.']),
-      CvProfession(titleEn: 'Mechanical Engineer', titleAr: '┘à┘ç┘å╪»╪│ ┘à┘è┘â╪º┘å┘è┘â┘è', categoryEn: 'Engineering', categoryAr: '╪º┘ä┘ç┘å╪»╪│╪⌐', emoji: 'ΓÜÖ∩╕Å', suggestedBullets: ['Designed and optimized mechanical systems.', 'Conducted thermal and stress analysis on components.']),
-      CvProfession(titleEn: 'Electrical Engineer', titleAr: '┘à┘ç┘å╪»╪│ ┘â┘ç╪▒╪¿╪º╪ª┘è', categoryEn: 'Engineering', categoryAr: '╪º┘ä┘ç┘å╪»╪│╪⌐', emoji: 'ΓÜí', suggestedBullets: ['Developed electrical schematics and wiring plans.', 'Tested and troubleshoot complex circuitry.']),
-      CvProfession(titleEn: 'Architect', titleAr: '┘à┘ç┘å╪»╪│ ┘à╪╣┘à╪º╪▒┘è', categoryEn: 'Engineering', categoryAr: '╪º┘ä┘ç┘å╪»╪│╪⌐', emoji: '≡ƒÅó', suggestedBullets: ['Designed aesthetically pleasing and functional structures.', 'Drafted blueprints using CAD software.']),
-    ],
-  ),
-  CvProfessionCategory(
-    titleEn: 'Logistics & Transportation',
-    titleAr: '╪º┘ä┘ä┘ê╪¼╪│╪¬┘è╪º╪¬ ┘ê╪º┘ä┘å┘é┘ä',
-    emoji: '≡ƒÜÜ',
-    professions: [
-      CvProfession(titleEn: 'Supply Chain Manager', titleAr: '┘à╪»┘è╪▒ ╪│┘ä╪│┘ä╪⌐ ╪º┘ä╪Ñ┘à╪»╪º╪»', categoryEn: 'Logistics', categoryAr: '╪º┘ä┘ä┘ê╪¼╪│╪¬┘è╪º╪¬', emoji: '≡ƒôª', suggestedBullets: ['Optimized supply chain operations reducing costs.', 'Negotiated contracts with vendors and suppliers.']),
-      CvProfession(titleEn: 'Delivery Driver', titleAr: '╪│╪º╪ª┘é ╪¬┘ê╪╡┘è┘ä', categoryEn: 'Logistics', categoryAr: '╪º┘ä┘ä┘ê╪¼╪│╪¬┘è╪º╪¬', emoji: '≡ƒÜÜ', suggestedBullets: ['Ensured timely delivery of goods and packages.', 'Maintained vehicle logs and maintenance schedules.']),
-      CvProfession(titleEn: 'Logistics Coordinator', titleAr: '┘à┘å╪│┘é ┘ä┘ê╪¼╪│╪¬┘è╪º╪¬', categoryEn: 'Logistics', categoryAr: '╪º┘ä┘ä┘ê╪¼╪│╪¬┘è╪º╪¬', emoji: '≡ƒôï', suggestedBullets: ['Coordinated dispatch and tracked incoming shipments.']),
-    ],
-  ),
-  CvProfessionCategory(
-    titleEn: 'Admin & Office Support',
-    titleAr: '╪º┘ä╪Ñ╪»╪º╪▒╪⌐ ┘ê╪º┘ä╪»╪╣┘à ╪º┘ä┘à┘â╪¬╪¿┘è',
-    emoji: '≡ƒôü',
-    professions: [
-      CvProfession(titleEn: 'Administrative Assistant', titleAr: '┘à╪│╪º╪╣╪» ╪Ñ╪»╪º╪▒┘è', categoryEn: 'Admin', categoryAr: '╪Ñ╪»╪º╪▒╪⌐', emoji: '≡ƒôü', suggestedBullets: ['Handled scheduling, filing, and office communication.', 'Organized meetings and maintained executives calendars.']),
-      CvProfession(titleEn: 'Data Entry Clerk', titleAr: '┘à╪»╪«┘ä ╪¿┘è╪º┘å╪º╪¬', categoryEn: 'Admin', categoryAr: '╪Ñ╪»╪º╪▒╪⌐', emoji: 'Γî¿∩╕Å', suggestedBullets: ['Accurately maintained large sets of company records.', 'Performed regular database cleanups and audits.']),
-      CvProfession(titleEn: 'HR Manager', titleAr: '┘à╪»┘è╪▒ ┘à┘ê╪º╪▒╪» ╪¿╪┤╪▒┘è╪⌐', categoryEn: 'Admin', categoryAr: '╪Ñ╪»╪º╪▒╪⌐', emoji: '≡ƒæÑ', suggestedBullets: ['Managed recruitment, onboarding, and employee relations.', 'Implemented company-wide HR policies.']),
-    ],
-  ),
-];
-
-// ├óΓÇ¥Γé¼├óΓÇ¥Γé¼ Categorized list generator ├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼
-final List<CvProfessionCategory> kProfessionCategories = [
-  CvProfessionCategory(
-    id: 'trades',
-    titleEn: 'Vocational & Technical Trades',
-    titleAr: '├░┼╕ΓÇ║┬á├»┬╕┬Å ├ÿ┬º├ÖΓÇ₧├ÿ┬¡├ÿ┬▒├Ö┬ü ├ÿ┬º├ÖΓÇ₧├Ö┬ü├ÖΓÇá├Ö┼á├ÿ┬⌐ ├Ö╦å├ÿ┬º├ÖΓÇ₧├ÿ┬¬├ÖΓÇÜ├ÖΓÇá├Ö┼á├ÿ┬⌐',
-    emoji: '├░┼╕ΓÇ║┬á├»┬╕┬Å',
-    professions: kProfessions
-        .where((p) =>
-            p.categoryAr.contains('├ÿ┬º├ÖΓÇ₧├ÿ┬¡├ÿ┬▒├Ö┬ü') || p.categoryEn.contains('Trades'))
-        .toList(),
-  ),
-  CvProfessionCategory(
-    id: 'construction',
-    titleEn: 'Construction & Logistics',
-    titleAr: '├░┼╕┬ÅΓÇö├»┬╕┬Å ├ÿ┬º├ÖΓÇ₧├ÿ┬¿├ÖΓÇá├ÿ┬º├ÿ┬í ├Ö╦å├ÿ┬º├ÖΓÇ₧├ÖΓÇ₧├Ö╦å├ÿ┬¼├ÿ┬│├ÿ┬¬├Ö┼á├ÿ┬º├ÿ┬¬',
-    emoji: '├░┼╕┬ÅΓÇö├»┬╕┬Å',
-    professions: kProfessions
-        .where((p) =>
-            p.categoryAr.contains('├ÿ┬º├ÖΓÇ₧├ÿ┬¿├ÖΓÇá├ÿ┬º├ÿ┬í') ||
-            p.categoryEn.contains('Construction'))
-        .toList(),
-  ),
-  CvProfessionCategory(
-    id: 'hospitality',
-    titleEn: 'Hospitality, Services & Agriculture',
-    titleAr: '├░┼╕┬Å┬¿ ├ÿ┬º├ÖΓÇ₧├ÿ┬╢├Ö┼á├ÿ┬º├Ö┬ü├ÿ┬⌐ ├Ö╦å├ÿ┬º├ÖΓÇ₧├ÿ┬«├ÿ┬»├ÖΓÇª├ÿ┬º├ÿ┬¬ ├Ö╦å├ÿ┬º├ÖΓÇ₧├ÿ┬▓├ÿ┬▒├ÿ┬º├ÿ┬╣├ÿ┬⌐',
-    emoji: '├░┼╕┬Å┬¿',
-    professions: kProfessions
-        .where((p) =>
-            p.categoryAr.contains('├ÿ┬º├ÖΓÇ₧├ÿ┬╢├Ö┼á├ÿ┬º├Ö┬ü├ÿ┬⌐') ||
-            p.categoryEn.contains('Hospitality'))
-        .toList(),
-  ),
-  CvProfessionCategory(
-    id: 'tech',
-    titleEn: 'Tech, Engineering & Business',
-    titleAr: '├░┼╕ΓÇÖ┬╗ ├ÿ┬º├ÖΓÇ₧├ÿ┬¬├ÖΓÇÜ├ÖΓÇá├Ö┼á├ÿ┬⌐ ├Ö╦å├ÿ┬º├ÖΓÇ₧├ÖΓÇí├ÖΓÇá├ÿ┬»├ÿ┬│├ÿ┬⌐ ├Ö╦å├ÿ┬º├ÖΓÇ₧├ÿ┬ú├ÿ┬╣├ÖΓÇª├ÿ┬º├ÖΓÇ₧',
-    emoji: '├░┼╕ΓÇÖ┬╗',
-    professions: kProfessions
-        .where((p) =>
-            p.categoryAr.contains('├ÿ┬º├ÖΓÇ₧├ÿ┬¬├ÖΓÇÜ├ÖΓÇá├Ö┼á├ÿ┬⌐') ||
-            p.categoryEn.contains('Tech'))
-        .toList(),
-  ),
-  CvProfessionCategory(
-    id: 'healthcare',
-    titleEn: 'Healthcare & Science',
-    titleAr: '├░┼╕┬Å┬Ñ ├ÿ┬º├ÖΓÇ₧├ÿ┬▒├ÿ┬╣├ÿ┬º├Ö┼á├ÿ┬⌐ ├ÿ┬º├ÖΓÇ₧├ÿ┬╡├ÿ┬¡├Ö┼á├ÿ┬⌐ ├Ö╦å├ÿ┬º├ÖΓÇ₧├ÿ┬╣├ÖΓÇ₧├Ö╦å├ÖΓÇª',
-    emoji: '├░┼╕┬Å┬Ñ',
-    professions: kProfessions
-        .where((p) =>
-            p.categoryAr.contains('├ÿ┬º├ÖΓÇ₧├ÿ┬▒├ÿ┬╣├ÿ┬º├Ö┼á├ÿ┬⌐') ||
-            p.categoryEn.contains('Healthcare'))
-        .toList(),
-  ),
-  CvProfessionCategory(
-    id: 'business',
-    titleEn: 'Business, Sales & Admin',
-    titleAr: '├░┼╕ΓÇ£┼á ├ÿ┬Ñ├ÿ┬»├ÿ┬º├ÿ┬▒├ÿ┬⌐ ├ÿ┬º├ÖΓÇ₧├ÿ┬ú├ÿ┬╣├ÖΓÇª├ÿ┬º├ÖΓÇ₧ ├Ö╦å├ÿ┬º├ÖΓÇ₧├ÖΓÇª├ÿ┬¿├Ö┼á├ÿ┬╣├ÿ┬º├ÿ┬¬',
-    emoji: '├░┼╕ΓÇ£┼á',
-    professions: kProfessions
-        .where((p) =>
-            p.categoryAr.contains('├ÿ┬Ñ├ÿ┬»├ÿ┬º├ÿ┬▒├ÿ┬⌐') ||
-            p.categoryEn.contains('Business'))
-        .toList(),
-  ),
-];
-
-const List<String> kCountries = [
-  'Afghanistan / ╪ú┘ü╪║╪º┘å╪│╪¬╪º┘å', 'Albania / ╪ú┘ä╪¿╪º┘å┘è╪º', 'Algeria / ╪º┘ä╪¼╪▓╪º╪ª╪▒', 'Andorra / ╪ú┘å╪»┘ê╪▒╪º', 'Angola / ╪ú┘å╪║┘ê┘ä╪º', 
-  'Argentina / ╪º┘ä╪ú╪▒╪¼┘å╪¬┘è┘å', 'Armenia / ╪ú╪▒┘à┘è┘å┘è╪º', 'Australia / ╪ú╪│╪¬╪▒╪º┘ä┘è╪º', 'Austria / ╪º┘ä┘å┘à╪│╪º', 'Azerbaijan / ╪ú╪░╪▒╪¿┘è╪¼╪º┘å',
-  'Bahrain / ╪º┘ä╪¿╪¡╪▒┘è┘å', 'Bangladesh / ╪¿┘å╪║┘ä╪º╪»┘è╪┤', 'Belarus / ╪¿┘è┘ä╪º╪▒┘ê╪│', 'Belgium / ╪¿┘ä╪¼┘è┘â╪º', 'Bolivia / ╪¿┘ê┘ä┘è┘ü┘è╪º',
-  'Brazil / ╪º┘ä╪¿╪▒╪º╪▓┘è┘ä', 'Bulgaria / ╪¿┘ä╪║╪º╪▒┘è╪º', 'Cameroon / ╪º┘ä┘â╪º┘à┘è╪▒┘ê┘å', 'Canada / ┘â┘å╪»╪º', 'Chile / ╪¬╪┤┘è┘ä┘è',
-  'China / ╪º┘ä╪╡┘è┘å', 'Colombia / ┘â┘ê┘ä┘ê┘à╪¿┘è╪º', 'Costa Rica / ┘â┘ê╪│╪¬╪º╪▒┘è┘â╪º', 'Croatia / ┘â╪▒┘ê╪º╪¬┘è╪º', 'Cuba / ┘â┘ê╪¿╪º',
-  'Cyprus / ┘é╪¿╪▒╪╡', 'Czech Republic / ╪º┘ä╪¬╪┤┘è┘â', 'Denmark / ╪º┘ä╪»┘å┘à╪º╪▒┘â', 'Egypt / ┘à╪╡╪▒', 'Estonia / ╪Ñ╪│╪¬┘ê┘å┘è╪º',
-  'Ethiopia / ╪Ñ╪½┘è┘ê╪¿┘è╪º', 'Finland / ┘ü┘å┘ä┘å╪»╪º', 'France / ┘ü╪▒┘å╪│╪º', 'Georgia / ╪¼┘ê╪▒╪¼┘è╪º', 'Germany / ╪ú┘ä┘à╪º┘å┘è╪º',
-  'Ghana / ╪║╪º┘å╪º', 'Greece / ╪º┘ä┘è┘ê┘å╪º┘å', 'Hungary / ╪º┘ä┘à╪¼╪▒', 'Iceland / ╪ó┘è╪│┘ä┘å╪»╪º', 'India / ╪º┘ä┘ç┘å╪»',
-  'Indonesia / ╪Ñ┘å╪»┘ê┘å┘è╪│┘è╪º', 'Iran / ╪Ñ┘è╪▒╪º┘å', 'Iraq / ╪º┘ä╪╣╪▒╪º┘é', 'Ireland / ╪ú┘è╪▒┘ä┘å╪»╪º', 'Israel / ╪Ñ╪│╪▒╪º╪ª┘è┘ä',
-  'Italy / ╪Ñ┘è╪╖╪º┘ä┘è╪º', 'Japan / ╪º┘ä┘è╪º╪¿╪º┘å', 'Jordan / ╪º┘ä╪ú╪▒╪»┘å', 'Kazakhstan / ┘â╪º╪▓╪º╪«╪│╪¬╪º┘å', 'Kenya / ┘â┘è┘å┘è╪º',
-  'Kuwait / ╪º┘ä┘â┘ê┘è╪¬', 'Latvia / ┘ä╪º╪¬┘ü┘è╪º', 'Lebanon / ┘ä╪¿┘å╪º┘å', 'Libya / ┘ä┘è╪¿┘è╪º', 'Lithuania / ┘ä┘è╪¬┘ê╪º┘å┘è╪º',
-  'Luxembourg / ┘ä┘ê┘â╪│┘à╪¿┘ê╪▒╪║', 'Malaysia / ┘à╪º┘ä┘è╪▓┘è╪º', 'Malta / ┘à╪º┘ä╪╖╪º', 'Mexico / ╪º┘ä┘à┘â╪│┘è┘â', 'Morocco / ╪º┘ä┘à╪║╪▒╪¿',
-  'Netherlands / ┘ç┘ê┘ä┘å╪»╪º', 'New Zealand / ┘å┘è┘ê╪▓┘è┘ä┘å╪»╪º', 'Nigeria / ┘å┘è╪¼┘è╪▒┘è╪º', 'Norway / ╪º┘ä┘å╪▒┘ê┘è╪¼', 'Oman / ╪╣┘à╪º┘å',
-  'Pakistan / ╪¿╪º┘â╪│╪¬╪º┘å', 'Palestine / ┘ü┘ä╪│╪╖┘è┘å', 'Peru / ╪¿┘è╪▒┘ê', 'Philippines / ╪º┘ä┘ü┘ä╪¿┘è┘å', 'Poland / ╪¿┘ê┘ä┘å╪»╪º',
-  'Portugal / ╪º┘ä╪¿╪▒╪¬╪║╪º┘ä', 'Qatar / ┘é╪╖╪▒', 'Romania / ╪▒┘ê┘à╪º┘å┘è╪º', 'Russia / ╪▒┘ê╪│┘è╪º', 'Saudi Arabia / ╪º┘ä╪│╪╣┘ê╪»┘è╪⌐',
-  'Senegal / ╪º┘ä╪│┘å╪║╪º┘ä', 'Serbia / ╪╡╪▒╪¿┘è╪º', 'Singapore / ╪│┘å╪║╪º┘ü┘ê╪▒╪⌐', 'Slovakia / ╪│┘ä┘ê┘ü╪º┘â┘è╪º', 'Slovenia / ╪│┘ä┘ê┘ü┘è┘å┘è╪º',
-  'South Africa / ╪¼┘å┘ê╪¿ ╪ú┘ü╪▒┘è┘é┘è╪º', 'South Korea / ┘â┘ê╪▒┘è╪º ╪º┘ä╪¼┘å┘ê╪¿┘è╪⌐', 'Spain / ╪Ñ╪│╪¿╪º┘å┘è╪º', 'Sudan / ╪º┘ä╪│┘ê╪»╪º┘å',
-  'Sweden / ╪º┘ä╪│┘ê┘è╪»', 'Switzerland / ╪│┘ê┘è╪│╪▒╪º', 'Syria / ╪│┘ê╪▒┘è╪º', 'Taiwan / ╪¬╪º┘è┘ê╪º┘å', 'Thailand / ╪¬╪º┘è┘ä╪º┘å╪»',
-  'Tunisia / ╪¬┘ê┘å╪│', 'Turkey / ╪¬╪▒┘â┘è╪º', 'Uganda / ╪ú┘ê╪║┘å╪»╪º', 'Ukraine / ╪ú┘ê┘â╪▒╪º┘å┘è╪º', 'United Arab Emirates / ╪º┘ä╪Ñ┘à╪º╪▒╪º╪¬',
-  'United Kingdom / ╪º┘ä┘à┘à┘ä┘â╪⌐ ╪º┘ä┘à╪¬╪¡╪»╪⌐', 'United States / ╪º┘ä┘ê┘ä╪º┘è╪º╪¬ ╪º┘ä┘à╪¬╪¡╪»╪⌐', 'Uruguay / ╪ú┘ê╪▒┘ê╪║┘ê╪º┘è',
-  'Uzbekistan / ╪ú┘ê╪▓╪¿┘â╪│╪¬╪º┘å', 'Venezuela / ┘ü┘å╪▓┘ê┘è┘ä╪º', 'Vietnam / ┘ü┘è╪¬┘å╪º┘à', 'Yemen / ╪º┘ä┘è┘à┘å', 'Zambia / ╪▓╪º┘à╪¿┘è╪º'
-];
-
-const Map<String, List<String>> kCountryCityMap = {
-  '├ÿ┬º├ÖΓÇ₧├ÿ┬│├ÿ┬╣├Ö╦å├ÿ┬»├Ö┼á├ÿ┬⌐': ['├ÿ┬º├ÖΓÇ₧├ÿ┬▒├Ö┼á├ÿ┬º├ÿ┬╢', '├ÿ┬¼├ÿ┬»├ÿ┬⌐', '├ÿ┬º├ÖΓÇ₧├ÿ┬»├ÖΓÇª├ÿ┬º├ÖΓÇª', '├ÖΓÇª├Ö╞Æ├ÿ┬⌐', '├ÿ┬º├ÖΓÇ₧├ÖΓÇª├ÿ┬»├Ö┼á├ÖΓÇá├ÿ┬⌐ ├ÿ┬º├ÖΓÇ₧├ÖΓÇª├ÖΓÇá├Ö╦å├ÿ┬▒├ÿ┬⌐'],
-  '├ÿ┬º├ÖΓÇ₧├ÿ┬Ñ├ÖΓÇª├ÿ┬º├ÿ┬▒├ÿ┬º├ÿ┬¬': ['├ÿ┬»├ÿ┬¿├Ö┼á', '├ÿ┬ú├ÿ┬¿├Ö╦å ├ÿ┬╕├ÿ┬¿├Ö┼á', '├ÿ┬º├ÖΓÇ₧├ÿ┬┤├ÿ┬º├ÿ┬▒├ÖΓÇÜ├ÿ┬⌐', '├ÿ┬º├ÖΓÇ₧├ÿ┬╣├Ö┼á├ÖΓÇá'],
-  '├ÖΓÇª├ÿ┬╡├ÿ┬▒': ['├ÿ┬º├ÖΓÇ₧├ÖΓÇÜ├ÿ┬º├ÖΓÇí├ÿ┬▒├ÿ┬⌐', '├ÿ┬º├ÖΓÇ₧├ÿ┬Ñ├ÿ┬│├Ö╞Æ├ÖΓÇá├ÿ┬»├ÿ┬▒├Ö┼á├ÿ┬⌐', '├ÿ┬º├ÖΓÇ₧├ÿ┬¼├Ö┼á├ÿ┬▓├ÿ┬⌐', '├ÿ┬┤├ÿ┬▒├ÖΓÇª ├ÿ┬º├ÖΓÇ₧├ÿ┬┤├Ö┼á├ÿ┬«'],
-  '├ÿ┬º├ÖΓÇ₧├Ö╞Æ├Ö╦å├Ö┼á├ÿ┬¬': ['├ÖΓÇª├ÿ┬»├Ö┼á├ÖΓÇá├ÿ┬⌐ ├ÿ┬º├ÖΓÇ₧├Ö╞Æ├Ö╦å├Ö┼á├ÿ┬¬', '├ÿ┬º├ÖΓÇ₧├ÿ┬ú├ÿ┬¡├ÖΓÇª├ÿ┬»├Ö┼á', '├ÿ┬¡├Ö╦å├ÖΓÇ₧├Ö┼á', '├ÿ┬º├ÖΓÇ₧├ÿ┬│├ÿ┬º├ÖΓÇ₧├ÖΓÇª├Ö┼á├ÿ┬⌐'],
-  '├ÖΓÇÜ├ÿ┬╖├ÿ┬▒': ['├ÿ┬º├ÖΓÇ₧├ÿ┬»├Ö╦å├ÿ┬¡├ÿ┬⌐', '├ÿ┬º├ÖΓÇ₧├ÿ┬▒├Ö┼á├ÿ┬º├ÖΓÇá', '├ÿ┬º├ÖΓÇ₧├Ö╦å├Ö╞Æ├ÿ┬▒├ÿ┬⌐'],
-  '├ÿ┬º├ÖΓÇ₧├ÿ┬¿├ÿ┬¡├ÿ┬▒├Ö┼á├ÖΓÇá': ['├ÿ┬º├ÖΓÇ₧├ÖΓÇª├ÖΓÇá├ÿ┬º├ÖΓÇª├ÿ┬⌐', '├ÿ┬º├ÖΓÇ₧├ÖΓÇª├ÿ┬¡├ÿ┬▒├ÖΓÇÜ', '├ÿ┬º├ÖΓÇ₧├ÿ┬▒├Ö┬ü├ÿ┬º├ÿ┬╣'],
-  '├ÿ┬╣├ÖΓÇª├ÿ┬º├ÖΓÇá': ['├ÖΓÇª├ÿ┬│├ÖΓÇÜ├ÿ┬╖', '├ÿ┬╡├ÖΓÇ₧├ÿ┬º├ÖΓÇ₧├ÿ┬⌐', '├ÿ┬╡├ÿ┬¡├ÿ┬º├ÿ┬▒'],
-  '├ÿ┬º├ÖΓÇ₧├ÿ┬ú├ÿ┬▒├ÿ┬»├ÖΓÇá': ['├ÿ┬╣├ÖΓÇª├ÿ┬º├ÖΓÇá', '├ÿ┬Ñ├ÿ┬▒├ÿ┬¿├ÿ┬»', '├ÿ┬º├ÖΓÇ₧├ÿ┬▓├ÿ┬▒├ÖΓÇÜ├ÿ┬º├ÿ┬í', '├ÿ┬º├ÖΓÇ₧├ÿ┬╣├ÖΓÇÜ├ÿ┬¿├ÿ┬⌐'],
-  '├ÖΓÇ₧├ÿ┬¿├ÖΓÇá├ÿ┬º├ÖΓÇá': ['├ÿ┬¿├Ö┼á├ÿ┬▒├Ö╦å├ÿ┬¬', '├ÿ┬╖├ÿ┬▒├ÿ┬º├ÿ┬¿├ÖΓÇ₧├ÿ┬│', '├ÿ┬╡├Ö┼á├ÿ┬»├ÿ┬º'],
-  '├ÿ┬º├ÖΓÇ₧├ÿ┬¼├ÿ┬▓├ÿ┬º├ÿ┬ª├ÿ┬▒': ['├ÿ┬º├ÖΓÇ₧├ÿ┬¼├ÿ┬▓├ÿ┬º├ÿ┬ª├ÿ┬▒ ├ÿ┬º├ÖΓÇ₧├ÿ┬╣├ÿ┬º├ÿ┬╡├ÖΓÇª├ÿ┬⌐', '├Ö╦å├ÖΓÇí├ÿ┬▒├ÿ┬º├ÖΓÇá', '├ÖΓÇÜ├ÿ┬│├ÖΓÇá├ÿ┬╖├Ö┼á├ÖΓÇá├ÿ┬⌐'],
-  '├ÿ┬º├ÖΓÇ₧├ÖΓÇª├ÿ┬║├ÿ┬▒├ÿ┬¿': ['├ÿ┬º├ÖΓÇ₧├ÿ┬»├ÿ┬º├ÿ┬▒ ├ÿ┬º├ÖΓÇ₧├ÿ┬¿├Ö┼á├ÿ┬╢├ÿ┬º├ÿ┬í', '├ÿ┬º├ÖΓÇ₧├ÿ┬▒├ÿ┬¿├ÿ┬º├ÿ┬╖', '├ÖΓÇª├ÿ┬▒├ÿ┬º├Ö╞Æ├ÿ┬┤', '├ÿ┬╖├ÖΓÇá├ÿ┬¼├ÿ┬⌐'],
-  '├ÿ┬¬├Ö╦å├ÖΓÇá├ÿ┬│': ['├ÿ┬¬├Ö╦å├ÖΓÇá├ÿ┬│ ├ÿ┬º├ÖΓÇ₧├ÿ┬╣├ÿ┬º├ÿ┬╡├ÖΓÇª├ÿ┬⌐', '├ÿ┬╡├Ö┬ü├ÿ┬º├ÖΓÇÜ├ÿ┬│', '├ÿ┬│├Ö╦å├ÿ┬│├ÿ┬⌐'],
-  '├ÿ┬ú├ÖΓÇ₧├ÖΓÇª├ÿ┬º├ÖΓÇá├Ö┼á├ÿ┬º': ['├ÿ┬¿├ÿ┬▒├ÖΓÇ₧├Ö┼á├ÖΓÇá', '├ÖΓÇª├Ö┼á├Ö╦å├ÖΓÇá├ÿ┬«', '├Ö┬ü├ÿ┬▒├ÿ┬º├ÖΓÇá├Ö╞Æ├Ö┬ü├Ö╦å├ÿ┬▒├ÿ┬¬', '├ÖΓÇí├ÿ┬º├ÖΓÇª├ÿ┬¿├Ö╦å├ÿ┬▒├ÿ┬║', '├Ö╞Æ├Ö╦å├ÖΓÇ₧├Ö╦å├ÖΓÇá├Ö┼á├ÿ┬º'],
-  '├Ö┬ü├ÿ┬▒├ÖΓÇá├ÿ┬│├ÿ┬º': ['├ÿ┬¿├ÿ┬º├ÿ┬▒├Ö┼á├ÿ┬│', '├ÖΓÇ₧├Ö┼á├Ö╦å├ÖΓÇá', '├ÖΓÇª├ÿ┬º├ÿ┬▒├ÿ┬│├Ö┼á├ÖΓÇ₧├Ö┼á├ÿ┬º', '├ÿ┬¬├Ö╦å├ÖΓÇ₧├Ö╦å├ÿ┬▓'],
-  '├ÿ┬Ñ├Ö┼á├ÿ┬╖├ÿ┬º├ÖΓÇ₧├Ö┼á├ÿ┬º': ['├ÿ┬▒├Ö╦å├ÖΓÇª├ÿ┬º', '├ÖΓÇª├Ö┼á├ÖΓÇ₧├ÿ┬º├ÖΓÇá├Ö╦å', '├ÖΓÇá├ÿ┬º├ÿ┬¿├Ö╦å├ÖΓÇ₧├Ö┼á', '├ÿ┬¬├Ö╦å├ÿ┬▒├Ö┼á├ÖΓÇá├Ö╦å'],
-  '├ÿ┬Ñ├ÿ┬│├ÿ┬¿├ÿ┬º├ÖΓÇá├Ö┼á├ÿ┬º': ['├ÖΓÇª├ÿ┬»├ÿ┬▒├Ö┼á├ÿ┬»', '├ÿ┬¿├ÿ┬▒├ÿ┬┤├ÖΓÇ₧├Ö╦å├ÖΓÇá├ÿ┬⌐', '├Ö┬ü├ÿ┬º├ÖΓÇ₧├ÖΓÇá├ÿ┬│├Ö┼á├ÿ┬º', '├ÿ┬Ñ├ÿ┬┤├ÿ┬¿├Ö┼á├ÖΓÇ₧├Ö┼á├ÿ┬⌐'],
-  '├ÖΓÇí├Ö╦å├ÖΓÇ₧├ÖΓÇá├ÿ┬»├ÿ┬º': ['├ÿ┬ú├ÖΓÇª├ÿ┬│├ÿ┬¬├ÿ┬▒├ÿ┬»├ÿ┬º├ÖΓÇª', '├ÿ┬▒├Ö╦å├ÿ┬¬├ÿ┬▒├ÿ┬»├ÿ┬º├ÖΓÇª', '├ÖΓÇ₧├ÿ┬º├ÖΓÇí├ÿ┬º├Ö┼á', '├ÿ┬ú├Ö╦å├ÿ┬¬├ÿ┬▒├Ö┼á├ÿ┬«├ÿ┬¬'],
-  '├ÿ┬º├ÖΓÇ₧├ÖΓÇá├ÖΓÇª├ÿ┬│├ÿ┬º': ['├Ö┬ü├Ö┼á├Ö┼á├ÖΓÇá├ÿ┬º', '├ÿ┬│├ÿ┬º├ÖΓÇ₧├ÿ┬▓├ÿ┬¿├Ö╦å├ÿ┬▒├ÿ┬║', '├ÿ┬║├ÿ┬▒├ÿ┬º├ÿ┬¬├ÿ┬│'],
-  '├ÿ┬¿├ÖΓÇ₧├ÿ┬¼├Ö┼á├Ö╞Æ├ÿ┬º': ['├ÿ┬¿├ÿ┬▒├Ö╦å├Ö╞Æ├ÿ┬│├ÖΓÇ₧', '├ÿ┬ú├ÖΓÇá├ÿ┬¬├Ö╦å├Ö┼á├ÿ┬▒├ÿ┬¿', '├ÿ┬║├ÖΓÇá├ÿ┬¬'],
-  '├ÿ┬º├ÖΓÇ₧├Ö┼á├Ö╦å├ÖΓÇá├ÿ┬º├ÖΓÇá': ['├ÿ┬ú├ÿ┬½├Ö┼á├ÖΓÇá├ÿ┬º', '├ÿ┬│├ÿ┬º├ÖΓÇ₧├Ö╦å├ÖΓÇá├Ö┼á├Ö╞Æ', '├ÿ┬¿├ÿ┬º├ÿ┬¬├ÿ┬▒├ÿ┬º├ÿ┬│'],
-  '├ÿ┬º├ÖΓÇ₧├ÿ┬│├Ö╦å├Ö┼á├ÿ┬»': ['├ÿ┬│├ÿ┬¬├Ö╦å├Ö╞Æ├ÖΓÇí├Ö╦å├ÖΓÇ₧├ÖΓÇª', '├ÿ┬║├Ö╦å├ÿ┬¬├ÖΓÇá├ÿ┬¿├ÿ┬▒├ÿ┬║', '├ÖΓÇª├ÿ┬º├ÖΓÇ₧├ÖΓÇª├Ö╦å'],
-  '├ÿ┬ú├Ö┼á├ÿ┬▒├ÖΓÇ₧├ÖΓÇá├ÿ┬»├ÿ┬º': ['├ÿ┬»├ÿ┬¿├ÖΓÇ₧├ÖΓÇá', '├Ö╞Æ├Ö╦å├ÿ┬▒├Ö╞Æ', '├ÿ┬║├ÿ┬º├ÖΓÇ₧├Ö╦å├ÿ┬º├Ö┼á'],
-  '├ÿ┬º├ÖΓÇ₧├ÿ┬»├ÖΓÇá├ÖΓÇª├ÿ┬º├ÿ┬▒├Ö╞Æ': ['├Ö╞Æ├Ö╦å├ÿ┬¿├ÖΓÇá├ÖΓÇí├ÿ┬º├ÿ┬║├ÖΓÇá', '├ÿ┬ó├ÿ┬▒├ÖΓÇí├Ö╦å├ÿ┬│'],
-  '├ÿ┬º├ÖΓÇ₧├ÖΓÇá├ÿ┬▒├Ö╦å├Ö┼á├ÿ┬¼': ['├ÿ┬ú├Ö╦å├ÿ┬│├ÖΓÇ₧├Ö╦å', '├ÿ┬¿├Ö┼á├ÿ┬▒├ÿ┬║├ÖΓÇá'],
-  '├ÿ┬º├ÖΓÇ₧├ÿ┬¿├ÿ┬▒├ÿ┬¬├ÿ┬║├ÿ┬º├ÖΓÇ₧': ['├ÖΓÇ₧├ÿ┬┤├ÿ┬¿├Ö╦å├ÖΓÇá├ÿ┬⌐', '├ÿ┬¿├Ö╦å├ÿ┬▒├ÿ┬¬├Ö╦å'],
-  '├ÿ┬º├ÖΓÇ₧├ÖΓÇª├ÖΓÇª├ÖΓÇ₧├Ö╞Æ├ÿ┬⌐ ├ÿ┬º├ÖΓÇ₧├ÖΓÇª├ÿ┬¬├ÿ┬¡├ÿ┬»├ÿ┬⌐': ['├ÖΓÇ₧├ÖΓÇá├ÿ┬»├ÖΓÇá', '├ÖΓÇª├ÿ┬º├ÖΓÇá├ÿ┬┤├ÿ┬│├ÿ┬¬├ÿ┬▒', '├ÿ┬¿├ÿ┬▒├ÖΓÇª├ÖΓÇá├ÿ┬║├ÖΓÇí├ÿ┬º├ÖΓÇª', '├ÿ┬║├ÖΓÇ₧├ÿ┬º├ÿ┬│├Ö╞Æ├Ö╦å'],
-  '├ÿ┬º├ÖΓÇ₧├Ö╦å├ÖΓÇ₧├ÿ┬º├Ö┼á├ÿ┬º├ÿ┬¬ ├ÿ┬º├ÖΓÇ₧├ÖΓÇª├ÿ┬¬├ÿ┬¡├ÿ┬»├ÿ┬⌐': ['├ÖΓÇá├Ö┼á├Ö╦å├Ö┼á├Ö╦å├ÿ┬▒├Ö╞Æ', '├ÖΓÇ₧├Ö╦å├ÿ┬│ ├ÿ┬ú├ÖΓÇá├ÿ┬¼├ÖΓÇ₧├Ö╦å├ÿ┬│', '├ÿ┬┤├Ö┼á├Ö╞Æ├ÿ┬º├ÿ┬║├Ö╦å', '├ÖΓÇí├Ö┼á├Ö╦å├ÿ┬│├ÿ┬¬├ÖΓÇá'],
-  '├Ö╞Æ├ÖΓÇá├ÿ┬»├ÿ┬º': ['├ÿ┬¬├Ö╦å├ÿ┬▒├Ö╦å├ÖΓÇá├ÿ┬¬├Ö╦å', '├Ö┬ü├ÿ┬º├ÖΓÇá├Ö╞Æ├Ö╦å├Ö┬ü├ÿ┬▒', '├ÖΓÇª├Ö╦å├ÖΓÇá├ÿ┬¬├ÿ┬▒├Ö┼á├ÿ┬º├ÖΓÇ₧', '├Ö╞Æ├ÿ┬º├ÖΓÇ₧├ÿ┬¼├ÿ┬º├ÿ┬▒├Ö┼á'],
-  '├ÿ┬ú├ÿ┬│├ÿ┬¬├ÿ┬▒├ÿ┬º├ÖΓÇ₧├Ö┼á├ÿ┬º': ['├ÿ┬│├Ö┼á├ÿ┬»├ÖΓÇá├Ö┼á', '├ÖΓÇª├ÖΓÇ₧├ÿ┬¿├Ö╦å├ÿ┬▒├ÖΓÇá', '├ÿ┬¿├ÿ┬▒├Ö┼á├ÿ┬▓├ÿ┬¿├ÿ┬º├ÖΓÇá', '├ÿ┬¿├Ö┼á├ÿ┬▒├ÿ┬½'],
-};
-
+// ════════════════════════════════════════════════════════════════════════════
+// CvFormData
+//
+// Categorized taxonomy of White-Collar & Blue-Collar professions with
+// bilingual labels (English & Arabic) and a comprehensive pool of 8-10
+// bilingual suggested experience bullet points per profession.
+//
+// Bilingual Mapping:
+//   • [textAr] is shown in the UI selection list when language is Arabic.
+//   • [textEn] is the formal ATS English text inserted into the PDF/CV.
+// ════════════════════════════════════════════════════════════════════════════
+
+class CvExperienceBullet {
+  const CvExperienceBullet({
+    required this.textEn,
+    required this.textAr,
+  });
+
+  /// Formal ATS English text inserted into the Europass PDF/CV model
+  final String textEn;
+
+  /// Arabic localized text shown in the UI preset suggestion list
+  final String textAr;
+}
+
+class CvProfession {
+  const CvProfession({
+    required this.titleEn,
+    required this.titleAr,
+    required this.categoryEn,
+    required this.categoryAr,
+    required this.emoji,
+    required this.suggestedBullets,
+  });
+
+  /// ATS-friendly English job title embedded in the PDF.
+  final String titleEn;
+
+  /// Arabic label shown inside the UI dropdown/modal.
+  final String titleAr;
+
+  /// Category name in English (e.g. "Vocational & Technical Trades")
+  final String categoryEn;
+
+  /// Category name in Arabic (e.g. "الحرف الفنية والتقنية")
+  final String categoryAr;
+
+  /// Emoji indicator for visual clarity
+  final String emoji;
+
+  /// Comprehensive list of 8-10 bilingual ATS suggested bullet points.
+  final List<CvExperienceBullet> suggestedBullets;
+
+  /// Legacy helper getter returning English bullet point strings.
+  List<String> get atsBullets => suggestedBullets.map((b) => b.textEn).toList();
+}
+
+class CvProfessionCategory {
+  const CvProfessionCategory({
+    required this.id,
+    required this.titleEn,
+    required this.titleAr,
+    required this.emoji,
+    required this.professions,
+  });
+
+  final String id;
+  final String titleEn;
+  final String titleAr;
+  final String emoji;
+  final List<CvProfession> professions;
+}
+
+// ── Categorized Professions Database ──────────────────────────────────────────
+const List<CvProfession> kProfessions = [
+  // 1. 🛠️ Vocational & Technical Trades
+  CvProfession(
+    titleEn: 'Electrician',
+    titleAr: 'كهربائي',
+    categoryEn: 'Vocational & Technical Trades',
+    categoryAr: 'الحرف الفنية والتقنية',
+    emoji: '🛠️',
+    suggestedBullets: [
+      CvExperienceBullet(
+        textEn: 'Installed, maintained and repaired electrical wiring, equipment and fixtures in compliance with national safety codes.',
+        textAr: 'تركيب وصيانة وإصلاح التمديدات والمعدات والتركيبات الكهربائية وفقاً لمعايير السلامة الوطنية.',
+      ),
+      CvExperienceBullet(
+        textEn: 'Read and interpreted blueprints, wiring diagrams and engineering drawings to carry out installation tasks.',
+        textAr: 'قراءة وتفسير المخططات الهندسية ورسومات التمديدات الكهربائية لتنفيذ المهام بدقة.',
+      ),
+      CvExperienceBullet(
+        textEn: 'Performed preventive maintenance on industrial electrical systems, reducing unplanned downtime by 25%.',
+        textAr: 'تنفيذ الصيانة الوقائية للأنظمة الكهربائية الصناعية، مما قلل من التوقف غير المخطط له بنسبة 25%.',
+      ),
+      CvExperienceBullet(
+        textEn: 'Diagnosed and repaired electrical faults in high-voltage transformers, switchgears, and control panels.',
+        textAr: 'تشخيص وإصلاح الأعطال الكهربائية في محولات الضغط العالي ولوحات التحكم والقطع.',
+      ),
+      CvExperienceBullet(
+        textEn: 'Tested electrical systems and continuity using multimeters, megohmmeters, and insulation testers.',
+        textAr: 'اختبار الأنظمة الكهربائية والاستمرارية باستخدام أجهزة الفولتميتر والميجوميتر وفحص العزل.',
+      ),
+      CvExperienceBullet(
+        textEn: 'Installed cable trays, conduit systems, and junction boxes for commercial facilities.',
+        textAr: 'تركيب مسارات الكابلات وأنظمة الأنابيب وصناديق التجميع في المنشآت التجارية.',
+      ),
+      CvExperienceBullet(
+        textEn: 'Collaborated with project managers and site engineers to deliver electrical works on schedule.',
+        textAr: 'التعاون مع مديري المشاريع ومهندسي الموقع لتسليم الأعمال الكهربائية في المواعيد المحتسبة.',
+      ),
+      CvExperienceBullet(
+        textEn: 'Enforced zero-incident OSHA & CE safety protocols across all live wire installation sites.',
+        textAr: 'تطبيق إجراءات السلامة المهنية وتجنب الحوادث في جميع مواقع العمل الكهربائية الحية.',
+      ),
+    ],
+  ),
+  CvProfession(
+    titleEn: 'Welder & Fabricator',
+    titleAr: 'لحام ومشكّل معادن',
+    categoryEn: 'Vocational & Technical Trades',
+    categoryAr: 'الحرف الفنية والتقنية',
+    emoji: '🛠️',
+    suggestedBullets: [
+      CvExperienceBullet(
+        textEn: 'Performed MIG, TIG and arc welding on structural steel and stainless steel components in manufacturing environments.',
+        textAr: 'تنفيذ عمليات اللحام باستخدام MIG وTIG واللحام القوسي على الهياكل الفولاذية والمعادن.',
+      ),
+      CvExperienceBullet(
+        textEn: 'Interpreted engineering drawings and welding symbols to produce precision welds meeting ISO 9001 quality standards.',
+        textAr: 'قراءة ورسم رموز اللحام والمخططات الهندسية لإنتاج لحامات دقيقة تطابق معايير ISO 9001.',
+      ),
+      CvExperienceBullet(
+        textEn: 'Inspected completed welds using visual and non-destructive testing (NDT) methods to ensure structural integrity.',
+        textAr: 'فحص اللحامات المكتملة باستخدام الفحص البصري وااختبارات NDT غير المدمرة لضمان متانة الهيكل.',
+      ),
+      CvExperienceBullet(
+        textEn: 'Operated angle grinders, cutting torches, plasma cutters, and fabrication tools with 100% precision.',
+        textAr: 'تشغيل أدوات القطع بالبلازما والمجالخ ومعدات التشكيل بدقة عالية.',
+      ),
+      CvExperienceBullet(
+        textEn: 'Fabricated heavy structural frames, tanks, and pressure piping to design specification.',
+        textAr: 'تصنيع وتشكيل الهياكل المعدنية الثقيلة والخزانات وأنابيب الضغط وفقاً للمواصفات.',
+      ),
+      CvExperienceBullet(
+        textEn: 'Set up welding parameters, shielding gas flow rates, and voltage according to metallurgy specs.',
+        textAr: 'ضبط معدلات تدفق الغاز ومستويات الجهد الكهربائي وفقاً لمواصفات المعادن المعالجة.',
+      ),
+      CvExperienceBullet(
+        textEn: 'Prepared metal surfaces by cleaning, beveling, and clamping parts prior to assembly.',
+        textAr: 'تجهيز أسطح المعادن بالتنظيف والشطف والتثبيت قبل بدء عملية التجميع.',
+      ),
+      CvExperienceBullet(
+        textEn: 'Strictly adhered to PPE, eye protection, and ventilation safety protocols on fabrication floors.',
+        textAr: 'الالتزام الصارم بمعدات الحماية الشخصية وسلامة التهوية داخل ورش التصنيع.',
+      ),
+    ],
+  ),
+  CvProfession(
+    titleEn: 'Plumber & Pipefitter',
+    titleAr: 'سباك وفني تمديدات صحية',
+    categoryEn: 'Vocational & Technical Trades',
+    categoryAr: 'الحرف الفنية والتقنية',
+    emoji: '🛠️',
+    suggestedBullets: [
+      CvExperienceBullet(
+        textEn: 'Installed, inspected and repaired commercial and residential piping systems, water heaters and drainage infrastructure.',
+        textAr: 'تركيب وفحص وإصلاح شبكات الأنابيب التجارية والسكنية وسخانات المياه والبنية التحتية للصرف.',
+      ),
+      CvExperienceBullet(
+        textEn: 'Used pressure testing gauges to detect pipe leaks and ensured all installations met building regulatory standards.',
+        textAr: 'استخدام أجهزة قياس الضغط لاكتشاف التسريبات وضمان مطابقة التمديدات للوائح البناء.',
+      ),
+      CvExperienceBullet(
+        textEn: 'Replaced damaged valves, fittings and pumps in high-demand plumbing systems with zero unplanned shutdowns.',
+        textAr: 'استبدال الصمامات والمضخات التالفة في شبكات المياه دون تعطيل خطوط الإمداد.',
+      ),
+      CvExperienceBullet(
+        textEn: 'Coordinated with site managers to plan pipe routing, trenching, and material estimation for major renovations.',
+        textAr: 'التنسيق مع مديري الموقع لتخطيط مسارات الأنابيب وحفر الخنادق وحساب كميات المواد.',
+      ),
+      CvExperienceBullet(
+        textEn: 'Soldered, brazed, and threaded copper, PVC, PEX, and cast iron piping for water supply.',
+        textAr: 'لحام وتلحيم وتثبيت أنابيب النحاس والـ PVC والحديد لشبكات التغذية.',
+      ),
+      CvExperienceBullet(
+        textEn: 'Cleared complex blockages in main sewer lines using hydro-jetters and motor drain augers.',
+        textAr: 'تسليك وتطهير الانسدادات المعقدة في خطوط المجاري الرئيسية باستخدام الضغط العالي والتجهيزات الآلية.',
+      ),
+      CvExperienceBullet(
+        textEn: 'Installed sanitary fixtures, pumps, backflow preventers, and water filtration equipment.',
+        textAr: 'تركيب الأدوات الصحية والمضخات ومعدات الفلترة وأجهزة منع التدفق العكسي.',
+      ),
+      CvExperienceBullet(
+        textEn: 'Maintained detailed work orders, material logs, and safety inspection documentation.',
+        textAr: 'توثيق أذونات العمل وسجلات المواد وفحوصات السلامة بشكل منتظم.',
+      ),
+    ],
+  ),
+  CvProfession(
+    titleEn: 'HVAC Technician',
+    titleAr: 'فني تكييف وتبريد',
+    categoryEn: 'Vocational & Technical Trades',
+    categoryAr: 'الحرف الفنية والتقنية',
+    emoji: '🛠️',
+    suggestedBullets: [
+      CvExperienceBullet(
+        textEn: 'Installed, serviced and repaired central heating, ventilation and air conditioning (HVAC) systems in commercial buildings.',
+        textAr: 'تركيب وصيانة وإصلاح أنظمة التكييف والتبريد المركزية والتهوية في المباني التجارية.',
+      ),
+      CvExperienceBullet(
+        textEn: 'Recovered refrigerants and recharged systems according to F-Gas environmental regulations and safety standards.',
+        textAr: 'استرجاع وسائط التبريد وإعادة شحن الأنظمة وفقاً للوائح البيئية والسلامة المعتمدة.',
+      ),
+      CvExperienceBullet(
+        textEn: 'Diagnosed electrical and mechanical faults in chillers, air handling units (AHUs) and compressors.',
+        textAr: 'تشخيص الأعطال الكهربائية والميكانيكية في المبردات (Chillers) ووحدات مناولة الهواء والضواغط.',
+      ),
+      CvExperienceBullet(
+        textEn: 'Executed scheduled preventive maintenance contracts, improving system energy efficiency by 18%.',
+        textAr: 'تنفيذ عقود الصيانة الوقائية الدورية مما ساهم في تحسين كفاءة استهلاك الطاقة بنسبة 18%.',
+      ),
+      CvExperienceBullet(
+        textEn: 'Replaced failed fan motors, expansion valves, thermostats, and circuit boards.',
+        textAr: 'استبدال محركات المروحيات وصمامات التمدد وثرموستات ولوحات التحكم التالفة.',
+      ),
+      CvExperienceBullet(
+        textEn: 'Inspected and cleaned ductwork, air filters, and evaporator coils to optimize indoor air quality.',
+        textAr: 'تنظيف وفحص مجاري الهواء والفلاتر ومبخرات التبريد لضمان جودة الهواء الداخلي.',
+      ),
+      CvExperienceBullet(
+        textEn: 'Programmed digital building management thermostats and automated HVAC controllers.',
+        textAr: 'برمجة أنظمة التحكم الرقمي والـ Thermostat التلقائي لإنعاش كفاءة التبريد.',
+      ),
+      CvExperienceBullet(
+        textEn: 'Completed emergency field service calls with a 95% first-visit resolution rate.',
+        textAr: 'الاستجابة لنداءات الصيانة الطارئة وإصلاح المشاكل من الزيارة الأولى بنسبة 95%.',
+      ),
+    ],
+  ),
+  CvProfession(
+    titleEn: 'Automotive Mechanic',
+    titleAr: 'ميكانيكي سيارات وآلات',
+    categoryEn: 'Vocational & Technical Trades',
+    categoryAr: 'الحرف الفنية والتقنية',
+    emoji: '🛠️',
+    suggestedBullets: [
+      CvExperienceBullet(
+        textEn: 'Diagnosed engine, transmission, brake and electrical faults using OBD-II computer diagnostic tools.',
+        textAr: 'تشخيص أعطال المحركات وعلب التروس والمكابح باستخدام أجهزة الفحص الكمبيوتري OBD-II.',
+      ),
+      CvExperienceBullet(
+        textEn: 'Performed complete vehicle overhauls, timing belt replacements and suspension tuning on diverse vehicle fleets.',
+        textAr: 'إجراء العمرات الكاملة للمحركات وتغيير سيور التوقيت وتعديل أنظمة التعليق لأسطول السيارات.',
+      ),
+      CvExperienceBullet(
+        textEn: 'Maintained daily service logs, estimated repair costs and communicated technical solutions clearly to clients.',
+        textAr: 'الاحتفاظ بسجلات الخدمة اليومية وتقدير تكاليف الإصلاح وشرح الحلول التقنية للعملاء.',
+      ),
+      CvExperienceBullet(
+        textEn: 'Replaced worn brake pads, rotors, shocks, struts, and steering linkages.',
+        textAr: 'استبدال فحمات المكابح والأقراص والمساعدين وأنظمة التوجيه التالفة.',
+      ),
+      CvExperienceBullet(
+        textEn: 'Flushed and refilled transmission fluids, engine oils, coolants, and brake hydraulic lines.',
+        textAr: 'تغيير وغسيل زيوت المحرك وسوائل التبريد وزيوت الفرامل والهيدروليك.',
+      ),
+      CvExperienceBullet(
+        textEn: 'Balanced wheels, performed 4-wheel alignment, and mounted commercial tires.',
+        textAr: 'ضبط زوايا العجلات الأربع وترصيص الإطارات وصيانتها.',
+      ),
+      CvExperienceBullet(
+        textEn: 'Enforced shop safety standards and proper disposal of hazardous automotive fluids and batteries.',
+        textAr: 'تطبيق معايير السلامة داخل الورشة والتخلص الآمن من بطاريات وزيوت السيارات.',
+      ),
+      CvExperienceBullet(
+        textEn: 'Conducted pre-purchase and pre-inspection safety testing for passenger and commercial vehicles.',
+        textAr: 'إجراء فحوصات الشاملة والسلامة الفنية للسيارات قبل الفحص الدوري.',
+      ),
+    ],
+  ),
+  CvProfession(
+    titleEn: 'Factory Operator & Technician',
+    titleAr: 'مشغل وفني مصنع',
+    categoryEn: 'Vocational & Technical Trades',
+    categoryAr: 'الحرف الفنية والتقنية',
+    emoji: '🛠️',
+    suggestedBullets: [
+      CvExperienceBullet(
+        textEn: 'Operated and maintained automated production line machinery, ensuring continuous output at target efficiency rates.',
+        textAr: 'تشغيل وصيانة خطوط الإنتاج الآلية وضمان استمرارية التشغيل بمعدلات الكفاءة المستهدفة.',
+      ),
+      CvExperienceBullet(
+        textEn: 'Conducted routine inspections and preventive maintenance on CNC machines, conveyors and hydraulic equipment.',
+        textAr: 'إجراء الفحوصات الدورية والصيانة الوقائية لآلات CNC والسيور الناقلة والأنظمة الهيدروليكية.',
+      ),
+      CvExperienceBullet(
+        textEn: 'Diagnosed mechanical and electrical faults, reducing average repair downtime from 4 hours to under 90 minutes.',
+        textAr: 'تشخيص الأعطال الميكانيكية والكهربائية وتقليل زمن التوقف من 4 ساعات إلى أقل من 90 دقيقة.',
+      ),
+      CvExperienceBullet(
+        textEn: 'Adhered to ISO quality control procedures and logged all maintenance activities in the CMMS system.',
+        textAr: 'الالتزام بمعايير جودة ISO وتسجيل جميع أنشطة الصيانة في نظام CMMS.',
+      ),
+      CvExperienceBullet(
+        textEn: 'Adjusted machine calibration parameters and tooling setups according to production batch specifications.',
+        textAr: 'ضبط إعدادات كاليبراتور الآلات والقوالب وفقاً لمواصفات دفعة الإنتاج.',
+      ),
+      CvExperienceBullet(
+        textEn: 'Monitored raw material feed lines to prevent blockages and line starvation.',
+        textAr: 'مراقبة خطوط تغذية المواد الخام لمنع الانحشار أو توقف التدفق.',
+      ),
+      CvExperienceBullet(
+        textEn: 'Enforced strict 5S shop-floor organization and machine safety guards compliance.',
+        textAr: 'تطبيق منهجية 5S لترتيب بيئة العمل والالتزام بحواجز الحماية التلقائية.',
+      ),
+      CvExperienceBullet(
+        textEn: 'Trained junior machine operators on emergency shut-off protocols and shift handovers.',
+        textAr: 'تدريب المشغلين الجدد على إجراءات الإيقاف الطارئ وتسليم الورديات.',
+      ),
+    ],
+  ),
+
+  // 2. 💻 Tech & Engineering
+  CvProfession(
+    titleEn: 'Software Engineer',
+    titleAr: 'مهندس برمجيات',
+    categoryEn: 'Tech, Engineering & Business',
+    categoryAr: 'التكنولوجيا والهندسة والأعمال',
+    emoji: '💻',
+    suggestedBullets: [
+      CvExperienceBullet(
+        textEn: 'Architected and deployed scalable RESTful microservices and backend web applications using modern cloud frameworks.',
+        textAr: 'تصميم وتطوير الخدمات المصغرة والتطبيقات السحابية القابلة للتوسع.',
+      ),
+      CvExperienceBullet(
+        textEn: 'Wrote clean, testable codebase backed by CI/CD pipelines, unit testing and automated integration tests.',
+        textAr: 'كتابة كود برمجي نظيف مدعوم باختبارات الوحدة والتكامل وأنابيب التجميع الآلي CI/CD.',
+      ),
+      CvExperienceBullet(
+        textEn: 'Collaborated in Agile/Scrum sprint teams to ship enterprise features on time with zero high-severity production bugs.',
+        textAr: 'العمل ضمن فرق Agile/Scrum لتسليم الميزات البرمجية في مواعيدها بدون أخطاء.',
+      ),
+      CvExperienceBullet(
+        textEn: 'Optimized database queries and API response latencies by 35% across high-traffic platforms.',
+        textAr: 'تحسين استعلامات قواعد البيانات واستجابة الـ API بنسبة 35% على المنصات عالية الزيارات.',
+      ),
+      CvExperienceBullet(
+        textEn: 'Integrated OAuth2, JWT, and third-party RESTful APIs with strict security protocols.',
+        textAr: 'دمج بروتوكولات الأمان OAuth2 و JWT والواجهات البرمجية الخارجية بأعلى معايير الحماية.',
+      ),
+      CvExperienceBullet(
+        textEn: 'Monitored system health using Prometheus, Grafana, and cloud logging dashboards.',
+        textAr: 'مراقبة أداء الخوادم واستقرار النظام باستخدام أدوات المراقبة والسجلات السحابية.',
+      ),
+      CvExperienceBullet(
+        textEn: 'Conducted peer code reviews to enforce software architecture patterns and coding guidelines.',
+        textAr: 'مراجعة الكود البرمجي للأقران لضمان الالتزام بأنماط المعمارية والمعايير القياسية.',
+      ),
+      CvExperienceBullet(
+        textEn: 'Refactored legacy monolithic services into modular maintainable components.',
+        textAr: 'إعادة هيكلة البرامج القديمة إلى مكونات برمجية حديثة وسهولة الصيانة.',
+      ),
+    ],
+  ),
+  CvProfession(
+    titleEn: 'Flutter & Mobile Developer',
+    titleAr: 'مطور تطبيقات فلاتر وجوال',
+    categoryEn: 'Tech, Engineering & Business',
+    categoryAr: 'التكنولوجيا والهندسة والأعمال',
+    emoji: '💻',
+    suggestedBullets: [
+      CvExperienceBullet(
+        textEn: 'Built cross-platform iOS & Android mobile applications using Flutter & Dart with clean architecture and Provider/Bloc.',
+        textAr: 'تطوير تطبيقات جوال تعمل على iOS و Android باستخدام Flutter و Dart وإدارة الحالة.',
+      ),
+      CvExperienceBullet(
+        textEn: 'Integrated Firebase Auth, Cloud Firestore, REST APIs and OAuth providers for seamless user authentication.',
+        textAr: 'دمج خدمات المصادقة من Firebase و Firestore والواجهات البرمجية لربط المستخدمين.',
+      ),
+      CvExperienceBullet(
+        textEn: 'Implemented responsive pixel-perfect UI layouts and custom smooth micro-animations.',
+        textAr: 'بناء واجهات مستخدم متجاوبة عالية الدقة مع حركات وتأثيرات تفاعلية سلسة.',
+      ),
+      CvExperienceBullet(
+        textEn: 'Published and maintained applications on Apple App Store & Google Play Store.',
+        textAr: 'رفع ونشر وصيانة التطبيقات على متجري App Store و Google Play.',
+      ),
+      CvExperienceBullet(
+        textEn: 'Implemented offline data caching using Hive, SQLite, and Shared Preferences.',
+        textAr: 'تفعيل التخزين المحلي المؤقت للبيانات لضمان عمل التطبيق بدون اتصال بالإنترنت.',
+      ),
+      CvExperienceBullet(
+        textEn: 'Integrated push notifications, deep linking, and in-app analytics tracking.',
+        textAr: 'دمج التنبيهات الفورية والروابط العميقة وأدوات تحليلات استخدام التطبيق.',
+      ),
+      CvExperienceBullet(
+        textEn: 'Reduced mobile app bundle size by 30% through asset optimization and tree-shaking.',
+        textAr: 'تقليل حجم ملف التطبيق بنسبة 30% عبر تحسين الوسائط وضغط العناصر.',
+      ),
+      CvExperienceBullet(
+        textEn: 'Handled app localization (RTL & LTR) for multi-language global deployment.',
+        textAr: 'دعم التوطين واللغات متعددة الاتجاهات (RTL/LTR) للنشر العالمي.',
+      ),
+    ],
+  ),
+  
+  // 3. 🏗️ Construction & Logistics
+  CvProfession(
+    titleEn: 'Construction Worker',
+    titleAr: 'عامل بناء',
+    categoryEn: 'Construction & Logistics',
+    categoryAr: 'البناء واللوجستيات',
+    emoji: '🏗️',
+    suggestedBullets: [
+      CvExperienceBullet(
+        textEn: 'Assisted in the erection of scaffolding and operation of heavy construction equipment.',
+        textAr: 'المساعدة في نصب السقالات وتشغيل معدات البناء الثقيلة.',
+      ),
+    ],
+  ),
+  
+  // 4. 🏨 Hospitality, Services & Agriculture
+  CvProfession(
+    titleEn: 'Customer Service Representative',
+    titleAr: 'ممثل خدمة العملاء',
+    categoryEn: 'Hospitality, Services & Agriculture',
+    categoryAr: 'الضيافة والخدمات والزراعة',
+    emoji: '🏨',
+    suggestedBullets: [
+      CvExperienceBullet(
+        textEn: 'Resolved customer inquiries and maintained high satisfaction ratings.',
+        textAr: 'حل استفسارات العملاء والحفاظ على معدلات رضا عالية.',
+      ),
+    ],
+  ),
+  
+  // 5. 🏥 Healthcare & Science
+  CvProfession(
+    titleEn: 'Registered Nurse',
+    titleAr: 'ممرض مسجل',
+    categoryEn: 'Healthcare & Science',
+    categoryAr: 'الرعاية الصحية والعلوم',
+    emoji: '🏥',
+    suggestedBullets: [
+      CvExperienceBullet(
+        textEn: 'Provided exceptional patient care and assisted in clinical procedures.',
+        textAr: 'تقديم رعاية متميزة للمرضى والمساعدة في الإجراءات السريرية.',
+      ),
+    ],
+  ),
+  
+  // 6. 📊 Business, Sales & Admin
+  CvProfession(
+    titleEn: 'Sales Manager',
+    titleAr: 'مدير مبيعات',
+    categoryEn: 'Business, Sales & Admin',
+    categoryAr: 'إدارة الأعمال والمبيعات',
+    emoji: '📊',
+    suggestedBullets: [
+      CvExperienceBullet(
+        textEn: 'Developed sales strategies and led a high-performing sales team.',
+        textAr: 'تطوير استراتيجيات المبيعات وقيادة فريق مبيعات عالي الأداء.',
+      ),
+    ],
+  ),
+];
+
+// ── Categorized list generator ────────────────────────────────────────────────
+final List<CvProfessionCategory> kProfessionCategories = [
+  CvProfessionCategory(
+    id: 'trades',
+    titleEn: 'Vocational & Technical Trades',
+    titleAr: '🛠️ الحرف الفنية والتقنية',
+    emoji: '🛠️',
+    professions: kProfessions
+        .where((p) =>
+            p.categoryAr.contains('الحرف') || p.categoryEn.contains('Trades'))
+        .toList(),
+  ),
+  CvProfessionCategory(
+    id: 'construction',
+    titleEn: 'Construction & Logistics',
+    titleAr: '🏗️ البناء واللوجستيات',
+    emoji: '🏗️',
+    professions: kProfessions
+        .where((p) =>
+            p.categoryAr.contains('البناء') ||
+            p.categoryEn.contains('Construction'))
+        .toList(),
+  ),
+  CvProfessionCategory(
+    id: 'hospitality',
+    titleEn: 'Hospitality, Services & Agriculture',
+    titleAr: '🏨 الضيافة والخدمات والزراعة',
+    emoji: '🏨',
+    professions: kProfessions
+        .where((p) =>
+            p.categoryAr.contains('الضيافة') ||
+            p.categoryEn.contains('Hospitality'))
+        .toList(),
+  ),
+  CvProfessionCategory(
+    id: 'tech',
+    titleEn: 'Tech, Engineering & Business',
+    titleAr: '💻 التقنية والهندسة والأعمال',
+    emoji: '💻',
+    professions: kProfessions
+        .where((p) =>
+            p.categoryAr.contains('التقنية') ||
+            p.categoryEn.contains('Tech'))
+        .toList(),
+  ),
+  CvProfessionCategory(
+    id: 'healthcare',
+    titleEn: 'Healthcare & Science',
+    titleAr: '🏥 الرعاية الصحية والعلوم',
+    emoji: '🏥',
+    professions: kProfessions
+        .where((p) =>
+            p.categoryAr.contains('الرعاية') ||
+            p.categoryEn.contains('Healthcare'))
+        .toList(),
+  ),
+  CvProfessionCategory(
+    id: 'business',
+    titleEn: 'Business, Sales & Admin',
+    titleAr: '📊 إدارة الأعمال والمبيعات',
+    emoji: '📊',
+    professions: kProfessions
+        .where((p) =>
+            p.categoryAr.contains('إدارة') ||
+            p.categoryEn.contains('Business'))
+        .toList(),
+  ),
+];
+
+const List<String> kCountries = [
+  'السعودية',
+  'الإمارات',
+  'مصر',
+  'الكويت',
+  'قطر',
+  'البحرين',
+  'عمان',
+  'الأردن',
+  'لبنان',
+  'الجزائر',
+  'المغرب',
+  'تونس',
+  'ألمانيا',
+  'فرنسا',
+  'إيطاليا',
+  'إسبانيا',
+  'هولندا',
+  'النمسا',
+  'بلجيكا',
+  'اليونان',
+  'السويد',
+  'أيرلندا',
+  'الدنمارك',
+  'النرويج',
+  'البرتغال',
+  'المملكة المتحدة',
+  'الولايات المتحدة',
+  'كندا',
+  'أستراليا',
+];
+
+const Map<String, List<String>> kCountryCityMap = {
+  'السعودية': ['الرياض', 'جدة', 'الدمام', 'مكة', 'المدينة المنورة'],
+  'الإمارات': ['دبي', 'أبو ظبي', 'الشارقة', 'العين'],
+  'مصر': ['القاهرة', 'الإسكندرية', 'الجيزة', 'شرم الشيخ'],
+  'الكويت': ['مدينة الكويت', 'الأحمدي', 'حولي', 'السالمية'],
+  'قطر': ['الدوحة', 'الريان', 'الوكرة'],
+  'البحرين': ['المنامة', 'المحرق', 'الرفاع'],
+  'عمان': ['مسقط', 'صلالة', 'صحار'],
+  'الأردن': ['عمان', 'إربد', 'الزرقاء', 'العقبة'],
+  'لبنان': ['بيروت', 'طرابلس', 'صيدا'],
+  'الجزائر': ['الجزائر العاصمة', 'وهران', 'قسنطينة'],
+  'المغرب': ['الدار البيضاء', 'الرباط', 'مراكش', 'طنجة'],
+  'تونس': ['تونس العاصمة', 'صفاقس', 'سوسة'],
+  'ألمانيا': ['برلين', 'ميونخ', 'فرانكفورت', 'هامبورغ', 'كولونيا'],
+  'فرنسا': ['باريس', 'ليون', 'مارسيليا', 'تولوز'],
+  'إيطاليا': ['روما', 'ميلانو', 'نابولي', 'تورينو'],
+  'إسبانيا': ['مدريد', 'برشلونة', 'فالنسيا', 'إشبيلية'],
+  'هولندا': ['أمستردام', 'روتردام', 'لاهاي', 'أوتريخت'],
+  'النمسا': ['فيينا', 'سالزبورغ', 'غراتس'],
+  'بلجيكا': ['بروكسل', 'أنتويرب', 'غنت'],
+  'اليونان': ['أثينا', 'سالونيك', 'باتراس'],
+  'السويد': ['ستوكهولم', 'غوتنبرغ', 'مالمو'],
+  'أيرلندا': ['دبلن', 'كورك', 'غالواي'],
+  'الدنمارك': ['كوبنهاغن', 'آرهوس'],
+  'النرويج': ['أوسلو', 'بيرغن'],
+  'البرتغال': ['لشبونة', 'بورتو'],
+  'المملكة المتحدة': ['لندن', 'مانشستر', 'برمنغهام', 'غلاسكو'],
+  'الولايات المتحدة': ['نيويورك', 'لوس أنجلوس', 'شيكاغو', 'هيوستن'],
+  'كندا': ['تورونتو', 'فانكوفر', 'مونتريال', 'كالجاري'],
+  'أستراليا': ['سيدني', 'ملبورن', 'بريزبان', 'بيرث'],
+};

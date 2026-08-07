@@ -9,11 +9,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:easy_work_web/main.dart';
+import 'package:easy_work_web/core/providers/auth_provider.dart';
 
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+    await tester.pumpWidget(EasyWorkApp(authProvider: AppAuthProvider()));
 
     // Verify that our counter starts at 0.
     expect(find.text('0'), findsOneWidget);

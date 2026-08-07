@@ -194,7 +194,7 @@ class _CvFormStep1State extends State<CvFormStep1> {
     final availableProfessions =
         _selectedCategory?.professions ?? kProfessions;
     final professionStrings = availableProfessions
-        .map((p) => "\ / \")
+        .map((p) => '${p.titleEn} / ${p.titleAr}')
         .toList();
 
     return SingleChildScrollView(

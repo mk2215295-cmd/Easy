@@ -39,30 +39,48 @@ class _JobCardWidgetState extends State<JobCardWidget> {
         onTap: () => context.go('${AppRoutes.jobs}/${widget.job.id}'),
         child: AnimatedScale(
           scale: _hovered ? 1.02 : 1.0,
-          duration: const Duration(milliseconds: 180),
+          duration: const Duration(milliseconds: 200),
           curve: Curves.easeOut,
           child: AnimatedContainer(
-            duration: const Duration(milliseconds: 180),
+            duration: const Duration(milliseconds: 200),
             curve: Curves.easeOut,
             decoration: BoxDecoration(
-              color: AppColors.backgroundSurface,
+              color: _hovered
+                  ? AppColors.backgroundSurface
+                  : AppColors.backgroundSurface,
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
                 color: _hovered
-                    ? AppColors.accentBlue.withValues(alpha: 0.6)
+                    ? AppColors.accentBlue.withValues(alpha: 0.7)
                     : AppColors.borderSubtle,
                 width: _hovered ? 1.5 : 1.0,
               ),
               boxShadow: _hovered
-                  ? const [
+                  ? [
                       BoxShadow(
-                        color: AppColors.accentBlueGlow,
-                        blurRadius: 24,
-                        spreadRadius: 1,
-                        offset: Offset(0, 8),
+                        color: AppColors.accentBlue.withValues(alpha: 0.18),
+                        blurRadius: 30,
+                        spreadRadius: 0,
+                        offset: const Offset(0, 8),
+                      ),
+                      BoxShadow(
+                        color: AppColors.accentBlue.withValues(alpha: 0.08),
+                        blurRadius: 60,
+                        spreadRadius: 4,
+                      ),
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.3),
+                        blurRadius: 20,
+                        offset: const Offset(0, 4),
                       ),
                     ]
-                  : const [],
+                  : [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.12),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

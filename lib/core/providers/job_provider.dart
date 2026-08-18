@@ -12,16 +12,11 @@ import '../services/location_service.dart';
 //
 // Owns:
 //   • jobs list (fetched from repository, geo-filtered)
-//   • localeCode — 'ar' by default (Egypt / outside-EU detected)
+//   • search queries (title, skill, company + location/country)
+//   • category and jobType filters
+//   • localeCode — 'ar' by default
 //   • _cv — the live CV Builder form state
 //   • _profile — UserProfileModel built dynamically from _cv + user actions
-//
-// Key design decisions:
-//   • _profile.generatedCvs starts EMPTY. The list is built purely from
-//     `_cv` whenever updateCv() is called. No hardcoded placeholder CVs.
-//   • _profile.applications starts EMPTY. Rows are added only when the user
-//     taps "Apply Now" from a JobDetailsScreen, via applyToJob().
-//   • The profile fullName tracks _cv.fullName in real-time.
 // ════════════════════════════════════════════════════════════════════════════
 class JobProvider extends ChangeNotifier {
   final JobRepository _repository = JobRepository();
@@ -32,12 +27,16 @@ class JobProvider extends ChangeNotifier {
   UserLocationInfo? _userLocation;
 
   // ── Language ──────────────────────────────────────────────────────────────
-  String _localeCode = 'ar'; // Arabic on startup (Egypt / outside-EU default)
+  String _localeCode = 'ar'; // Arabic on startup default
   bool _userManuallyToggledLocale = false;
 
+  // ── Filters & Search ──────────────────────────────────────────────────────
+  String _selectedJobType = 'All';
+  String _selectedCategory = 'All';
+  String _searchTitleQuery = '';
+  String _searchLocationQuery = '';
+
   // ── CV Builder form state ─────────────────────────────────────────────────
-  // Pre-populated with the user's name so the Profile page shows 'Mahmoud'
-  // immediately. All other fields start blank — the form drives them.
   CvModel _cv = const CvModel(
     fullName: 'Mahmoud',
     profession: '',
@@ -71,7 +70,6 @@ class JobProvider extends ChangeNotifier {
   );
 
   // ── User Profile state ─────────────────────────────────────────────────────
-  // NO hardcoded CVs or applications — every item is injected dynamically.
   UserProfileModel _profile = const UserProfileModel(
     uid: 'user-77',
     fullName: 'Mahmoud',
@@ -79,28 +77,59 @@ class JobProvider extends ChangeNotifier {
         'https://images.unsplash.com/photo-1534528741775-53994a69daeb'
         '?auto=format&fit=crop&q=80&w=200',
     profileCompletionPercentage: 85,
-    generatedCvs: [],    // populated by updateCv()
-    applications: [],    // populated by applyToJob()
+    generatedCvs: [],
+    applications: [],
   );
 
   JobProvider() {
-    // Build the initial CV card from the pre-filled name + empty profession
     _rebuildCvList();
   }
 
-  String _selectedJobType = 'All';
-
   // ── Public getters ────────────────────────────────────────────────────────
   List<JobModel> get jobs => _jobs;
+
   List<JobModel> get filteredJobs {
-    if (_selectedJobType == 'All' || _selectedJobType.isEmpty) return _jobs;
     return _jobs.where((j) {
-      final t = (j.jobType ?? '').toLowerCase();
-      final cat = (j.category ?? '').toLowerCase();
-      final target = _selectedJobType.toLowerCase();
-      if (target.contains('full')) return t.contains('full');
-      if (target.contains('part')) return t.contains('part') || t.contains('seasonal');
-      if (target.contains('volunteer')) return t.contains('volunteer') || cat.contains('volunteer');
+      // 1. Job Type filter
+      if (_selectedJobType != 'All' && _selectedJobType.isNotEmpty) {
+        final t = (j.jobType ?? '').toLowerCase();
+        final target = _selectedJobType.toLowerCase();
+        if (target.contains('full') && !t.contains('full')) return false;
+        if (target.contains('part') && !(t.contains('part') || t.contains('seasonal'))) return false;
+        if (target.contains('volunteer') && !(t.contains('volunteer') || (j.category ?? '').toLowerCase().contains('volunteer'))) return false;
+      }
+
+      // 2. Category filter
+      if (_selectedCategory != 'All' && _selectedCategory.isNotEmpty) {
+        final cat = (j.category ?? '').toLowerCase();
+        final title = (j.title ?? '').toLowerCase();
+        final target = _selectedCategory.toLowerCase();
+        if (!cat.contains(target) && !title.contains(target)) return false;
+      }
+
+      // 3. Search Title / Skill / Company
+      if (_searchTitleQuery.isNotEmpty) {
+        final q = _searchTitleQuery.toLowerCase();
+        final title = (j.title ?? '').toLowerCase();
+        final titleAr = (j.titleAr ?? '').toLowerCase();
+        final company = (j.company ?? '').toLowerCase();
+        final desc = (j.description ?? '').toLowerCase();
+        if (!title.contains(q) && !titleAr.contains(q) && !company.contains(q) && !desc.contains(q)) {
+          return false;
+        }
+      }
+
+      // 4. Search Location / Country
+      if (_searchLocationQuery.isNotEmpty) {
+        final q = _searchLocationQuery.toLowerCase();
+        final loc = (j.location ?? '').toLowerCase();
+        final locAr = (j.locationAr ?? '').toLowerCase();
+        final country = (j.countryCode ?? '').toLowerCase();
+        if (!loc.contains(q) && !locAr.contains(q) && !country.contains(q)) {
+          return false;
+        }
+      }
+
       return true;
     }).toList();
   }
@@ -110,10 +139,13 @@ class JobProvider extends ChangeNotifier {
   String get localeCode => _localeCode;
   bool get isArabic => _localeCode == 'ar';
   String get selectedJobType => _selectedJobType;
+  String get selectedCategory => _selectedCategory;
+  String get searchTitleQuery => _searchTitleQuery;
+  String get searchLocationQuery => _searchLocationQuery;
   CvModel get cv => _cv;
   UserProfileModel get profile => _profile;
 
-  // ── Load jobs (geo-aware) ─────────────────────────────────────────────────
+  // ── Load jobs ─────────────────────────────────────────────────────────────
   Future<void> loadJobs() async {
     _isLoading = true;
     notifyListeners();
@@ -137,9 +169,28 @@ class JobProvider extends ChangeNotifier {
     }
   }
 
-  // ── Filters ───────────────────────────────────────────────────────────────
+  // ── Filters & Search Setters ──────────────────────────────────────────────
   void setJobTypeFilter(String type) {
     _selectedJobType = type;
+    notifyListeners();
+  }
+
+  void setCategoryFilter(String category) {
+    _selectedCategory = category;
+    notifyListeners();
+  }
+
+  void setSearchQueries(String title, String location) {
+    _searchTitleQuery = title;
+    _searchLocationQuery = location;
+    notifyListeners();
+  }
+
+  void clearFilters() {
+    _selectedJobType = 'All';
+    _selectedCategory = 'All';
+    _searchTitleQuery = '';
+    _searchLocationQuery = '';
     notifyListeners();
   }
 
@@ -151,21 +202,12 @@ class JobProvider extends ChangeNotifier {
   }
 
   // ── CV Builder ────────────────────────────────────────────────────────────
-  /// Called by every form field listener in CvFormStep1 (and future steps).
-  /// Updates the live model AND rebuilds the generated CV card on the
-  /// Profile Dashboard in real-time.
   void updateCv(CvModel updatedCv) {
     _cv = updatedCv;
     _rebuildCvList();
     notifyListeners();
   }
 
-  /// Computes dynamic profile completion based on real user data:
-  ///   • 20% baseline (registration)
-  ///   • +20% for completed CV profession
-  ///   • +20% for contact details (phone, country, city)
-  ///   • +20% for skills / work experience
-  ///   • +20% for submitted applications
   int _calculateProfileCompletion() {
     int pct = 20;
     if (_cv.profession.trim().isNotEmpty) pct += 20;
@@ -179,10 +221,6 @@ class JobProvider extends ChangeNotifier {
     return pct.clamp(20, 100);
   }
 
-  /// Rebuilds _profile.generatedCvs from the current _cv state.
-  /// Produces exactly ONE card whose title = profession and whose filename
-  /// encodes the user's name + profession. If the profession field is still
-  /// empty the list stays empty (no phantom placeholder card).
   void _rebuildCvList() {
     final name = _cv.fullName.trim().isEmpty ? 'User' : _cv.fullName.trim();
     final profession = _cv.profession.trim();
@@ -210,11 +248,7 @@ class JobProvider extends ChangeNotifier {
   }
 
   // ── Apply to a job ────────────────────────────────────────────────────────
-  /// Adds a new application row to the Profile Dashboard table.
-  /// Called by the "Apply Now" button on JobDetailsScreen.
-  /// Deduplicates by job ID so hammering the button adds only one row.
   void applyToJob(JobModel job) {
-    // Prevent duplicate entries
     final alreadyApplied =
         _profile.applications.any((a) => a.id == 'app-${job.id}');
     if (alreadyApplied) return;
@@ -262,7 +296,6 @@ class JobProvider extends ChangeNotifier {
     return pct.clamp(20, 100);
   }
 
-  // ── Helpers ───────────────────────────────────────────────────────────────
   JobModel? getJobById(String id) {
     try {
       return _jobs.firstWhere((j) => j.id == id);

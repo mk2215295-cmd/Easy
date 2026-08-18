@@ -660,7 +660,7 @@ class _AtsInjectedBadge extends StatelessWidget {
           const SizedBox(width: 8),
           Expanded(
             child: Text(
-              'تم إدراج المهام الوظيفية المعتمدة لـ "\"',
+              'تم إدراج المهام الوظيفية المعتمدة بنجاح',
               style: AppTextStyles.labelSmall.copyWith(
                   color: AppColors.accentGreen, fontSize: 11),
             ),

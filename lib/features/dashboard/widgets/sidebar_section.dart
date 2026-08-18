@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:url_launcher/url_launcher.dart' show launchUrl, LaunchMode;
 
 import '../../../core/models/affiliate_deal_model.dart';
@@ -41,9 +42,17 @@ class SidebarSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: AppColors.backgroundSurface,
-        border: Border(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            AppColors.backgroundSurface,
+            AppColors.backgroundElevated.withValues(alpha: 0.3),
+          ],
+        ),
+        border: const Border(
           left: BorderSide(color: AppColors.borderSubtle, width: 1),
         ),
       ),
@@ -53,7 +62,8 @@ class SidebarSection extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // ── Panel header ─────────────────────────────────────────────
-            _PanelHeader(),
+            _PanelHeader()
+                .animate().fadeIn(delay: 300.ms).slideX(begin: 0.1, end: 0, duration: 400.ms),
 
             const SizedBox(height: 20),
 

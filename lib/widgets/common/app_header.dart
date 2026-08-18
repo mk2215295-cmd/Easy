@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-import '../../core/constants/app_assets.dart';
+import '../brand/easy_work_animated_logo.dart';
 import '../../core/providers/auth_provider.dart';
 import '../../core/providers/job_provider.dart';
 import '../../routing/app_router.dart';
@@ -76,11 +76,27 @@ class _AppHeaderState extends State<AppHeader> {
 
     return Container(
       height: AppHeader.barHeight,
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: AppColors.backgroundSurface,
-        border: Border(
+        gradient: LinearGradient(
+          begin: Alignment.centerLeft,
+          end: Alignment.centerRight,
+          colors: [
+            AppColors.backgroundSurface,
+            AppColors.accentBlueMuted.withValues(alpha: 0.08),
+            AppColors.backgroundSurface,
+          ],
+        ),
+        border: const Border(
           bottom: BorderSide(color: AppColors.borderSubtle, width: 1),
         ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.2),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Padding(
         padding: EdgeInsets.symmetric(
@@ -89,7 +105,7 @@ class _AppHeaderState extends State<AppHeader> {
         child: Row(
           children: [
             // ── Logo ────────────────────────────────────────────────────
-            const _LogoSection(),
+            _LogoSection(isArabic: isArabic),
 
             const SizedBox(width: 32),
 
@@ -130,46 +146,18 @@ class _AppHeaderState extends State<AppHeader> {
 
 // ════════════════════════════════════════════════════════════════════════════════
 // _LogoSection
-// Displays the official scaled-down Easy Work logo in the top nav & drawer.
+// Displays the animated Easy Work brand logo in the top nav & drawer.
 // ════════════════════════════════════════════════════════════════════════════════
 class _LogoSection extends StatelessWidget {
-  const _LogoSection();
+  const _LogoSection({this.isArabic = false});
+  final bool isArabic;
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return EasyWorkAnimatedLogo(
+      size: 34,
+      isArabic: isArabic,
       onTap: () => context.go(AppRoutes.dashboard),
-      child: MouseRegion(
-        cursor: SystemMouseCursors.click,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(
-              color: AppColors.accentBlue.withValues(alpha: 0.3),
-              width: 1,
-            ),
-            boxShadow: const [
-              BoxShadow(
-                color: Color(0x1A007FFF),
-                blurRadius: 8,
-                offset: Offset(0, 2),
-              ),
-            ],
-          ),
-          child: Image.asset(
-            AppAssets.logo,
-            height: 32,
-            fit: BoxFit.contain,
-            errorBuilder: (_, __, ___) => Image.asset(
-              AppAssets.logoImage14,
-              height: 32,
-              fit: BoxFit.contain,
-            ),
-          ),
-        ),
-      ),
     );
   }
 }

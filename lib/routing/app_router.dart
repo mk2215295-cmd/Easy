@@ -5,9 +5,9 @@ import '../core/providers/auth_provider.dart';
 import '../features/applications/applications_screen.dart';
 import '../features/auth/login_screen.dart';
 import '../features/cv_builder/cv_builder_screen.dart';
-import '../features/dashboard/dashboard_screen.dart';
 import '../features/job_details/job_details_screen.dart';
 import '../features/jobs/jobs_screen.dart';
+import '../features/landing/global_hero_screen.dart';
 import '../features/profile/profile_screen.dart';
 import '../theme/app_theme.dart';
 
@@ -25,26 +25,21 @@ abstract final class AppRoutes {
   static const String messages     = '/messages';
 }
 
-// ── Routes that require authentication ───────────────────────────────────────
+// ── Private routes that require authentication ───────────────────────────────
 const _kGuardedRoutes = {
-  AppRoutes.dashboard,
-  AppRoutes.jobs,
-  AppRoutes.cvBuilder,
   AppRoutes.profile,
   AppRoutes.applications,
   AppRoutes.messages,
 };
 
 // ════════════════════════════════════════════════════════════════════════════
-// buildAppRouter — factory that accepts the AuthProvider so the router's
-// redirect callback and refreshListenable are fully reactive.
+// buildAppRouter — factory that accepts AuthProvider for reactive redirects.
 // ════════════════════════════════════════════════════════════════════════════
 GoRouter buildAppRouter(AppAuthProvider authProvider) {
   return GoRouter(
     debugLogDiagnostics: false,
     initialLocation: AppRoutes.dashboard,
 
-    // Re-evaluate redirect every time auth state changes
     refreshListenable: authProvider,
 
     // ── Auth guard ──────────────────────────────────────────────────────
@@ -52,20 +47,18 @@ GoRouter buildAppRouter(AppAuthProvider authProvider) {
       final loc = state.matchedLocation;
       final isOnLogin = loc == AppRoutes.login;
 
-      // While Firebase is still resolving the session — show nothing
       if (authProvider.isLoading) return null;
 
       final isLoggedIn = authProvider.isAuthenticated;
 
-      // Unauthenticated user hitting a guarded route → send to login
-      if (!isLoggedIn && _kGuardedRoutes.any((r) => loc == r || loc.startsWith('/jobs/'))) {
+      // Only redirect if unauthenticated user attempts to access private pages
+      if (!isLoggedIn && _kGuardedRoutes.contains(loc)) {
         return AppRoutes.login;
       }
 
-      // Authenticated user landing on /login → send to dashboard
       if (isLoggedIn && isOnLogin) return AppRoutes.dashboard;
 
-      return null; // no redirect needed
+      return null;
     },
 
     routes: [
@@ -79,17 +72,17 @@ GoRouter buildAppRouter(AppAuthProvider authProvider) {
         ),
       ),
 
-      // ── Dashboard ─────────────────────────────────────────────────────
+      // ── Flagship Animated Landing Hero ────────────────────────────────
       GoRoute(
         path: AppRoutes.dashboard,
         name: 'dashboard',
         pageBuilder: (context, state) => _fadePage(
           key: state.pageKey,
-          child: const DashboardScreen(),
+          child: const GlobalHeroScreen(),
         ),
       ),
 
-      // ── Jobs List + Job Detail ─────────────────────────────────────────
+      // ── Jobs List + Job Detail (Public Access) ────────────────────────
       GoRoute(
         path: AppRoutes.jobs,
         name: 'jobs',
@@ -112,7 +105,7 @@ GoRouter buildAppRouter(AppAuthProvider authProvider) {
         ],
       ),
 
-      // ── CV Builder ────────────────────────────────────────────────────
+      // ── CV Builder (Public Access) ────────────────────────────────────
       GoRoute(
         path: AppRoutes.cvBuilder,
         name: 'cvBuilder',
@@ -122,7 +115,7 @@ GoRouter buildAppRouter(AppAuthProvider authProvider) {
         ),
       ),
 
-      // ── User Profile ──────────────────────────────────────────────────
+      // ── User Profile (Guarded) ────────────────────────────────────────
       GoRoute(
         path: AppRoutes.profile,
         name: 'profile',
@@ -132,7 +125,7 @@ GoRouter buildAppRouter(AppAuthProvider authProvider) {
         ),
       ),
 
-      // ── Applications ──────────────────────────────────────────────────
+      // ── Applications (Guarded) ────────────────────────────────────────
       GoRoute(
         path: AppRoutes.applications,
         name: 'applications',
@@ -142,7 +135,7 @@ GoRouter buildAppRouter(AppAuthProvider authProvider) {
         ),
       ),
 
-      // ── Messages (placeholder) ────────────────────────────────────────
+      // ── Messages ──────────────────────────────────────────────────────
       GoRoute(
         path: AppRoutes.messages,
         name: 'messages',
@@ -164,7 +157,6 @@ GoRouter buildAppRouter(AppAuthProvider authProvider) {
   );
 }
 
-// ── Shared fade transition ────────────────────────────────────────────────────
 CustomTransitionPage<void> _fadePage({
   required LocalKey key,
   required Widget child,
@@ -180,9 +172,6 @@ CustomTransitionPage<void> _fadePage({
   );
 }
 
-// ════════════════════════════════════════════════════════════════════════════
-// _PlaceholderScreen — only for routes not yet implemented (Messages)
-// ════════════════════════════════════════════════════════════════════════════
 class _PlaceholderScreen extends StatelessWidget {
   const _PlaceholderScreen({
     required this.label,
@@ -223,7 +212,7 @@ class _PlaceholderScreen extends StatelessWidget {
             TextButton.icon(
               onPressed: () => context.go(AppRoutes.dashboard),
               icon: const Icon(Icons.arrow_back_rounded, size: 16),
-              label: const Text('Back to Dashboard'),
+              label: const Text('Back to Home'),
             ),
           ],
         ),
@@ -232,9 +221,6 @@ class _PlaceholderScreen extends StatelessWidget {
   }
 }
 
-// ════════════════════════════════════════════════════════════════════════════
-// _ErrorScreen — 404 / routing error fallback
-// ════════════════════════════════════════════════════════════════════════════
 class _ErrorScreen extends StatelessWidget {
   const _ErrorScreen({this.error});
   final Exception? error;
@@ -260,7 +246,7 @@ class _ErrorScreen extends StatelessWidget {
             const SizedBox(height: 28),
             ElevatedButton(
               onPressed: () => context.go(AppRoutes.dashboard),
-              child: const Text('Go to Dashboard'),
+              child: const Text('Go to Home'),
             ),
           ],
         ),

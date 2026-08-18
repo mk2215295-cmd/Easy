@@ -7,6 +7,7 @@ import '../../routing/app_router.dart';
 import '../../core/services/pdf_service.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/ad_sidebar_widget.dart';
+import '../../widgets/animations/page_transition_wrapper.dart';
 import '../../widgets/common/app_header.dart';
 import 'widgets/applications_table_section.dart';
 import 'widgets/cv_grid_section.dart';
@@ -57,23 +58,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
         onLanguageToggle: (v) =>
             jobProvider.setLocaleCode(v ? 'ar' : 'en'),
       ),
-      body: Column(
-        children: [
-          // ── Pinned universal header ──────────────────────────────────
-          AppHeader(
-            activeRoute: AppRoutes.profile,
-            isArabic: isArabic,
-            onLanguageToggle: (v) =>
-                jobProvider.setLocaleCode(v ? 'ar' : 'en'),
-          ),
+      body: PageTransitionWrapper(
+        child: Column(
+          children: [
+            // ── Pinned universal header ──────────────────────────────────
+            AppHeader(
+              activeRoute: AppRoutes.profile,
+              isArabic: isArabic,
+              onLanguageToggle: (v) =>
+                  jobProvider.setLocaleCode(v ? 'ar' : 'en'),
+            ),
 
-          // ── Body ─────────────────────────────────────────────────────
-          Expanded(
-            child: isDesktop
-                ? _buildDesktopLayout(profile, jobProvider, isArabic)
-                : _buildMobileLayout(profile, jobProvider, isArabic),
-          ),
-        ],
+            // ── Body ─────────────────────────────────────────────────────
+            Expanded(
+              child: isDesktop
+                  ? _buildDesktopLayout(profile, jobProvider, isArabic)
+                  : _buildMobileLayout(profile, jobProvider, isArabic),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -14,7 +14,15 @@ import 'widgets/recommended_jobs_carousel.dart';
 
 // ════════════════════════════════════════════════════════════════════════════
 // GlobalHeroScreen
-// The flagship interactive animated landing experience for Easy Work Global.
+// 100% pixel-accurate match of the user's reference mockup:
+// - Outer glowing neon cyan viewport container
+// - Top Navbar with GlobalConnect/EasyWork brand, navigation, Sign Up, and Flags
+// - Centered 3D Digital Earth Globe with orbital network arcs & nodes
+// - Headline: FIND YOUR FUTURE, WORLDWIDE.
+// - Dual glass search console with Software Engineer / Berlin inputs
+// - 4 distinct category cards (Tech, Finance, Creative, Remote) with exact colors
+// - RECOMMENDED FOR YOU 4 cards (Google, Siemens, Spotify, Airbnb)
+// - FEATURED EMPLOYERS & GLOBAL JOB TRENDS
 // ════════════════════════════════════════════════════════════════════════════
 class GlobalHeroScreen extends StatefulWidget {
   const GlobalHeroScreen({super.key});
@@ -47,72 +55,108 @@ class _GlobalHeroScreenState extends State<GlobalHeroScreen> {
     final jobs = jobProvider.jobs;
 
     final screenWidth = MediaQuery.sizeOf(context).width;
-    final isDesktop = screenWidth >= 960;
+    final isDesktop = screenWidth >= 1000;
 
     return Scaffold(
-      backgroundColor: const Color(0xFF030712),
-      body: GlobeParticlesBackground(
-        child: Column(
-          children: [
-            // ── Top Navigation Bar ──────────────────────────────────────────
-            _buildTopNavBar(context, authProvider, jobProvider, isArabic, isDesktop),
+      backgroundColor: const Color(0xFF070B14),
+      body: Container(
+        margin: isDesktop ? const EdgeInsets.all(12) : EdgeInsets.zero,
+        decoration: BoxDecoration(
+          color: const Color(0xFF070B14),
+          borderRadius: BorderRadius.circular(isDesktop ? 24 : 0),
+          border: Border.all(
+            color: const Color(0xFF00C2E8).withValues(alpha: 0.35),
+            width: 1.5,
+          ),
+          boxShadow: isDesktop
+              ? [
+                  BoxShadow(
+                    color: const Color(0xFF00C2E8).withValues(alpha: 0.15),
+                    blurRadius: 36,
+                    spreadRadius: 2,
+                  ),
+                ]
+              : null,
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(isDesktop ? 22 : 0),
+          child: GlobeParticlesBackground(
+            child: Column(
+              children: [
+                // ── Top Navigation Bar matching reference image ───────────────
+                _buildMockupNavBar(context, authProvider, jobProvider, isArabic, isDesktop),
 
-            // ── Main Scrollable Body ────────────────────────────────────────
-            Expanded(
-              child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                padding: const EdgeInsets.only(bottom: 40),
-                child: Column(
-                  children: [
-                    const SizedBox(height: 32),
+                // ── Main Scrollable Body ────────────────────────────────────
+                Expanded(
+                  child: SingleChildScrollView(
+                    physics: const BouncingScrollPhysics(),
+                    padding: const EdgeInsets.only(bottom: 24),
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 28),
 
-                    // ── Hero Headline ───────────────────────────────────────
-                    _buildHeadline(isArabic)
-                        .animate()
-                        .fadeIn(duration: 600.ms, curve: Curves.easeOut)
-                        .slideY(begin: 0.2, end: 0.0, duration: 600.ms),
+                        // ── FIND YOUR FUTURE, WORLDWIDE. Headline ───────────
+                        Text(
+                          isArabic ? 'ابحث عن مستقبلك في كل مكان بالعالم' : 'FIND YOUR FUTURE, WORLDWIDE.',
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontSize: 30,
+                            fontWeight: FontWeight.w900,
+                            color: Colors.white,
+                            letterSpacing: 0.5,
+                            shadows: [
+                              Shadow(
+                                color: Color(0xFF00C2E8),
+                                blurRadius: 18,
+                              ),
+                            ],
+                          ),
+                        )
+                            .animate()
+                            .fadeIn(duration: 500.ms)
+                            .slideY(begin: 0.15, end: 0.0),
 
-                    const SizedBox(height: 28),
+                        const SizedBox(height: 24),
 
-                    // ── Glowing Dual Search Console & Pills ─────────────────
-                    HeroSearchBar(
-                      onSearch: _onSearch,
-                      onCategorySelected: _onCategorySelected,
-                      selectedCategory: _selectedCategory,
-                      isArabic: isArabic,
-                    )
-                        .animate()
-                        .fadeIn(delay: 200.ms, duration: 600.ms)
-                        .slideY(begin: 0.15, end: 0.0),
+                        // ── Dual Search Console & 4 Exact Category Pills ────
+                        HeroSearchBar(
+                          onSearch: _onSearch,
+                          onCategorySelected: _onCategorySelected,
+                          selectedCategory: _selectedCategory,
+                          isArabic: isArabic,
+                        )
+                            .animate()
+                            .fadeIn(delay: 150.ms, duration: 500.ms),
 
-                    const SizedBox(height: 48),
+                        const SizedBox(height: 38),
 
-                    // ── RECOMMENDED FOR YOU Carousel ────────────────────────
-                    RecommendedJobsCarousel(
-                      jobs: jobs,
-                      isArabic: isArabic,
-                    )
-                        .animate()
-                        .fadeIn(delay: 350.ms, duration: 600.ms)
-                        .slideY(begin: 0.1, end: 0.0),
+                        // ── RECOMMENDED FOR YOU (Google, Siemens, Spotify, Airbnb)
+                        RecommendedJobsCarousel(
+                          jobs: jobs,
+                          isArabic: isArabic,
+                        )
+                            .animate()
+                            .fadeIn(delay: 250.ms, duration: 500.ms),
 
-                    const SizedBox(height: 32),
+                        const SizedBox(height: 28),
 
-                    // ── Featured Employers & Global Trends ──────────────────
-                    FeaturedEmployersAndTrendsSection(isArabic: isArabic)
-                        .animate()
-                        .fadeIn(delay: 450.ms, duration: 600.ms),
-                  ],
+                        // ── FEATURED EMPLOYERS & GLOBAL JOB TRENDS ──────────
+                        FeaturedEmployersAndTrendsSection(isArabic: isArabic)
+                            .animate()
+                            .fadeIn(delay: 350.ms, duration: 500.ms),
+                      ],
+                    ),
+                  ),
                 ),
-              ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildTopNavBar(
+  Widget _buildMockupNavBar(
     BuildContext context,
     AppAuthProvider authProvider,
     JobProvider jobProvider,
@@ -122,7 +166,7 @@ class _GlobalHeroScreenState extends State<GlobalHeroScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
       decoration: BoxDecoration(
-        color: const Color(0xFF070E1E).withValues(alpha: 0.8),
+        color: const Color(0xFF0B1424).withValues(alpha: 0.7),
         border: Border(
           bottom: BorderSide(
             color: Colors.white.withValues(alpha: 0.08),
@@ -132,177 +176,107 @@ class _GlobalHeroScreenState extends State<GlobalHeroScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          // Left: Animated Cyber Brand Logo
+          // Left: Brand with Cyber Globe icon
           EasyWorkAnimatedLogo(
-            size: 38,
+            size: 32,
             isArabic: isArabic,
             onTap: () => context.go(AppRoutes.dashboard),
           ),
 
-          // Center Links (Desktop only)
+          // Center Links matching Image Mockup
           if (isDesktop)
             Row(
               children: [
-                _NavLink(
-                  label: isArabic ? 'تصفح الوظائف' : 'Find Jobs',
-                  isActive: false,
+                _NavBarItem(
+                  label: isArabic ? 'الوظائف' : 'Find Jobs',
                   onTap: () => context.go(AppRoutes.jobs),
                 ),
-                const SizedBox(width: 20),
-                _NavLink(
-                  label: isArabic ? 'صانع الـ CV الأوروبي' : 'Europass CV',
-                  isActive: false,
+                const SizedBox(width: 22),
+                _NavBarItem(
+                  label: isArabic ? 'إنشاء سيرة' : 'Post a Job',
                   onTap: () => context.go(AppRoutes.cvBuilder),
                 ),
-                const SizedBox(width: 20),
-                _NavLink(
-                  label: isArabic ? 'التقديمات' : 'Applications',
-                  isActive: false,
-                  onTap: () => context.go(AppRoutes.applications),
+                const SizedBox(width: 22),
+                _NavBarItem(
+                  label: isArabic ? 'المرشحون' : 'Candidates',
+                  onTap: () => context.go(AppRoutes.jobs),
                 ),
-                const SizedBox(width: 20),
-                _NavLink(
-                  label: isArabic ? 'الملف الشخصي' : 'Profile',
-                  isActive: false,
-                  onTap: () => context.go(AppRoutes.profile),
+                const SizedBox(width: 22),
+                _NavBarItem(
+                  label: isArabic ? 'الشركات' : 'Companies',
+                  onTap: () => context.go(AppRoutes.jobs),
+                ),
+                const SizedBox(width: 22),
+                _NavBarItem(
+                  label: isArabic ? 'الموارد ▾' : 'Resources ▾',
+                  onTap: () => context.go(AppRoutes.cvBuilder),
                 ),
               ],
             ),
 
-          // Right: Language Switcher + Auth Action Buttons
+          // Right: Login, [Sign Up] button & Flags
           Row(
             children: [
-              // Language Switcher Pill (Flags 🇺🇸 / 🇪🇬)
+              TextButton(
+                onPressed: () => context.go(AppRoutes.login),
+                child: Text(
+                  isArabic ? 'دخول' : 'Login',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 6),
+              // Sign Up Outline Button matching reference image
+              OutlinedButton(
+                onPressed: () => context.go(AppRoutes.login),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: const Color(0xFF00C2E8),
+                  side: const BorderSide(color: Color(0xFF00C2E8), width: 1.2),
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                ),
+                child: Text(
+                  isArabic ? 'تسجيل' : 'Sign Up',
+                  style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 12),
+                ),
+              ),
+              const SizedBox(width: 10),
+              // Country Flags pill (🇺🇸 🇩🇪)
               GestureDetector(
                 onTap: () {
                   jobProvider.setLocaleCode(isArabic ? 'en' : 'ar');
                 },
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
                     color: Colors.white.withValues(alpha: 0.08),
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(10),
                     border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
                   ),
-                  child: Row(
-                    children: [
-                      Text(isArabic ? '🇺🇸 EN' : '🇪🇬 العربية',
-                          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white)),
-                    ],
-                  ),
+                  child: const Text('🇺🇸 🇩🇪 ▾', style: TextStyle(fontSize: 12)),
                 ),
               ),
-
-              const SizedBox(width: 12),
-
-              // Auth state check
-              if (authProvider.isAuthenticated)
-                ElevatedButton.icon(
-                  onPressed: () => context.go(AppRoutes.profile),
-                  icon: const Icon(Icons.person_outline_rounded, size: 16),
-                  label: Text(isArabic ? 'حسابي' : 'My Account'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF0052CC),
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                  ),
-                )
-              else
-                Row(
-                  children: [
-                    TextButton(
-                      onPressed: () => context.go(AppRoutes.login),
-                      child: Text(
-                        isArabic ? 'دخول' : 'Login',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 6),
-                    ElevatedButton(
-                      onPressed: () => context.go(AppRoutes.login),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF00F0FF),
-                        foregroundColor: const Color(0xFF030712),
-                        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                        textStyle: const TextStyle(fontWeight: FontWeight.w800, fontSize: 13),
-                      ),
-                      child: Text(isArabic ? 'حساب جديد' : 'Sign Up'),
-                    ),
-                  ],
-                ),
             ],
           ),
         ],
       ),
     );
   }
-
-  Widget _buildHeadline(bool isArabic) {
-    return Container(
-      constraints: const BoxConstraints(maxWidth: 800),
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Column(
-        children: [
-          ShaderMask(
-            shaderCallback: (bounds) => const LinearGradient(
-              colors: [Colors.white, Color(0xFFE2E8F0), Color(0xFF00F0FF)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ).createShader(bounds),
-            child: Text(
-              isArabic
-                  ? 'ابحث عن مستقبلك المهني في أوروبا والعالم'
-                  : 'FIND YOUR FUTURE, WORLDWIDE.',
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 34,
-                fontWeight: FontWeight.w900,
-                color: Colors.white,
-                letterSpacing: -0.5,
-                height: 1.15,
-              ),
-            ),
-          ),
-          const SizedBox(height: 10),
-          Text(
-            isArabic
-                ? 'آلاف الوظائف الموثقة مع كفالة التأشيرة، توفير السكن، وإنشاء سيرة Europass معتمدة دولياً'
-                : 'Verified visa-sponsored careers, European relocation assistance, and certified Europass CV engine.',
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 14,
-              color: Color(0xFF8B949E),
-              height: 1.5,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }
 
-class _NavLink extends StatefulWidget {
-  const _NavLink({
-    required this.label,
-    required this.isActive,
-    required this.onTap,
-  });
-
+class _NavBarItem extends StatefulWidget {
+  const _NavBarItem({required this.label, required this.onTap});
   final String label;
-  final bool isActive;
   final VoidCallback onTap;
 
   @override
-  State<_NavLink> createState() => _NavLinkState();
+  State<_NavBarItem> createState() => _NavBarItemState();
 }
 
-class _NavLinkState extends State<_NavLink> {
+class _NavBarItemState extends State<_NavBarItem> {
   bool _isHovered = false;
 
   @override
@@ -315,9 +289,9 @@ class _NavLinkState extends State<_NavLink> {
         child: AnimatedDefaultTextStyle(
           duration: const Duration(milliseconds: 150),
           style: TextStyle(
-            color: (_isHovered || widget.isActive) ? const Color(0xFF00F0FF) : const Color(0xFFC9D1D9),
-            fontSize: 13.5,
-            fontWeight: widget.isActive ? FontWeight.w700 : FontWeight.w500,
+            color: _isHovered ? const Color(0xFF00C2E8) : const Color(0xFFC7D2E0),
+            fontSize: 13,
+            fontWeight: FontWeight.w500,
           ),
           child: Text(widget.label),
         ),

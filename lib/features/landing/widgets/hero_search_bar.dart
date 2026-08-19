@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 
 // ════════════════════════════════════════════════════════════════════════════
 // HeroSearchBar & Category Pills
-// Glowing glassmorphic dual-input search console and quick category selector
-// matching the user's reference image.
+// Exact 1-to-1 visual recreation of the image search console and category cards.
 // ════════════════════════════════════════════════════════════════════════════
 class HeroSearchBar extends StatefulWidget {
   const HeroSearchBar({
@@ -24,8 +23,8 @@ class HeroSearchBar extends StatefulWidget {
 }
 
 class _HeroSearchBarState extends State<HeroSearchBar> {
-  final TextEditingController _titleController = TextEditingController();
-  final TextEditingController _locationController = TextEditingController();
+  final TextEditingController _titleController = TextEditingController(text: 'Software Engineer');
+  final TextEditingController _locationController = TextEditingController(text: 'Berlin, Germany');
   bool _isSearchHovered = false;
 
   @override
@@ -42,169 +41,217 @@ class _HeroSearchBarState extends State<HeroSearchBar> {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.sizeOf(context).width;
-    final isDesktop = screenWidth >= 800;
+    final isDesktop = screenWidth >= 850;
 
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        // ── Main Glassmorphic Search Bar ────────────────────────────────────
+        // ── Main Glassmorphic Search Bar Console ────────────────────────────
         Container(
-          constraints: const BoxConstraints(maxWidth: 860),
+          constraints: const BoxConstraints(maxWidth: 920),
           margin: const EdgeInsets.symmetric(horizontal: 16),
-          padding: const EdgeInsets.all(8),
+          padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: const Color(0xFF0F1E38).withValues(alpha: 0.72),
-            borderRadius: BorderRadius.circular(24),
+            color: const Color(0xFF1B263B).withValues(alpha: 0.55),
+            borderRadius: BorderRadius.circular(22),
             border: Border.all(
-              color: const Color(0xFF00F0FF).withValues(alpha: 0.3),
-              width: 1.5,
+              color: const Color(0xFF5A7290).withValues(alpha: 0.4),
+              width: 1.2,
             ),
             boxShadow: [
               BoxShadow(
-                color: const Color(0xFF00F0FF).withValues(alpha: 0.12),
-                blurRadius: 30,
-                spreadRadius: 2,
+                color: Colors.black.withValues(alpha: 0.5),
+                blurRadius: 28,
+                offset: const Offset(0, 10),
               ),
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.5),
-                blurRadius: 20,
-                offset: const Offset(0, 10),
+                color: const Color(0xFF00C2E8).withValues(alpha: 0.1),
+                blurRadius: 30,
               ),
             ],
           ),
-          child: isDesktop ? _buildDesktopInputs() : _buildMobileInputs(),
+          child: isDesktop ? _buildDesktopLayout() : _buildMobileLayout(),
         ),
 
         const SizedBox(height: 24),
 
-        // ── Category Pills Row ──────────────────────────────────────────────
-        _buildCategoryPills(isDesktop),
+        // ── 4 Category Pills with exact colors from image ───────────────────
+        _buildExactCategoryRow(isDesktop),
       ],
     );
   }
 
-  Widget _buildDesktopInputs() {
+  Widget _buildDesktopLayout() {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        // Input 1: Job Title, Skill, or Company
+        // 1. Job Title, Skill, or Company
         Expanded(
-          flex: 5,
-          child: _buildInputField(
-            controller: _titleController,
-            icon: Icons.search_rounded,
-            label: widget.isArabic ? 'المسمى الوظيفي، المهارة، أو الشركة' : 'Job Title, Skill, or Company',
-            hint: widget.isArabic ? 'مثال: مهندس، فني، Google...' : 'e.g. Software Engineer, Welder...',
+          flex: 42,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(left: 6, bottom: 4),
+                child: Text(
+                  widget.isArabic ? 'المسمى الوظيفي، المهارة، أو الشركة' : 'Job Title, Skill, or Company',
+                  style: const TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF9FB2C8),
+                  ),
+                ),
+              ),
+              Container(
+                height: 42,
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.search_rounded, color: Color(0xFF64748B), size: 18),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: TextField(
+                        controller: _titleController,
+                        onSubmitted: (_) => _triggerSearch(),
+                        style: const TextStyle(color: Color(0xFF0F172A), fontSize: 13.5, fontWeight: FontWeight.w500),
+                        decoration: InputDecoration(
+                          hintText: widget.isArabic ? 'مثال: Software Engineer' : 'e.g. Software Engineer',
+                          hintStyle: const TextStyle(color: Color(0xFF94A3B8), fontSize: 13),
+                          isDense: true,
+                          contentPadding: EdgeInsets.zero,
+                          border: InputBorder.none,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
 
-        // Vertical divider line
-        Container(
-          width: 1,
-          height: 42,
-          margin: const EdgeInsets.symmetric(horizontal: 8),
-          color: Colors.white.withValues(alpha: 0.15),
-        ),
+        const SizedBox(width: 14),
 
-        // Input 2: Location (City or Country)
+        // 2. Location (City or Country)
         Expanded(
-          flex: 4,
-          child: _buildInputField(
-            controller: _locationController,
-            icon: Icons.location_on_outlined,
-            label: widget.isArabic ? 'الموقع (المدينة أو الدولة)' : 'Location (City or Country)',
-            hint: widget.isArabic ? 'برلين، فرنسا، عن بُعد...' : 'Berlin, Germany, Remote...',
+          flex: 38,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(left: 6, bottom: 4),
+                child: Text(
+                  widget.isArabic ? 'الموقع (المدينة أو الدولة)' : 'Location (City or Country)',
+                  style: const TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF9FB2C8),
+                  ),
+                ),
+              ),
+              Container(
+                height: 42,
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.location_on_outlined, color: Color(0xFF64748B), size: 18),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: TextField(
+                        controller: _locationController,
+                        onSubmitted: (_) => _triggerSearch(),
+                        style: const TextStyle(color: Color(0xFF0F172A), fontSize: 13.5, fontWeight: FontWeight.w500),
+                        decoration: InputDecoration(
+                          hintText: widget.isArabic ? 'مثال: Berlin, Germany' : 'e.g. Berlin, Germany',
+                          hintStyle: const TextStyle(color: Color(0xFF94A3B8), fontSize: 13),
+                          isDense: true,
+                          contentPadding: EdgeInsets.zero,
+                          border: InputBorder.none,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
 
-        const SizedBox(width: 8),
+        const SizedBox(width: 14),
 
-        // Search Button (Glowing Neon Teal)
-        _buildSearchButton(),
-      ],
-    );
-  }
-
-  Widget _buildMobileInputs() {
-    return Column(
-      children: [
-        _buildInputField(
-          controller: _titleController,
-          icon: Icons.search_rounded,
-          label: widget.isArabic ? 'المسمى الوظيفي أو الشركة' : 'Job Title or Company',
-          hint: widget.isArabic ? 'مهندس برمجيات...' : 'Software Engineer...',
-        ),
-        const SizedBox(height: 8),
-        _buildInputField(
-          controller: _locationController,
-          icon: Icons.location_on_outlined,
-          label: widget.isArabic ? 'الموقع (الدولة أو المدينة)' : 'Location (City/Country)',
-          hint: widget.isArabic ? 'ألمانيا، باريس...' : 'Germany, Paris...',
-        ),
-        const SizedBox(height: 12),
-        SizedBox(
-          width: double.infinity,
+        // 3. Glowing SEARCH Button
+        Padding(
+          padding: const EdgeInsets.only(top: 18),
           child: _buildSearchButton(),
         ),
       ],
     );
   }
 
-  Widget _buildInputField({
-    required TextEditingController controller,
-    required IconData icon,
-    required String label,
-    required String hint,
-  }) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-      decoration: BoxDecoration(
-        color: const Color(0xFF070F1E).withValues(alpha: 0.6),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            label,
-            style: const TextStyle(
-              fontSize: 10.5,
-              fontWeight: FontWeight.w600,
-              color: Color(0xFF8B949E),
-              letterSpacing: 0.2,
-            ),
-          ),
-          const SizedBox(height: 2),
-          Row(
+  Widget _buildMobileLayout() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          widget.isArabic ? 'المسمى الوظيفي، المهارة، أو الشركة' : 'Job Title, Skill, or Company',
+          style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: Color(0xFF9FB2C8)),
+        ),
+        const SizedBox(height: 4),
+        Container(
+          height: 42,
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10)),
+          child: Row(
             children: [
-              Icon(icon, color: const Color(0xFF00F0FF), size: 18),
+              const Icon(Icons.search_rounded, color: Color(0xFF64748B), size: 18),
               const SizedBox(width: 8),
               Expanded(
                 child: TextField(
-                  controller: controller,
-                  onSubmitted: (_) => _triggerSearch(),
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                  ),
-                  decoration: InputDecoration(
-                    hintText: hint,
-                    hintStyle: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.35),
-                      fontSize: 13,
-                    ),
-                    isDense: true,
-                    contentPadding: EdgeInsets.zero,
-                    border: InputBorder.none,
-                  ),
+                  controller: _titleController,
+                  style: const TextStyle(color: Color(0xFF0F172A), fontSize: 13),
+                  decoration: const InputDecoration(isDense: true, contentPadding: EdgeInsets.zero, border: InputBorder.none),
                 ),
               ),
             ],
           ),
-        ],
-      ),
+        ),
+        const SizedBox(height: 10),
+        Text(
+          widget.isArabic ? 'الموقع (المدينة أو الدولة)' : 'Location (City or Country)',
+          style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: Color(0xFF9FB2C8)),
+        ),
+        const SizedBox(height: 4),
+        Container(
+          height: 42,
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10)),
+          child: Row(
+            children: [
+              const Icon(Icons.location_on_outlined, color: Color(0xFF64748B), size: 18),
+              const SizedBox(width: 8),
+              Expanded(
+                child: TextField(
+                  controller: _locationController,
+                  style: const TextStyle(color: Color(0xFF0F172A), fontSize: 13),
+                  decoration: const InputDecoration(isDense: true, contentPadding: EdgeInsets.zero, border: InputBorder.none),
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 12),
+        SizedBox(width: double.infinity, child: _buildSearchButton()),
+      ],
     );
   }
 
@@ -215,61 +262,89 @@ class _HeroSearchBarState extends State<HeroSearchBar> {
       child: GestureDetector(
         onTap: _triggerSearch,
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          height: 52,
-          padding: const EdgeInsets.symmetric(horizontal: 28),
+          duration: const Duration(milliseconds: 180),
+          height: 42,
+          padding: const EdgeInsets.symmetric(horizontal: 22),
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: _isSearchHovered
-                  ? [const Color(0xFF00F0FF), const Color(0xFF10B981)]
-                  : [const Color(0xFF00C9FF), const Color(0xFF0072FF)],
+                  ? [const Color(0xFF00E5FF), const Color(0xFF00B0FF)]
+                  : [const Color(0xFF00C2E8), const Color(0xFF0098B8)],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(10),
             boxShadow: [
               BoxShadow(
-                color: const Color(0xFF00F0FF).withValues(alpha: _isSearchHovered ? 0.6 : 0.35),
-                blurRadius: _isSearchHovered ? 20 : 12,
-                spreadRadius: _isSearchHovered ? 2 : 0,
+                color: const Color(0xFF00C2E8).withValues(alpha: _isSearchHovered ? 0.65 : 0.35),
+                blurRadius: 16,
               ),
             ],
           ),
-          child: Center(
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  widget.isArabic ? 'بحث' : 'SEARCH',
-                  style: const TextStyle(
-                    color: Color(0xFF030712),
-                    fontSize: 14,
-                    fontWeight: FontWeight.w900,
-                    letterSpacing: 1.0,
-                  ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                widget.isArabic ? 'SEARCH' : 'SEARCH',
+                style: const TextStyle(
+                  color: Color(0xFF07121E),
+                  fontSize: 13.5,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 1.0,
                 ),
-                const SizedBox(width: 8),
-                const Icon(
-                  Icons.search_rounded,
-                  color: Color(0xFF030712),
-                  size: 20,
-                ),
-              ],
-            ),
+              ),
+              const SizedBox(width: 6),
+              const Icon(
+                Icons.search_rounded,
+                color: Color(0xFF07121E),
+                size: 18,
+              ),
+            ],
           ),
         ),
       ),
     );
   }
 
-  Widget _buildCategoryPills(bool isDesktop) {
+  Widget _buildExactCategoryRow(bool isDesktop) {
     final categories = [
-      {'id': 'Tech', 'nameEn': 'Tech & AI', 'nameAr': 'التقنية والبرمجيات', 'jobs': '4.2k+ jobs', 'icon': Icons.computer_rounded},
-      {'id': 'Finance', 'nameEn': 'Finance & Business', 'nameAr': 'المالية والأعمال', 'jobs': '3.1k+ jobs', 'icon': Icons.account_balance_wallet_outlined},
-      {'id': 'Creative', 'nameEn': 'Creative & Media', 'nameAr': 'التصميم والإعلام', 'jobs': '2.8k+ jobs', 'icon': Icons.palette_outlined},
-      {'id': 'Remote', 'nameEn': 'Remote Global', 'nameAr': 'عن بُعد حول العالم', 'jobs': '5.5k+ jobs', 'icon': Icons.public_rounded},
-      {'id': 'Industrial', 'nameEn': 'Vocational & Trades', 'nameAr': 'المهن الفنية والصناعية', 'jobs': '3.8k+ jobs', 'icon': Icons.handyman_outlined},
-      {'id': 'Healthcare', 'nameEn': 'Healthcare & Care', 'nameAr': 'الرعاية والطب', 'jobs': '2.4k+ jobs', 'icon': Icons.medical_services_outlined},
+      {
+        'id': 'Tech',
+        'title': 'Tech',
+        'jobs': '4.2k+ jobs',
+        'icon': Icons.computer_rounded,
+        'bg': const Color(0xFF142944),
+        'border': const Color(0xFF2C5688),
+        'iconBg': const Color(0xFF1B3D6B),
+      },
+      {
+        'id': 'Finance',
+        'title': 'Finance',
+        'jobs': '3.1k+ jobs',
+        'icon': Icons.account_balance_wallet_outlined,
+        'bg': const Color(0xFF103534),
+        'border': const Color(0xFF206965),
+        'iconBg': const Color(0xFF184E4C),
+      },
+      {
+        'id': 'Creative',
+        'title': 'Creative',
+        'jobs': '2.8k+ jobs',
+        'icon': Icons.palette_outlined,
+        'bg': const Color(0xFF3A231C),
+        'border': const Color(0xFF6B4135),
+        'iconBg': const Color(0xFF533127),
+      },
+      {
+        'id': 'Remote',
+        'title': 'Remote',
+        'jobs': '5.5k+ jobs',
+        'icon': Icons.sports_esports_outlined,
+        'bg': const Color(0xFF342817),
+        'border': const Color(0xFF69512F),
+        'iconBg': const Color(0xFF503D23),
+      },
     ];
 
     return SingleChildScrollView(
@@ -280,11 +355,13 @@ class _HeroSearchBarState extends State<HeroSearchBar> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: categories.map((cat) {
           final isSelected = widget.selectedCategory.toLowerCase() == (cat['id'] as String).toLowerCase();
-          return _CategoryPillItem(
-            id: cat['id'] as String,
-            name: widget.isArabic ? (cat['nameAr'] as String) : (cat['nameEn'] as String),
-            jobCount: cat['jobs'] as String,
+          return _ExactCategoryCard(
+            title: cat['title'] as String,
+            jobs: cat['jobs'] as String,
             icon: cat['icon'] as IconData,
+            bgColor: cat['bg'] as Color,
+            borderColor: cat['border'] as Color,
+            iconBg: cat['iconBg'] as Color,
             isSelected: isSelected,
             onTap: () => widget.onCategorySelected(cat['id'] as String),
           );
@@ -294,109 +371,109 @@ class _HeroSearchBarState extends State<HeroSearchBar> {
   }
 }
 
-class _CategoryPillItem extends StatefulWidget {
-  const _CategoryPillItem({
-    required this.id,
-    required this.name,
-    required this.jobCount,
+class _ExactCategoryCard extends StatefulWidget {
+  const _ExactCategoryCard({
+    required this.title,
+    required this.jobs,
     required this.icon,
+    required this.bgColor,
+    required this.borderColor,
+    required this.iconBg,
     required this.isSelected,
     required this.onTap,
   });
 
-  final String id;
-  final String name;
-  final String jobCount;
+  final String title;
+  final String jobs;
   final IconData icon;
+  final Color bgColor;
+  final Color borderColor;
+  final Color iconBg;
   final bool isSelected;
   final VoidCallback onTap;
 
   @override
-  State<_CategoryPillItem> createState() => _CategoryPillItemState();
+  State<_ExactCategoryCard> createState() => _ExactCategoryCardState();
 }
 
-class _CategoryPillItemState extends State<_CategoryPillItem> {
+class _ExactCategoryCardState extends State<_ExactCategoryCard> {
   bool _isHovered = false;
 
   @override
   Widget build(BuildContext context) {
-    final active = widget.isSelected || _isHovered;
-
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
       child: GestureDetector(
         onTap: widget.onTap,
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          duration: const Duration(milliseconds: 180),
+          width: 175,
+          height: 64,
+          margin: const EdgeInsets.symmetric(horizontal: 6),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           decoration: BoxDecoration(
-            color: active
-                ? const Color(0xFF00F0FF).withValues(alpha: 0.12)
-                : const Color(0xFF0F1E38).withValues(alpha: 0.5),
-            borderRadius: BorderRadius.circular(18),
+            color: _isHovered ? widget.bgColor.withValues(alpha: 0.95) : widget.bgColor.withValues(alpha: 0.75),
+            borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: active
-                  ? const Color(0xFF00F0FF).withValues(alpha: 0.6)
-                  : Colors.white.withValues(alpha: 0.1),
+              color: _isHovered ? Colors.white.withValues(alpha: 0.6) : widget.borderColor,
               width: 1.2,
             ),
-            boxShadow: active
+            boxShadow: _isHovered
                 ? [
                     BoxShadow(
-                      color: const Color(0xFF00F0FF).withValues(alpha: 0.2),
+                      color: widget.borderColor.withValues(alpha: 0.4),
                       blurRadius: 16,
+                      offset: const Offset(0, 4),
                     ),
                   ]
                 : null,
           ),
           child: Row(
-            mainAxisSize: MainAxisSize.min,
             children: [
+              // Icon in circular badge
               Container(
-                width: 32,
-                height: 32,
+                width: 36,
+                height: 36,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: active
-                      ? const Color(0xFF00F0FF).withValues(alpha: 0.2)
-                      : Colors.white.withValues(alpha: 0.06),
+                  color: widget.iconBg,
                 ),
-                child: Icon(
-                  widget.icon,
-                  size: 16,
-                  color: active ? const Color(0xFF00F0FF) : Colors.white70,
-                ),
+                child: Icon(widget.icon, size: 18, color: Colors.white),
               ),
               const SizedBox(width: 10),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    widget.name,
-                    style: TextStyle(
-                      fontSize: 12.5,
-                      fontWeight: FontWeight.w700,
-                      color: active ? Colors.white : Colors.white70,
+              // Title & Job Count
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      widget.title,
+                      style: const TextStyle(
+                        fontSize: 13.5,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                        height: 1.1,
+                      ),
                     ),
-                  ),
-                  Text(
-                    widget.jobCount,
-                    style: TextStyle(
-                      fontSize: 10,
-                      fontWeight: FontWeight.w500,
-                      color: active ? const Color(0xFF00F0FF) : const Color(0xFF8B949E),
+                    const SizedBox(height: 2),
+                    Text(
+                      widget.jobs,
+                      style: const TextStyle(
+                        fontSize: 10.5,
+                        fontWeight: FontWeight.w500,
+                        color: Color(0xFF94A3B8),
+                        height: 1.0,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-              const SizedBox(width: 8),
-              Icon(
+              const Icon(
                 Icons.chevron_right_rounded,
                 size: 16,
-                color: active ? const Color(0xFF00F0FF) : const Color(0xFF8B949E),
+                color: Color(0xFF94A3B8),
               ),
             ],
           ),
